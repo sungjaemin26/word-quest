@@ -1,0 +1,755 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORD QUEST - 영어 단어 게임</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: #f1f5f9;
+      font-family: Arial, "Apple SD Gothic Neo", sans-serif;
+      color: #1e293b;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 28px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 30px;
+      color: #2563eb;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin: 8px 0 24px;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 15px 8px;
+      margin-bottom: 22px;
+    }
+
+    .score-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .score-label {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .score-number {
+      font-size: 23px;
+      font-weight: bold;
+      color: #1d4ed8;
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: bold;
+      transition: background 0.15s;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .mode-button {
+      flex: 1;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .mode-button.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .question-box {
+      text-align: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 25px 15px;
+      margin-bottom: 18px;
+    }
+
+    .question-label {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    .question {
+      font-size: 30px;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .pos {
+      display: inline-block;
+      font-size: 13px;
+      color: #475569;
+      background: #e2e8f0;
+      padding: 5px 10px;
+      border-radius: 20px;
+      margin-top: 12px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .option-button {
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 60px;
+      border: 2px solid transparent;
+      overflow-wrap: anywhere;
+    }
+
+    .option-button:hover:not(:disabled) {
+      background: #dbeafe;
+      border-color: #93c5fd;
+    }
+
+    .option-button.correct {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #166534;
+    }
+
+    .option-button.wrong {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #991b1b;
+    }
+
+    .answer-area {
+      margin-top: 18px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 18px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    .main-button {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .main-button:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+
+    .secondary-button {
+      width: 100%;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+
+    .feedback.correct {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .feedback.wrong {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .explain {
+      margin-top: 12px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .explain-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>WORD QUEST</h1>
+    <p class="subtitle">영어 단어 실력을 키워 보자!</p>
+
+    <div class="score-board">
+      <div class="score-item">
+        <div class="score-label">점수</div>
+        <div class="score-number" id="score">0</div>
+      </div>
+
+      <div class="score-item">
+        <div class="score-label">연속 정답</div>
+        <div class="score-number" id="streak">0</div>
+      </div>
+
+      <div class="score-item">
+        <div class="score-label">푼 문제</div>
+        <div class="score-number" id="total">0</div>
+      </div>
+    </div>
+
+    <div class="mode-buttons">
+      <button class="mode-button active" id="meaningMode">
+        뜻 → 영어
+      </button>
+
+      <button class="mode-button" id="spellingMode">
+        영어 → 뜻
+      </button>
+    </div>
+
+    <div class="question-box">
+      <div class="question-label" id="questionLabel">
+        다음 뜻에 해당하는 영어 단어를 입력하세요.
+      </div>
+
+      <div class="question" id="question">준비 중...</div>
+
+      <div class="pos hidden" id="questionPos"></div>
+    </div>
+
+    <div class="options hidden" id="options">
+      <button class="option-button" id="option0"></button>
+      <button class="option-button" id="option1"></button>
+      <button class="option-button" id="option2"></button>
+      <button class="option-button" id="option3"></button>
+    </div>
+
+    <div class="answer-area hidden" id="answerArea">
+      <input
+        type="text"
+        id="answerInput"
+        placeholder="영어 단어를 입력하세요"
+        autocomplete="off"
+        autocapitalize="off"
+      >
+
+      <button class="main-button" id="checkButton">
+        정답 확인
+      </button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="explain hidden" id="explain"></div>
+
+    <button class="main-button hidden" id="nextButton">
+      다음 문제
+    </button>
+
+    <button class="secondary-button" id="skipButton">
+      문제 건너뛰기
+    </button>
+
+    <p class="footer">
+      WORD QUEST · 영어 어휘 학습 게임
+    </p>
+  </div>
+
+  <script>
+    // =====================================
+    // 1. 단어 데이터
+    // pos: n(명사), v(동사), a(형용사), ad(부사)
+    // =====================================
+
+    const words = [
+      { en: "various", ko: "다양한", pos: "a" },
+      { en: "significant", ko: "중요한, 상당한", pos: "a" },
+      { en: "contribute", ko: "기여하다", pos: "v" },
+      { en: "accurate", ko: "정확한", pos: "a" },
+      { en: "maintain", ko: "유지하다", pos: "v" },
+      { en: "reluctant", ko: "꺼리는, 마지못한", pos: "a" },
+      { en: "interpret", ko: "해석하다", pos: "v" },
+      { en: "efficient", ko: "효율적인", pos: "a" },
+      { en: "consequence", ko: "결과, 영향", pos: "n" },
+      { en: "emerge", ko: "나타나다, 발생하다", pos: "v" },
+      { en: "perspective", ko: "관점", pos: "n" },
+      { en: "relevant", ko: "관련 있는", pos: "a" },
+      { en: "potential", ko: "잠재적인", pos: "a" },
+      { en: "alter", ko: "바꾸다, 변경하다", pos: "v" },
+      { en: "establish", ko: "설립하다, 확립하다", pos: "v" },
+      { en: "scarce", ko: "부족한, 드문", pos: "a" },
+      { en: "justify", ko: "정당화하다", pos: "v" },
+      { en: "consume", ko: "소비하다", pos: "v" },
+      { en: "evaluate", ko: "평가하다", pos: "v" },
+      { en: "indicate", ko: "나타내다, 가리키다", pos: "v" }
+    ];
+
+
+    // =====================================
+    // 2. 게임 상태
+    // =====================================
+
+    let mode = "meaning";
+    let currentWord = null;
+    let choices = [];
+    let score = 0;
+    let streak = 0;
+    let total = 0;
+    let answered = false;
+
+
+    // =====================================
+    // 3. HTML 요소 가져오기
+    // =====================================
+
+    const $ = (id) => document.getElementById(id);
+
+    const meaningMode = $("meaningMode");
+    const spellingMode = $("spellingMode");
+
+    const questionLabel = $("questionLabel");
+    const question = $("question");
+    const questionPos = $("questionPos");
+
+    const options = $("options");
+    const answerArea = $("answerArea");
+    const answerInput = $("answerInput");
+
+    const checkButton = $("checkButton");
+    const nextButton = $("nextButton");
+    const skipButton = $("skipButton");
+
+    const feedback = $("feedback");
+    const explain = $("explain");
+
+
+    // =====================================
+    // 4. 품사 표시
+    // =====================================
+
+    function getPOS(pos) {
+      const names = {
+        n: "n · 명사",
+        v: "v · 동사",
+        a: "a · 형용사",
+        ad: "ad · 부사"
+      };
+
+      return names[pos] || pos;
+    }
+
+
+    // =====================================
+    // 5. 점수판 업데이트
+    // =====================================
+
+    function updateScore() {
+      $("score").textContent = score;
+      $("streak").textContent = streak;
+      $("total").textContent = total;
+    }
+
+
+    // =====================================
+    // 6. 문제 생성
+    // =====================================
+
+    function newQuestion() {
+      answered = false;
+
+      feedback.className = "feedback";
+      feedback.textContent = "";
+
+      explain.classList.add("hidden");
+      explain.textContent = "";
+
+      nextButton.classList.add("hidden");
+
+      answerInput.value = "";
+      answerInput.disabled = false;
+
+      checkButton.disabled = false;
+      checkButton.classList.remove("hidden");
+
+      // 문제에 사용할 단어를 무작위 선택
+      currentWord = words[
+        Math.floor(Math.random() * words.length)
+      ];
+
+      if (mode === "meaning") {
+        // 뜻을 보고 영어 철자를 입력하는 모드
+
+        questionLabel.textContent =
+          "다음 뜻에 해당하는 영어 단어를 입력하세요.";
+
+        question.textContent = currentWord.ko;
+
+        questionPos.classList.add("hidden");
+
+        options.classList.add("hidden");
+        answerArea.classList.remove("hidden");
+
+        answerInput.placeholder = "영어 단어를 입력하세요";
+        checkButton.textContent = "정답 확인";
+
+        answerInput.focus();
+
+      } else {
+        // 영어 단어를 보고 뜻을 고르는 모드
+
+        questionLabel.textContent =
+          "다음 영어 단어의 뜻을 고르세요.";
+
+        question.textContent = currentWord.en;
+
+        questionPos.textContent = getPOS(currentWord.pos);
+        questionPos.classList.remove("hidden");
+
+        answerArea.classList.add("hidden");
+        options.classList.remove("hidden");
+
+        // 정답 1개와 오답 3개 만들기
+        const wrongWords = words.filter(
+          word => word.en !== currentWord.en
+        );
+
+        wrongWords.sort(() => Math.random() - 0.5);
+
+        choices = [
+          currentWord,
+          ...wrongWords.slice(0, 3)
+        ];
+
+        // 선택지 순서 무작위 섞기
+        choices.sort(() => Math.random() - 0.5);
+
+        // 선택지 표시
+        for (let i = 0; i < 4; i++) {
+          const button = $("option" + i);
+
+          button.textContent = choices[i].ko;
+          button.disabled = false;
+          button.className = "option-button";
+
+          button.onclick = function() {
+            choose(i);
+          };
+        }
+      }
+    }
+
+
+    // =====================================
+    // 7. 정답 및 오답 설명
+    // =====================================
+
+    function showExplanation(myAnswer, correctWord) {
+      explain.classList.remove("hidden");
+
+      // 사용자 입력은 textContent로 표시하여
+      // 입력한 문자열이 HTML로 실행되지 않게 함
+
+      explain.replaceChildren();
+
+      const title = document.createElement("div");
+      title.className = "explain-title";
+      title.textContent = "단어 설명";
+
+      const myLine = document.createElement("div");
+      myLine.textContent =
+        "내 답: " + myAnswer.en +
+        " (" + getPOS(myAnswer.pos) + ") — " +
+        myAnswer.ko;
+
+      const correctLine = document.createElement("div");
+      correctLine.textContent =
+        "정답: " + correctWord.en +
+        " (" + getPOS(correctWord.pos) + ") — " +
+        correctWord.ko;
+
+      explain.append(title, myLine, correctLine);
+    }
+
+
+    // =====================================
+    // 8. 답 확인 처리
+    // =====================================
+
+    function checkResult(isCorrect, myAnswer) {
+      if (answered) return;
+
+      answered = true;
+      total++;
+
+      // 모든 입력을 잠금
+      answerInput.disabled = true;
+      checkButton.disabled = true;
+
+      for (let i = 0; i < 4; i++) {
+        $("option" + i).disabled = true;
+      }
+
+      if (isCorrect) {
+        score += 10;
+        streak++;
+
+        feedback.className = "feedback correct";
+        feedback.textContent = "정답! +10점 🎉";
+
+      } else {
+        streak = 0;
+
+        feedback.className = "feedback wrong";
+        feedback.textContent = "오답! 정답은 " + currentWord.en;
+
+        if (myAnswer) {
+          showExplanation(myAnswer, currentWord);
+        }
+      }
+
+      // 뜻을 고르는 모드에서는 정답 선택지 강조
+      if (mode === "meaning") {
+        for (let i = 0; i < 4; i++) {
+          const button = $("option" + i);
+
+          if (choices[i].en === currentWord.en) {
+            button.classList.add("correct");
+          }
+        }
+      }
+
+      updateScore();
+
+      checkButton.classList.add("hidden");
+      nextButton.classList.remove("hidden");
+    }
+
+
+    // =====================================
+    // 9. 뜻 → 영어 모드 정답 확인
+    // =====================================
+
+    function checkSpelling() {
+      if (answered) return;
+
+      const input = answerInput.value.trim();
+
+      if (input === "") {
+        feedback.className = "feedback wrong";
+        feedback.textContent = "영어 단어를 입력해 주세요.";
+        return;
+      }
+
+      const isCorrect =
+        input.toLowerCase() === currentWord.en.toLowerCase();
+
+      // 입력한 답이 게임 단어 목록에 있는지 확인
+      const myWord = words.find(
+        word => word.en.toLowerCase() === input.toLowerCase()
+      );
+
+      checkResult(isCorrect, myWord || null);
+
+      if (!isCorrect && !myWord) {
+        // 목록에 없는 단어는 뜻을 확인할 수 없음
+        explain.classList.remove("hidden");
+        explain.textContent =
+          "내가 입력한 단어는 현재 게임 단어 목록에 없습니다. " +
+          "정답의 뜻은 위에서 확인할 수 있습니다.";
+      }
+    }
+
+
+    // =====================================
+    // 10. 영어 → 뜻 모드 선택지 확인
+    // =====================================
+
+    function choose(index) {
+      if (answered) return;
+
+      const selectedWord = choices[index];
+      const isCorrect = selectedWord.en === currentWord.en;
+
+      if (!isCorrect) {
+        // 선택한 오답 단어의 뜻과 품사를 표시
+        showExplanation(selectedWord, currentWord);
+
+        $("option" + index).classList.add("wrong");
+      }
+
+      checkResult(isCorrect, isCorrect ? null : selectedWord);
+    }
+
+
+    // =====================================
+    // 11. 모드 변경
+    // =====================================
+
+    function changeMode(newMode) {
+      mode = newMode;
+
+      meaningMode.classList.toggle(
+        "active",
+        mode === "meaning"
+      );
+
+      spellingMode.classList.toggle(
+        "active",
+        mode === "spelling"
+      );
+
+      newQuestion();
+    }
+
+
+    // =====================================
+    // 12. 건너뛰기
+    // =====================================
+
+    function skipQuestion() {
+      if (answered) {
+        newQuestion();
+        return;
+      }
+
+      answered = true;
+      total++;
+      streak = 0;
+
+      feedback.className = "feedback wrong";
+      feedback.textContent =
+        "건너뛰었습니다. 정답은 " + currentWord.en;
+
+      showExplanation(currentWord, currentWord);
+
+      answerInput.disabled = true;
+      checkButton.disabled = true;
+
+      for (let i = 0; i < 4; i++) {
+        $("option" + i).disabled = true;
+
+        if (mode === "spelling") {
+          if (choices[i].en === currentWord.en) {
+            $("option" + i).classList.add("correct");
+          }
+        }
+      }
+
+      checkButton.classList.add("hidden");
+      nextButton.classList.remove("hidden");
+
+      updateScore();
+    }
+
+
+    // =====================================
+    // 13. 버튼 이벤트
+    // =====================================
+
+    meaningMode.addEventListener("click", function() {
+      changeMode("meaning");
+    });
+
+    spellingMode.addEventListener("click", function() {
+      changeMode("spelling");
+    });
+
+    checkButton.addEventListener("click", checkSpelling);
+
+    nextButton.addEventListener("click", newQuestion);
+
+    skipButton.addEventListener("click", skipQuestion);
+
+    // Enter 키로도 정답 확인
+    answerInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !answered) {
+        checkSpelling();
+      }
+    });
+
+
+    // =====================================
+    // 14. 게임 시작
+    // =====================================
+
+    updateScore();
+    newQuestion();
+
+  </script>
+</body>
+</html>
