@@ -7,59 +7,57 @@
 <title>WORD QUEST</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:16px;background:#eef3fa;color:#18263e;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
-.app{max-width:760px;margin:12px auto;background:white;border-radius:20px;padding:22px;box-shadow:0 8px 30px #152b4a15}
+body{margin:0;padding:16px;background:#eef3fa;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.app{max-width:760px;margin:10px auto;background:white;padding:20px;border-radius:18px;box-shadow:0 8px 30px #0001}
 h1{text-align:center;color:#2563eb;margin:0}
 .subtitle{text-align:center;color:#64748b}
-.tabs,.actions,.modes{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-button,.filebutton{border:0;border-radius:10px;padding:12px 15px;font-size:15px;font-weight:bold;background:#e7eef8;color:#203250;cursor:pointer}
-button.primary,.filebutton{background:#2563eb;color:white}
-button.active{background:#173f9d;color:white}
+nav,.actions,.modes{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+button,.filebtn{border:0;border-radius:10px;padding:12px 14px;font-size:14px;font-weight:bold;background:#e2e8f0;color:#1e293b;cursor:pointer}
+button.primary,.filebtn{background:#2563eb;color:white}
+button.active{background:#1e40af;color:white}
 button:disabled{opacity:.5}
 [hidden]{display:none!important}
-.panel{background:#f7faff;border:1px solid #e2e8f0;border-radius:14px;padding:17px;margin:14px 0}
-.muted{color:#64748b;font-size:14px}
+.panel{background:#f8fafc;border:1px solid #dbe3ee;border-radius:12px;padding:15px;margin:12px 0}
+.muted{color:#64748b;font-size:13px;line-height:1.6}
 .stats{display:flex;gap:8px}
-.stats div{flex:1;text-align:center;background:#eff6ff;padding:12px 5px;border-radius:12px;font-size:13px}
-.stats strong{display:block;font-size:23px;color:#1d4ed8}
-.question{text-align:center;font-size:28px;font-weight:bold;margin:22px 0;overflow-wrap:anywhere}
+.stats div{flex:1;text-align:center;background:#eff6ff;padding:12px 4px;border-radius:10px;font-size:12px}
+.stats strong{display:block;color:#1d4ed8;font-size:23px}
+.question{text-align:center;font-size:27px;font-weight:bold;margin:25px 0;overflow-wrap:anywhere}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .choices button{min-height:60px;overflow-wrap:anywhere}
-.right{background:#dcfce7!important;border:2px solid #16a34a}
-.wrong{background:#fee2e2!important;border:2px solid #dc2626}
-input[type=text],textarea,select{width:100%;padding:12px;border:1px solid #bac8db;border-radius:10px;font:inherit;margin:6px 0}
-textarea{min-height:100px}
-.message{padding:13px;border-radius:10px;margin:12px 0;background:#eef4ff;white-space:pre-wrap;overflow-wrap:anywhere}
+.correct{background:#dcfce7!important;border:2px solid #16a34a!important}
+.wrong{background:#fee2e2!important;border:2px solid #dc2626!important}
+input[type=text],textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;margin:5px 0}
+textarea{min-height:110px}
+.message{background:#eff6ff;padding:12px;border-radius:10px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .good{background:#dcfce7}
 .bad{background:#fee2e2}
-.wordrow{border:1px solid #dce5f2;border-radius:12px;padding:12px;margin:10px 0;overflow-wrap:anywhere}
-.wordrow strong{color:#1d4ed8}
-.fields{display:grid;grid-template-columns:1fr 1fr 100px;gap:8px}
-.fields label{font-size:13px}
-.progress{height:9px;background:#dbe5f3;border-radius:10px;overflow:hidden}
-.progress div{height:100%;background:#2563eb;transition:width .2s}
-.filebutton{display:inline-block}
-.filebutton input{display:none}
-hr{border:0;border-top:1px solid #ddd;margin:20px 0}
+.wordrow{padding:12px;border:1px solid #dbe3ee;border-radius:10px;margin:8px 0;overflow-wrap:anywhere}
+.fields{display:grid;grid-template-columns:1fr 1fr 110px;gap:8px}
+.fields label{font-size:12px}
+.progress{height:9px;background:#dbeafe;border-radius:9px;overflow:hidden}
+.progress div{height:100%;background:#2563eb}
+.filebtn{display:inline-block}
+.filebtn input{display:none}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:320px;overflow:auto}
+hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
 @media(max-width:520px){
-.app{padding:15px}
+.app{padding:14px}
 .fields{grid-template-columns:1fr 1fr}
 .fields label:last-child{grid-column:span 2}
 .choices{grid-template-columns:1fr}
-.question{font-size:24px}
+.question{font-size:23px}
 }
 </style>
 </head>
 <body>
 <main class="app">
-<header>
 <h1>WORD QUEST</h1>
-<p class="subtitle">내 자료로 만드는 영어 단어 게임</p>
-</header>
+<p class="subtitle">나만의 영어 단어 학습 게임</p>
 
-<nav class="tabs">
-<button class="active" data-tab="play">🎮 학습</button>
-<button data-tab="upload">📤 자료 추가</button>
+<nav>
+<button data-tab="play" class="active">🎮 학습</button>
+<button data-tab="upload">📷 자료 추가</button>
 <button data-tab="library">📚 단어장</button>
 </nav>
 
@@ -71,25 +69,27 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0}
 </div>
 
 <div class="modes">
-<button id="modeType" class="active">뜻 → 영어</button>
-<button id="modeChoice">영어 → 뜻</button>
+<button id="typeMode" class="active">뜻 → 영어</button>
+<button id="choiceMode">영어 → 뜻</button>
 </div>
 
-<div class="actions">
-<label>학습할 단어장
+<label>학습 단어장
 <select id="deckSelect"></select>
 </label>
 <button id="start" class="primary">새 20문제 시작</button>
+
+<div id="welcome" class="panel">
+단어장을 선택하고 게임을 시작하세요.
 </div>
 
-<div id="gameArea" hidden>
+<div id="game" hidden>
 <div class="progress"><div id="bar"></div></div>
-<p class="muted" id="progressText"></p>
+<p id="progressText" class="muted"></p>
 
 <div class="panel">
-<p class="muted" id="prompt"></p>
-<div class="question" id="question"></div>
-<p class="muted" id="posLabel"></p>
+<p id="prompt" class="muted"></p>
+<div id="question" class="question"></div>
+<p id="posLabel" class="muted"></p>
 </div>
 
 <div id="typing">
@@ -97,7 +97,7 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0}
 <button id="check" class="primary">정답 확인</button>
 </div>
 
-<div class="choices" id="choices" hidden></div>
+<div id="choices" class="choices" hidden></div>
 <div id="feedback" class="message" hidden></div>
 
 <div class="actions">
@@ -106,13 +106,9 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0}
 </div>
 </div>
 
-<div id="welcome" class="panel">
-단어장을 선택하고 <b>새 20문제 시작</b>을 눌러 주세요.
-</div>
-
 <div id="results" hidden>
 <h2>학습 결과</h2>
-<div class="panel" id="summary"></div>
+<div id="summary" class="panel"></div>
 <h3>✅ 맞힌 단어</h3>
 <div id="correctList"></div>
 <h3>❌ 틀린 단어</h3>
@@ -124,39 +120,39 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0}
 </section>
 
 <section id="upload" hidden>
-<h2>자료에서 단어 추출</h2>
+<h2>사진·문서에서 단어 추출</h2>
 <p class="muted">
-PDF, DOCX, TXT, JPG, PNG, WEBP 지원.
-영어 단어와 한국어 뜻이 나란히 적힌 자료가 가장 정확합니다.
+JPG, PNG, WEBP, PDF, DOCX, TXT를 지원합니다.
+사진은 왼쪽과 오른쪽 영역을 나눠 OCR로 분석합니다.
 </p>
 
-<label class="filebutton">
+<label class="filebtn">
 파일 선택
-<input id="files" type="file" accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,.webp" multiple>
+<input id="files" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx,.txt" multiple>
 </label>
 
-<p id="uploadStatus" class="message">
-파일을 선택하면 분석을 시작합니다.
-사진과 스캔 PDF는 OCR을 사용합니다.
-</p>
+<div id="uploadStatus" class="message">
+파일을 선택하면 자동 분석을 시작합니다.
+</div>
 
 <details>
-<summary>텍스트 직접 붙여 넣기</summary>
-<textarea id="paste" placeholder="apple - 사과&#10;contribute: 기여하다 (v)&#10;significant | 중요한 | a"></textarea>
-<button id="parsePaste">텍스트 분석</button>
+<summary>OCR 원문 확인 및 직접 수정</summary>
+<textarea id="rawText" placeholder="OCR로 읽은 글자가 여기에 표시됩니다."></textarea>
+<button id="parseRaw">이 텍스트 다시 분석</button>
 </details>
 
-<h3>추출 후보 <span id="candidateCount">0</span>개</h3>
+<h3>추출한 단어: <span id="candidateCount">0</span>개</h3>
 <p class="muted">
-자동 추출 결과는 반드시 확인해 주세요.
-영어 지문만 있는 경우 한국어 뜻을 자동 번역하지는 않습니다.
+추출 결과를 확인한 뒤 저장하세요.
+자동 인식이 틀린 경우 직접 수정할 수 있습니다.
 </p>
 
 <div id="candidates"></div>
 
+<h3>단어 직접 추가</h3>
 <div class="fields">
-<label>영어<input id="addEn" type="text" placeholder="example"></label>
-<label>뜻<input id="addKo" type="text" placeholder="예시"></label>
+<label>영어<input id="addEn" type="text"></label>
+<label>뜻<input id="addKo" type="text"></label>
 <label>품사
 <select id="addPos">
 <option value="?">미확인</option>
@@ -167,235 +163,401 @@ PDF, DOCX, TXT, JPG, PNG, WEBP 지원.
 </select>
 </label>
 </div>
-
 <div class="actions">
-<button id="addManual">후보 직접 추가</button>
+<button id="addManual">후보 추가</button>
 <button id="clearCandidates">후보 비우기</button>
 </div>
 
 <hr>
-
 <label>저장할 단어장 이름
-<input id="deckName" type="text" placeholder="예: 10월 모의고사">
+<input id="deckName" type="text" placeholder="예: 수능 숙어">
 </label>
-<button id="saveCandidates" class="primary">
-확인한 후보를 단어장에 저장
-</button>
+<button id="saveCandidates" class="primary">단어장 저장</button>
 </section>
 
 <section id="library" hidden>
 <h2>내 단어장</h2>
 <p class="muted">
-단어는 현재 브라우저에 저장됩니다.
-다른 기기와 자동 동기화되지 않으므로 백업을 권장합니다.
+단어장은 현재 브라우저에 저장됩니다.
+브라우저 데이터가 삭제되면 사라질 수 있으니 백업하세요.
 </p>
-
 <div class="actions">
-<button id="export">전체 단어장 JSON 백업</button>
-<label class="filebutton">
-백업 가져오기
+<button id="export">JSON 백업</button>
+<label class="filebtn">백업 가져오기
 <input id="import" type="file" accept=".json">
 </label>
 </div>
 <div id="libraryList"></div>
 </section>
-
 </main>
 
 <script>
 "use strict";
 
-// 기본 단어장
-const DEFAULT = [
+const $=id=>document.getElementById(id);
+const KEY="wordquest_decks_v3";
+
+const DEFAULT=[
 ["various","다양한","a"],
 ["significant","중요한, 상당한","a"],
 ["contribute","기여하다","v"],
 ["accurate","정확한","a"],
 ["maintain","유지하다","v"],
-["reluctant","꺼리는, 마지못한","a"],
+["reluctant","꺼리는","a"],
 ["interpret","해석하다","v"],
 ["efficient","효율적인","a"],
 ["consequence","결과, 영향","n"],
-["emerge","나타나다, 발생하다","v"],
+["emerge","나타나다","v"],
 ["perspective","관점","n"],
 ["relevant","관련 있는","a"],
 ["potential","잠재적인","a"],
-["alter","바꾸다, 변경하다","v"],
-["establish","설립하다, 확립하다","v"],
-["scarce","부족한, 드문","a"],
+["alter","바꾸다","v"],
+["establish","확립하다","v"],
+["scarce","부족한","a"],
 ["justify","정당화하다","v"],
 ["consume","소비하다","v"],
 ["evaluate","평가하다","v"],
-["indicate","나타내다, 가리키다","v"]
+["indicate","나타내다","v"]
 ].map(([en,ko,pos])=>({en,ko,pos}));
 
-const $ = id => document.getElementById(id);
-const KEY = "wordquest_decks_v3";
-
 let decks;
-try {
-  const saved = JSON.parse(localStorage.getItem(KEY));
-  decks = saved && typeof saved === "object" &&
-    !Array.isArray(saved)
-    ? saved
-    : {"기본 단어장":DEFAULT};
-} catch {
-  decks = {"기본 단어장":DEFAULT};
+try{
+  decks=JSON.parse(localStorage.getItem(KEY));
+  if(!decks||typeof decks!=="object"||Array.isArray(decks))
+    throw Error();
+}catch{
+  decks={"기본 단어장":DEFAULT};
 }
+if(!Object.keys(decks).length)
+  decks={"기본 단어장":DEFAULT};
 
-if (!Object.keys(decks).length) {
-  decks = {"기본 단어장":DEFAULT};
+function valid(w){
+  return w&&typeof w.en==="string"&&
+    typeof w.ko==="string"&&w.en.trim()&&w.ko.trim();
 }
-
-function valid(w) {
-  return w &&
-    typeof w.en === "string" &&
-    typeof w.ko === "string" &&
-    w.en.trim() &&
-    w.ko.trim();
-}
-
-function normalize(w) {
+function normalize(w){
   return {
     en:w.en.trim().toLowerCase(),
     ko:w.ko.trim(),
-    pos:["n","v","a","ad"].includes(w.pos)
-      ? w.pos : "?"
+    pos:["n","v","a","ad"].includes(w.pos)?w.pos:"?"
   };
 }
-
-function posText(p) {
-  return {
-    n:"n · 명사",
-    v:"v · 동사",
-    a:"a · 형용사",
-    ad:"ad · 부사",
-    "?":"품사 미확인"
-  }[p] || "품사 미확인";
+function posText(p){
+  return {n:"명사",v:"동사",a:"형용사",ad:"부사","?":"품사 미확인"}[p]||"품사 미확인";
 }
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i=a.length-1;i>0;i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
   }
   return a;
 }
-
-function persist() {
-  try {
+function persist(){
+  try{
     localStorage.setItem(KEY,JSON.stringify(decks));
     return true;
-  } catch {
-    alert("브라우저 저장에 실패했습니다. 저장 공간을 확인하세요.");
+  }catch{
+    alert("브라우저 저장에 실패했습니다.");
     return false;
   }
 }
 
-// 탭 전환
-function showTab(name) {
-  document.querySelectorAll("[data-tab]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.tab===name);
-  });
+function showTab(tab){
   ["play","upload","library"].forEach(id=>{
-    $(id).hidden = id!==name;
+    $(id).hidden=id!==tab;
   });
-  if (name==="library") renderLibrary();
-  if (name==="play") updateDeckSelect();
+  document.querySelectorAll("[data-tab]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===tab);
+  });
+  if(tab==="library")renderLibrary();
+  if(tab==="play")updateDeckSelect();
 }
-
 document.querySelectorAll("[data-tab]").forEach(b=>{
   b.onclick=()=>showTab(b.dataset.tab);
 });
 
-function updateDeckSelect() {
-  const s=$("deckSelect");
-  const old=s.value;
-  s.replaceChildren();
-
-  for (const [name,arr] of Object.entries(decks)) {
-    const option=document.createElement("option");
-    option.value=name;
-    option.textContent=`${name} (${arr.length}개)`;
-    s.append(option);
+function updateDeckSelect(){
+  const select=$("deckSelect");
+  const old=select.value;
+  select.replaceChildren();
+  for(const [name,arr] of Object.entries(decks)){
+    const opt=document.createElement("option");
+    opt.value=name;
+    opt.textContent=`${name} (${arr.length}개)`;
+    select.append(opt);
   }
-  if (decks[old]) s.value=old;
+  if(decks[old])select.value=old;
 }
 
-// 단어 추출
-let candidates=[];
+// =====================================
+// OCR 라이브러리
+// =====================================
 
-function parseWords(text) {
+const LIB={
+  ocr:"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",
+  pdf:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+  docx:"https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"
+};
+const loading={};
+
+function loadScript(type){
+  if(loading[type])return loading[type];
+  loading[type]=new Promise((resolve,reject)=>{
+    const s=document.createElement("script");
+    s.src=LIB[type];
+    s.onload=resolve;
+    s.onerror=()=>{
+      delete loading[type];
+      reject(Error("라이브러리 로딩 실패: "+type));
+    };
+    document.head.append(s);
+  });
+  return loading[type];
+}
+
+// =====================================
+// OCR 결과의 단어·뜻 연결
+// =====================================
+
+const englishPattern=/^[A-Za-z][A-Za-z '-]*$/;
+const koreanPattern=/[가-힣]/;
+const posPattern=/^\(?\s*(n|v|a|ad|adj|adv)\s*\)?$/i;
+
+function cleanLine(s){
+  return s.replace(/\s+/g," ").trim()
+    .replace(/^[•·▪●]\s*/,"");
+}
+
+function makePair(en,ko){
+  en=cleanLine(en).replace(/^[\d.)]+\s*/,"");
+  ko=cleanLine(ko);
+  if(!englishPattern.test(en))return null;
+  if(!koreanPattern.test(ko))return null;
+  if(en.length>65||ko.length>150)return null;
+
+  let pos="?";
+  const match=ko.match(/\((n|v|a|ad|adj|adv)\)/i);
+  if(match){
+    pos=match[1].toLowerCase();
+    if(pos==="adj")pos="a";
+    if(pos==="adv")pos="ad";
+    ko=ko.replace(match[0],"").trim();
+  }
+  return {en:en.toLowerCase(),ko,pos};
+}
+
+function parseSameLine(line){
+  // 영어 표현 뒤에 한국어 뜻이 나오는 형태
+  const m=line.match(
+    /^([A-Za-z][A-Za-z '-]*?)\s*(?:[:|–—-]\s*|\s+)([~∼\-]?\s*[가-힣].*)$/
+  );
+  if(!m)return null;
+  return makePair(m[1],m[2]);
+}
+
+function parseWords(text){
+  const lines=text.split(/\r?\n/)
+    .map(cleanLine).filter(Boolean);
+
   const output=[];
+  let pending=null;
 
-  for (const raw of text.split(/\r?\n/)) {
-    let line=raw.trim()
-      .replace(/^[\s\d.)①-⑳•*]+/u,"")
-      .trim();
-
-    if (!line) continue;
-
-    const match=line.match(
-      /^([A-Za-z][A-Za-z '-]{0,45}?)\s*(?:\||\t|\s[-–—:]\s*|\s{2,})\s*(.+)$/
-    );
-
-    if (!match) continue;
-
-    const en=match[1].trim();
-    let ko=match[2].trim();
-    let pos="?";
-
-    if (!/[가-힣]/.test(ko)) continue;
-
-    const pm=ko.match(
-      /(?:\(|\[)\s*(n|v|a|ad|adj|adv|noun|verb)\s*(?:\)|\])/i
-    );
-
-    if (pm) {
-      const map={adj:"a",adv:"ad",noun:"n",verb:"v"};
-      pos=map[pm[1].toLowerCase()] ||
-          pm[1].toLowerCase();
-      ko=ko.replace(pm[0],"").trim();
+  for(const line of lines){
+    const same=parseSameLine(line);
+    if(same){
+      output.push(same);
+      pending=null;
+      continue;
     }
 
-    const extra=ko.match(
-      /\s*\|\s*(n|v|a|ad)\s*$/i
-    );
-    if (extra) {
-      pos=extra[1].toLowerCase();
-      ko=ko.slice(0,extra.index).trim();
+    // 영어만 있는 줄: 다음 한국어 줄과 연결
+    if(englishPattern.test(line)){
+      pending=line;
+      continue;
     }
 
-    if (en && ko && en.length<50 && ko.length<120) {
-      output.push({en,ko,pos});
+    // 한국어만 있는 줄
+    if(pending&&koreanPattern.test(line)){
+      const pair=makePair(pending,line);
+      if(pair)output.push(pair);
+      pending=null;
+      continue;
     }
+
+    // 제목이나 불명확한 줄
+    if(!posPattern.test(line))pending=null;
   }
 
+  const map=new Map();
+  output.forEach(w=>{
+    if(!map.has(w.en))map.set(w.en,w);
+  });
+  return [...map.values()];
+}
+
+// =====================================
+// 사진을 영역별로 OCR 분석
+// =====================================
+
+async function createOCRWorker(){
+  await loadScript("ocr");
+  return await Tesseract.createWorker("eng+kor");
+}
+
+function cropCanvas(image,sx,sy,sw,sh){
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(sw*2));
+  canvas.height=Math.max(1,Math.round(sh*2));
+  const ctx=canvas.getContext("2d");
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(
+    image,sx,sy,sw,sh,
+    0,0,canvas.width,canvas.height
+  );
+  return canvas;
+}
+
+async function imageFromFile(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=new Image();
+    await new Promise((resolve,reject)=>{
+      img.onload=resolve;
+      img.onerror=reject;
+      img.src=url;
+    });
+    return img;
+  }finally{
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function recognizeCanvas(worker,canvas){
+  const result=await worker.recognize(canvas);
+  return result.data.text||"";
+}
+
+async function recognizeColumns(image,worker){
+  const w=image.width;
+  const h=image.height;
+
+  // 왼쪽과 오른쪽을 각각 OCR
+  const left=cropCanvas(image,0,0,w/2,h);
+  const right=cropCanvas(image,w/2,0,w/2,h);
+
+  const leftText=await recognizeCanvas(worker,left);
+  const rightText=await recognizeCanvas(worker,right);
+
+  const combined=leftText+"\n"+rightText;
+
+  // 영역별 인식이 실패하면 전체 이미지도 시도
+  if(parseWords(combined).length===0){
+    const whole=cropCanvas(image,0,0,w,h);
+    const wholeText=await recognizeCanvas(worker,whole);
+    return combined+"\n"+wholeText;
+  }
+  return combined;
+}
+
+// =====================================
+// 문서 분석
+// =====================================
+
+async function extractPDF(file,worker){
+  await loadScript("pdf");
+  pdfjsLib.GlobalWorkerOptions.workerSrc=
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const pdf=await pdfjsLib.getDocument({
+    data:new Uint8Array(await file.arrayBuffer())
+  }).promise;
+
+  let output="";
+
+  for(let i=1;i<=pdf.numPages;i++){
+    $("uploadStatus").textContent=
+      `PDF ${i}/${pdf.numPages}페이지 분석 중...`;
+
+    const page=await pdf.getPage(i);
+    const content=await page.getTextContent();
+
+    let text="";
+    let previousY=null;
+    for(const item of content.items){
+      const y=item.transform?.[5];
+      if(previousY!==null&&Math.abs(y-previousY)>3)
+        text+="\n";
+      text+=item.str+" ";
+      previousY=y;
+    }
+
+    if(parseWords(text).length){
+      output+=text+"\n";
+    }else{
+      const viewport=page.getViewport({scale:2});
+      const canvas=document.createElement("canvas");
+      canvas.width=Math.ceil(viewport.width);
+      canvas.height=Math.ceil(viewport.height);
+      await page.render({
+        canvasContext:canvas.getContext("2d"),
+        viewport
+      }).promise;
+      output+=await recognizeColumns(canvas,worker)+"\n";
+    }
+  }
   return output;
 }
 
-function mergeCandidates(items) {
-  const seen=new Set(
-    candidates.map(w=>w.en.toLowerCase())
-  );
-  let added=0;
+async function extractFile(file,worker){
+  const name=file.name.toLowerCase();
 
-  for (const w of items) {
-    if (!valid(w)) continue;
-    const n=normalize(w);
-    if (!seen.has(n.en)) {
-      candidates.push(n);
-      seen.add(n.en);
-      added++;
-    }
+  if(name.endsWith(".txt"))return await file.text();
+
+  if(name.endsWith(".docx")){
+    await loadScript("docx");
+    const result=await mammoth.extractRawText({
+      arrayBuffer:await file.arrayBuffer()
+    });
+    return result.value;
   }
 
-  renderCandidates();
-  return added;
+  if(name.endsWith(".pdf"))
+    return await extractPDF(file,worker);
+
+  if(/\.(jpg|jpeg|png|webp)$/.test(name)){
+    const img=await imageFromFile(file);
+    return await recognizeColumns(img,worker);
+  }
+
+  throw Error("지원하지 않는 파일입니다.");
 }
 
-function makeInput(value,callback) {
+// =====================================
+// 추출 후보 관리
+// =====================================
+
+let candidates=[];
+
+function mergeCandidates(items){
+  const seen=new Set(candidates.map(w=>w.en.toLowerCase()));
+  let count=0;
+
+  for(const w of items){
+    if(!valid(w))continue;
+    const n=normalize(w);
+    if(!seen.has(n.en)){
+      candidates.push(n);
+      seen.add(n.en);
+      count++;
+    }
+  }
+  renderCandidates();
+  return count;
+}
+
+function makeInput(value,callback){
   const input=document.createElement("input");
   input.type="text";
   input.value=value;
@@ -403,41 +565,39 @@ function makeInput(value,callback) {
   return input;
 }
 
-function renderCandidates() {
+function renderCandidates(){
   const root=$("candidates");
   root.replaceChildren();
   $("candidateCount").textContent=candidates.length;
 
   candidates.forEach((w,i)=>{
-    const card=document.createElement("div");
-    card.className="wordrow";
+    const row=document.createElement("div");
+    row.className="wordrow";
+    const fields=document.createElement("div");
+    fields.className="fields";
 
-    const grid=document.createElement("div");
-    grid.className="fields";
+    const en=document.createElement("label");
+    en.textContent="영어";
+    en.append(makeInput(w.en,v=>w.en=v));
 
-    const enLabel=document.createElement("label");
-    enLabel.textContent="영어";
-    enLabel.append(makeInput(w.en,v=>w.en=v));
+    const ko=document.createElement("label");
+    ko.textContent="뜻";
+    ko.append(makeInput(w.ko,v=>w.ko=v));
 
-    const koLabel=document.createElement("label");
-    koLabel.textContent="뜻";
-    koLabel.append(makeInput(w.ko,v=>w.ko=v));
-
-    const posLabel=document.createElement("label");
-    posLabel.textContent="품사";
-
+    const pl=document.createElement("label");
+    pl.textContent="품사";
     const select=document.createElement("select");
     ["?","n","v","a","ad"].forEach(p=>{
       const option=document.createElement("option");
       option.value=p;
-      option.textContent=posText(p);
+      option.textContent=p==="?"?"미확인":p+" "+posText(p);
       select.append(option);
     });
     select.value=w.pos;
     select.onchange=()=>w.pos=select.value;
-    posLabel.append(select);
+    pl.append(select);
 
-    grid.append(enLabel,koLabel,posLabel);
+    fields.append(en,ko,pl);
 
     const del=document.createElement("button");
     del.textContent="삭제";
@@ -446,15 +606,61 @@ function renderCandidates() {
       renderCandidates();
     };
 
-    card.append(grid,del);
-    root.append(card);
+    row.append(fields,del);
+    root.append(row);
   });
 }
 
-$("parsePaste").onclick=()=>{
-  const n=mergeCandidates(parseWords($("paste").value));
-  $("uploadStatus").textContent=
-    `텍스트에서 ${n}개 단어를 추가했습니다.`;
+$("files").onchange=async event=>{
+  const files=[...event.target.files];
+  if(!files.length)return;
+
+  let worker=null;
+  let added=0;
+  let allText="";
+  const errors=[];
+
+  try{
+    const needsOCR=files.some(f=>
+      /\.(jpg|jpeg|png|webp|pdf)$/i.test(f.name)
+    );
+    if(needsOCR){
+      $("uploadStatus").textContent="OCR 엔진 준비 중...";
+      worker=await createOCRWorker();
+    }
+
+    for(let i=0;i<files.length;i++){
+      const file=files[i];
+      $("uploadStatus").textContent=
+        `${i+1}/${files.length}: ${file.name} 분석 중...`;
+
+      try{
+        const text=await extractFile(file,worker);
+        allText+="\n"+text;
+        added+=mergeCandidates(parseWords(text));
+      }catch(err){
+        errors.push(file.name+": "+err.message);
+      }
+    }
+
+    $("rawText").value=allText.trim();
+    $("uploadStatus").textContent=
+      `분석 완료! 새 단어 ${added}개.\n`+
+      (errors.length?errors.join("\n")+"\n":"")+
+      (added===0
+        ?"단어가 인식되지 않았습니다. OCR 원문을 확인해 주세요."
+        :"추출 결과를 확인하고 단어장에 저장하세요.");
+  }catch(err){
+    $("uploadStatus").textContent="오류: "+err.message;
+  }finally{
+    if(worker)await worker.terminate();
+    event.target.value="";
+  }
+};
+
+$("parseRaw").onclick=()=>{
+  const n=mergeCandidates(parseWords($("rawText").value));
+  $("uploadStatus").textContent=`다시 분석하여 ${n}개를 추가했습니다.`;
 };
 
 $("addManual").onclick=()=>{
@@ -463,20 +669,15 @@ $("addManual").onclick=()=>{
     ko:$("addKo").value,
     pos:$("addPos").value
   };
-  if (!valid(w)) {
-    alert("영어와 뜻을 입력하세요.");
-    return;
-  }
-  if (!mergeCandidates([w])) {
-    alert("이미 후보에 있는 단어입니다.");
-    return;
-  }
+  if(!valid(w))return alert("영어와 뜻을 입력하세요.");
+  if(!mergeCandidates([w]))
+    return alert("이미 등록된 후보입니다.");
   $("addEn").value="";
   $("addKo").value="";
 };
 
 $("clearCandidates").onclick=()=>{
-  if (confirm("후보를 모두 비울까요?")) {
+  if(confirm("후보를 모두 비울까요?")){
     candidates=[];
     renderCandidates();
   }
@@ -484,199 +685,45 @@ $("clearCandidates").onclick=()=>{
 
 $("saveCandidates").onclick=()=>{
   const name=$("deckName").value.trim();
-  if (!name) return alert("단어장 이름을 입력하세요.");
-  if (!candidates.length) return alert("저장할 단어가 없습니다.");
-  if (candidates.some(w=>!valid(w))) {
-    return alert("영어 또는 뜻이 비어 있는 단어가 있습니다.");
-  }
+  if(!name)return alert("단어장 이름을 입력하세요.");
+  if(!candidates.length)return alert("저장할 단어가 없습니다.");
+  if(candidates.some(w=>!valid(w)))
+    return alert("영어와 뜻이 비어 있는 항목을 확인하세요.");
 
   const map=new Map(
-    (decks[name]||[]).map(w=>[
-      w.en.toLowerCase(),normalize(w)
-    ])
+    (decks[name]||[]).map(w=>[w.en.toLowerCase(),normalize(w)])
   );
-
   candidates.forEach(w=>{
     const n=normalize(w);
     map.set(n.en,n);
   });
-
   decks[name]=[...map.values()];
 
-  if (persist()) {
+  if(persist()){
     candidates=[];
     renderCandidates();
     $("deckName").value="";
     updateDeckSelect();
     $("deckSelect").value=name;
-    alert(`${name} 단어장 저장 완료!`);
+    alert("단어장 저장 완료!");
     showTab("library");
   }
 };
 
-// 파일 처리 라이브러리
-const scripts={
-  pdf:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
-  docx:"https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js",
-  ocr:"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
-};
-
-const loading={};
-
-function loadScript(type) {
-  if (loading[type]) return loading[type];
-
-  loading[type]=new Promise((resolve,reject)=>{
-    const script=document.createElement("script");
-    script.src=scripts[type];
-    script.onload=resolve;
-    script.onerror=()=>{
-      delete loading[type];
-      reject(new Error("라이브러리를 불러오지 못했습니다."));
-    };
-    document.head.append(script);
-  });
-
-  return loading[type];
-}
-
-// 사진 OCR
-async function ocrImage(image) {
-  await loadScript("ocr");
-
-  const worker=await Tesseract.createWorker("eng+kor");
-
-  try {
-    const result=await worker.recognize(image);
-    return result.data.text;
-  } finally {
-    await worker.terminate();
-  }
-}
-
-// PDF 처리
-async function pdfText(file) {
-  await loadScript("pdf");
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc=
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-  const pdf=await pdfjsLib.getDocument({
-    data:new Uint8Array(await file.arrayBuffer())
-  }).promise;
-
-  let text="";
-
-  for (let i=1;i<=pdf.numPages;i++) {
-    const page=await pdf.getPage(i);
-    const content=await page.getTextContent();
-
-    let prevY=null;
-    for (const item of content.items) {
-      const y=item.transform?.[5];
-      if (prevY!==null && Math.abs(y-prevY)>3) {
-        text+="\n";
-      }
-      text+=item.str+" ";
-      prevY=y;
-    }
-    text+="\n";
-  }
-
-  // 텍스트를 읽을 수 없는 PDF는 OCR 사용
-  if (parseWords(text).length===0) {
-    text="";
-    for (let i=1;i<=pdf.numPages;i++) {
-      const page=await pdf.getPage(i);
-      const viewport=page.getViewport({scale:2});
-      const canvas=document.createElement("canvas");
-
-      canvas.width=viewport.width;
-      canvas.height=viewport.height;
-
-      await page.render({
-        canvasContext:canvas.getContext("2d"),
-        viewport
-      }).promise;
-
-      text+=await ocrImage(canvas)+"\n";
-    }
-  }
-
-  return text;
-}
-
-// 파일 형식별 추출
-async function extract(file) {
-  const name=file.name.toLowerCase();
-
-  if (name.endsWith(".txt")) {
-    return await file.text();
-  }
-
-  if (name.endsWith(".docx")) {
-    await loadScript("docx");
-    const result=await mammoth.extractRawText({
-      arrayBuffer:await file.arrayBuffer()
-    });
-    return result.value;
-  }
-
-  if (name.endsWith(".pdf")) {
-    return await pdfText(file);
-  }
-
-  if (/\.(jpg|jpeg|png|webp)$/.test(name)) {
-    return await ocrImage(file);
-  }
-
-  throw new Error("지원하지 않는 파일 형식입니다.");
-}
-
-// 업로드 이벤트
-$("files").onchange=async event=>{
-  const files=[...event.target.files];
-  if (!files.length) return;
-
-  let totalAdded=0;
-  const errors=[];
-
-  for (let i=0;i<files.length;i++) {
-    const file=files[i];
-
-    $("uploadStatus").textContent=
-      `${i+1}/${files.length}: ${file.name} 분석 중...`;
-
-    try {
-      const text=await extract(file);
-      totalAdded+=mergeCandidates(parseWords(text));
-    } catch (err) {
-      errors.push(`${file.name}: ${err.message}`);
-    }
-  }
-
-  $("uploadStatus").textContent=
-    `분석 완료! 새 후보 ${totalAdded}개.\n`+
-    (errors.length ? errors.join("\n") : "")+
-    "\n철자와 뜻을 확인한 뒤 저장하세요.";
-
-  event.target.value="";
-};
-
+// =====================================
 // 단어장 관리
-function renderLibrary() {
+// =====================================
+
+function renderLibrary(){
   const root=$("libraryList");
   root.replaceChildren();
 
-  for (const [name,words] of Object.entries(decks)) {
+  for(const [name,words] of Object.entries(decks)){
     const panel=document.createElement("div");
     panel.className="panel";
 
-    const heading=document.createElement("h3");
-    heading.textContent=`${name} (${words.length}개)`;
-
-    const actions=document.createElement("div");
-    actions.className="actions";
+    const title=document.createElement("h3");
+    title.textContent=`${name} (${words.length}개)`;
 
     const use=document.createElement("button");
     use.textContent="이 단어장 학습";
@@ -689,30 +736,26 @@ function renderLibrary() {
     const del=document.createElement("button");
     del.textContent="단어장 삭제";
     del.onclick=()=>{
-      if (!confirm(`${name} 단어장을 삭제할까요?`)) return;
+      if(!confirm(`${name} 단어장을 삭제할까요?`))return;
       delete decks[name];
-      if (!Object.keys(decks).length) {
+      if(!Object.keys(decks).length)
         decks={"기본 단어장":DEFAULT};
-      }
       persist();
       updateDeckSelect();
       renderLibrary();
     };
 
-    actions.append(use,del);
-    panel.append(heading,actions);
-
     const details=document.createElement("details");
     const summary=document.createElement("summary");
-    summary.textContent="단어 보기 및 삭제";
+    summary.textContent="단어 목록 보기";
     details.append(summary);
 
     words.forEach((w,i)=>{
       const row=document.createElement("div");
       row.className="wordrow";
 
-      const text=document.createElement("span");
-      text.textContent=
+      const span=document.createElement("span");
+      span.textContent=
         `${w.en} (${posText(w.pos)}) — ${w.ko}`;
 
       const remove=document.createElement("button");
@@ -725,63 +768,50 @@ function renderLibrary() {
         renderLibrary();
       };
 
-      row.append(text,remove);
+      row.append(span,remove);
       details.append(row);
     });
 
-    panel.append(details);
+    panel.append(title,use,del,details);
     root.append(panel);
   }
 }
 
-// JSON 백업
 $("export").onclick=()=>{
-  const data=JSON.stringify({
-    format:"wordquest-v3",
-    decks
-  },null,2);
-
-  const blob=new Blob([data],{
-    type:"application/json"
-  });
+  const blob=new Blob([
+    JSON.stringify({format:"wordquest-v3",decks},null,2)
+  ],{type:"application/json"});
 
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
   a.download="word-quest-backup.json";
   a.click();
-
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 
 $("import").onchange=async event=>{
   const file=event.target.files[0];
-  if (!file) return;
+  if(!file)return;
 
-  try {
+  try{
     const data=JSON.parse(await file.text());
+    if(data.format!=="wordquest-v3"||
+       !data.decks||
+       typeof data.decks!=="object"||
+       Array.isArray(data.decks))
+      throw Error("올바른 백업 파일이 아닙니다.");
 
-    if (data.format!=="wordquest-v3" ||
-        !data.decks ||
-        typeof data.decks!=="object" ||
-        Array.isArray(data.decks)) {
-      throw new Error("올바른 백업 파일이 아닙니다.");
-    }
-
-    for (const [name,arr] of Object.entries(data.decks)) {
-      if (!name.trim() || !Array.isArray(arr)) continue;
-
+    for(const [name,arr] of Object.entries(data.decks)){
+      if(!name.trim()||!Array.isArray(arr))continue;
       const map=new Map(
-        (decks[name]||[])
-          .filter(valid)
+        (decks[name]||[]).filter(valid)
           .map(w=>[w.en.toLowerCase(),normalize(w)])
       );
-
-      for (const w of arr.filter(valid)) {
+      arr.filter(valid).forEach(w=>{
         const n=normalize(w);
         map.set(n.en,n);
-      }
-
+      });
       decks[name]=[...map.values()];
     }
 
@@ -789,16 +819,18 @@ $("import").onchange=async event=>{
     updateDeckSelect();
     renderLibrary();
     alert("백업 가져오기 완료!");
-  } catch (err) {
+  }catch(err){
     alert("가져오기 실패: "+err.message);
   }
-
   event.target.value="";
 };
 
-// 게임 상태
+// =====================================
+// 20문제 게임
+// =====================================
+
 let mode="type";
-let set=[];
+let questions=[];
 let index=0;
 let answered=false;
 let choices=[];
@@ -806,319 +838,236 @@ let history=[];
 let score=0;
 let streak=0;
 
-function current() {
-  return set[index];
-}
+function current(){return questions[index];}
 
-function startGame() {
-  const deck=decks[$("deckSelect").value]||[];
-
-  if (deck.length<20) {
-    alert(`단어가 ${deck.length}개입니다. 20개 이상 필요합니다.`);
-    return;
-  }
-
-  set=shuffle(deck).slice(0,20);
-  index=0;
-  score=0;
-  streak=0;
-  history=[];
-
-  $("results").hidden=true;
-  $("welcome").hidden=true;
-  $("gameArea").hidden=false;
-
-  renderQuestion();
-}
-
-function updateStats() {
+function updateStats(){
   $("score").textContent=score;
   $("streak").textContent=streak;
   $("count").textContent=`${history.length}/20`;
-
-  $("bar").style.width=
-    `${history.length/20*100}%`;
-
+  $("bar").style.width=`${history.length*5}%`;
   $("progressText").textContent=
     `${Math.min(index+1,20)} / 20 문제`;
 }
 
-function renderQuestion() {
+function startGame(){
+  const deck=decks[$("deckSelect").value]||[];
+  const unique=[...new Map(
+    deck.filter(valid).map(w=>[w.en.toLowerCase(),w])
+  ).values()];
+
+  if(unique.length<20)
+    return alert(`현재 단어 ${unique.length}개입니다. 20개 이상 필요합니다.`);
+
+  questions=shuffle(unique).slice(0,20);
+  index=0;
+  history=[];
+  score=0;
+  streak=0;
+
+  $("welcome").hidden=true;
+  $("results").hidden=true;
+  $("game").hidden=false;
+  renderQuestion();
+}
+
+function renderQuestion(){
   answered=false;
   const w=current();
 
   $("feedback").hidden=true;
   $("next").hidden=true;
   $("skip").hidden=false;
-
   $("answer").value="";
   $("answer").disabled=false;
   $("check").disabled=false;
 
   $("question").textContent=
-    mode==="type" ? w.ko : w.en;
-
+    mode==="type"?w.ko:w.en;
   $("prompt").textContent=
     mode==="type"
-      ? "뜻을 보고 영어 철자를 입력하세요."
-      : "영어 단어의 뜻을 선택하세요.";
-
+    ?"뜻을 보고 영어 단어 또는 숙어를 입력하세요."
+    :"영어 표현의 뜻을 선택하세요.";
   $("posLabel").textContent=posText(w.pos);
 
   $("typing").hidden=mode!=="type";
   $("choices").hidden=mode!=="choice";
 
-  if (mode==="choice") {
+  if(mode==="choice"){
     const deck=decks[$("deckSelect").value]||[];
+    const others=shuffle(deck.filter(x=>
+      x.en!==w.en&&x.ko!==w.ko
+    ));
+    choices=shuffle([w,...others.slice(0,3)]);
 
-    choices=shuffle([
-      w,
-      ...shuffle(deck.filter(x=>
-        x.en!==w.en && x.ko!==w.ko
-      )).slice(0,3)
-    ]);
-
-    if (choices.length<4) {
-      alert("서로 다른 뜻의 단어가 4개 이상 필요합니다.");
+    if(choices.length<4){
+      alert("선택지를 만들 단어가 부족합니다.");
       return;
     }
 
-    const root=$("choices");
-    root.replaceChildren();
-
+    $("choices").replaceChildren();
     choices.forEach((x,i)=>{
-      const button=document.createElement("button");
-      button.textContent=x.ko;
-      button.onclick=()=>answerChoice(i);
-      root.append(button);
+      const b=document.createElement("button");
+      b.textContent=x.ko;
+      b.onclick=()=>choose(i);
+      $("choices").append(b);
     });
   }
-
   updateStats();
 }
 
-function describe(w) {
+function describe(w){
   return `${w.en} (${posText(w.pos)}) — ${w.ko}`;
 }
 
-function finish(status,answerText,chosen) {
-  if (answered) return;
-
+function finish(status,myAnswer,selected){
+  if(answered)return;
   answered=true;
+
   const w=current();
+  history.push({word:w,status,myAnswer,selected});
 
-  history.push({
-    word:w,
-    status,
-    answerText,
-    chosen
-  });
-
-  if (status==="correct") {
+  if(status==="correct"){
     score+=10;
     streak++;
-  } else {
-    streak=0;
-  }
+  }else streak=0;
 
-  const msg=$("feedback");
-  msg.hidden=false;
-  msg.className=
+  const feedback=$("feedback");
+  feedback.hidden=false;
+  feedback.className=
     "message "+(status==="correct"?"good":"bad");
 
-  let content=
-    status==="correct"
-      ? "정답! +10점 🎉"
-      : status==="skipped"
-      ? "건너뛴 문제입니다."
-      : "오답입니다.";
+  let text=status==="correct"
+    ?"정답! +10점 🎉"
+    :status==="skipped"
+    ?"건너뛴 문제입니다."
+    :"오답입니다.";
 
-  content+=`\n정답: ${describe(w)}`;
+  text+="\n정답: "+describe(w);
 
-  if (status==="wrong") {
-    content+=`\n내 답: ${
-      chosen ? describe(chosen) : answerText
-    }`;
-
-    if (!chosen) {
-      content+="\n입력한 단어의 뜻은 등록된 단어장에서 확인되지 않습니다.";
-    }
+  if(status==="wrong"){
+    text+="\n내 답: "+
+      (selected?describe(selected):myAnswer);
+    if(!selected)
+      text+="\n입력한 단어는 현재 단어장에서 뜻을 확인할 수 없습니다.";
   }
 
-  msg.textContent=content;
-
+  feedback.textContent=text;
   $("answer").disabled=true;
   $("check").disabled=true;
 
   [...$("choices").children].forEach((b,i)=>{
     b.disabled=true;
-
-    if (choices[i].en===w.en) {
-      b.classList.add("right");
-    }
-
-    if (chosen &&
-        choices[i].en===chosen.en &&
-        status==="wrong") {
-      b.classList.add("wrong");
-    }
+    if(choices[i].en===w.en)b.classList.add("correct");
+    if(selected&&choices[i].en===selected.en&&
+       status==="wrong")b.classList.add("wrong");
   });
 
   $("skip").hidden=true;
   $("next").hidden=false;
   $("next").textContent=
-    history.length===20 ? "결과 보기" : "다음 문제";
-
+    history.length===20?"결과 보기":"다음 문제";
   updateStats();
 }
 
-function checkTyped() {
-  if (answered || mode!=="type") return;
-
+function checkTyped(){
+  if(answered||mode!=="type")return;
   const value=$("answer").value.trim();
-  if (!value) {
-    alert("영어 단어를 입력하세요.");
-    return;
-  }
+  if(!value)return alert("영어 단어를 입력하세요.");
 
   const w=current();
-
-  const found=Object.values(decks)
-    .flat()
+  const found=Object.values(decks).flat()
     .find(x=>x.en.toLowerCase()===value.toLowerCase());
 
   finish(
     value.toLowerCase()===w.en.toLowerCase()
-      ? "correct" : "wrong",
-    value,
-    found||null
+      ?"correct":"wrong",
+    value,found||null
   );
 }
 
-function answerChoice(i) {
-  if (answered) return;
-
-  const chosen=choices[i];
-
+function choose(i){
+  if(answered)return;
+  const selected=choices[i];
   finish(
-    chosen.en===current().en ? "correct" : "wrong",
-    chosen.ko,
-    chosen
+    selected.en===current().en?"correct":"wrong",
+    selected.ko,selected
   );
 }
 
-function nextQuestion() {
-  if (history.length===20) {
-    showResults();
-    return;
+function resultRow(r){
+  const div=document.createElement("div");
+  div.className="wordrow";
+  const strong=document.createElement("strong");
+  strong.textContent=describe(r.word);
+  div.append(strong);
+
+  if(r.status!=="correct"){
+    const p=document.createElement("p");
+    p.textContent=r.status==="skipped"
+      ?"건너뜀"
+      :"내 답: "+(r.selected?
+        describe(r.selected):r.myAnswer);
+    div.append(p);
   }
+  return div;
+}
+
+function showResults(){
+  $("game").hidden=true;
+  $("results").hidden=false;
+
+  const good=history.filter(x=>x.status==="correct");
+  const bad=history.filter(x=>x.status==="wrong");
+  const skip=history.filter(x=>x.status==="skipped");
+
+  $("summary").textContent=
+    `${score}점 / 200점\n`+
+    `정답 ${good.length}개 · 오답 ${bad.length}개 · 건너뜀 ${skip.length}개\n`+
+    `정답률 ${Math.round(good.length/20*100)}%`;
+
+  [
+    ["correctList",good],
+    ["wrongList",bad],
+    ["skippedList",skip]
+  ].forEach(([id,arr])=>{
+    const root=$(id);
+    root.replaceChildren();
+    if(!arr.length)root.textContent="없음";
+    else arr.forEach(r=>root.append(resultRow(r)));
+  });
+}
+
+function nextQuestion(){
+  if(history.length===20)return showResults();
   index++;
   renderQuestion();
 }
 
-// 결과 카드
-function resultRow(r) {
-  const card=document.createElement("div");
-  card.className="wordrow";
-
-  const title=document.createElement("strong");
-  title.textContent=describe(r.word);
-  card.append(title);
-
-  if (r.status!=="correct") {
-    const p=document.createElement("p");
-
-    p.textContent=
-      r.status==="skipped"
-        ? "건너뜀"
-        : `내 답: ${
-            r.chosen
-              ? describe(r.chosen)
-              : r.answerText
-          }`;
-
-    card.append(p);
-  }
-
-  return card;
-}
-
-// 결과 화면
-function showResults() {
-  $("gameArea").hidden=true;
-  $("results").hidden=false;
-
-  const good=history.filter(r=>r.status==="correct");
-  const bad=history.filter(r=>r.status==="wrong");
-  const skip=history.filter(r=>r.status==="skipped");
-
-  $("summary").textContent=
-    `${score}점 / 200점\n`+
-    `정답 ${good.length}개 · `+
-    `오답 ${bad.length}개 · `+
-    `건너뜀 ${skip.length}개\n`+
-    `정답률 ${Math.round(good.length/20*100)}%`;
-
-  const groups=[
-    ["correctList",good],
-    ["wrongList",bad],
-    ["skippedList",skip]
-  ];
-
-  for (const [id,arr] of groups) {
-    const root=$(id);
-    root.replaceChildren();
-
-    if (!arr.length) {
-      root.textContent="없음";
-    } else {
-      arr.forEach(r=>root.append(resultRow(r)));
-    }
-  }
-}
-
-// 모드 변경
-function setMode(newMode) {
-  if (mode===newMode) return;
-
-  if (set.length &&
-      history.length<20 &&
-      !$("gameArea").hidden) {
-    if (!confirm("모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?")) {
+function setMode(newMode){
+  if(mode===newMode)return;
+  if(!$("game").hidden&&history.length<20){
+    if(!confirm("모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?"))
       return;
-    }
   }
-
   mode=newMode;
-
-  $("modeType").classList.toggle(
-    "active",mode==="type"
-  );
-  $("modeChoice").classList.toggle(
-    "active",mode==="choice"
-  );
-
-  if (!$("gameArea").hidden) {
-    startGame();
-  }
+  $("typeMode").classList.toggle("active",mode==="type");
+  $("choiceMode").classList.toggle("active",mode==="choice");
+  if(!$("game").hidden)startGame();
 }
 
-// 이벤트
 $("start").onclick=startGame;
 $("restart").onclick=startGame;
 $("check").onclick=checkTyped;
 $("skip").onclick=()=>finish("skipped","",null);
 $("next").onclick=nextQuestion;
-
-$("answer").onkeydown=event=>{
-  if (event.key==="Enter") checkTyped();
+$("typeMode").onclick=()=>setMode("type");
+$("choiceMode").onclick=()=>setMode("choice");
+$("answer").onkeydown=e=>{
+  if(e.key==="Enter")checkTyped();
 };
 
-$("modeType").onclick=()=>setMode("type");
-$("modeChoice").onclick=()=>setMode("choice");
-
-// 초기화
 updateDeckSelect();
+updateStats();
 </script>
 </body>
 </html>
