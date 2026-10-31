@@ -2,1136 +2,1123 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WORD QUEST - 영어 단어 게임</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 18px;
-      min-height: 100vh;
-      background: #f1f5f9;
-      font-family: Arial, "Apple SD Gothic Neo", sans-serif;
-      color: #1e293b;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 650px;
-      margin: 15px auto;
-      padding: 25px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    h1 {
-      margin: 0;
-      text-align: center;
-      font-size: 30px;
-      color: #2563eb;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #64748b;
-      margin: 8px 0 24px;
-    }
-
-    .score-board {
-      display: flex;
-      justify-content: space-around;
-      gap: 8px;
-      background: #eff6ff;
-      border-radius: 12px;
-      padding: 15px 8px;
-      margin-bottom: 22px;
-    }
-
-    .score-item {
-      text-align: center;
-      flex: 1;
-    }
-
-    .score-label {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 5px;
-    }
-
-    .score-number {
-      font-size: 23px;
-      font-weight: bold;
-      color: #1d4ed8;
-    }
-
-    .mode-buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    button {
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      padding: 13px 16px;
-      font-size: 15px;
-      font-weight: bold;
-      transition: background 0.15s;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-    }
-
-    .mode-button {
-      flex: 1;
-      background: #e2e8f0;
-      color: #334155;
-    }
-
-    .mode-button.active {
-      background: #2563eb;
-      color: white;
-    }
-
-    .progress-area {
-      margin-bottom: 15px;
-    }
-
-    .progress-text {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 7px;
-    }
-
-    .progress-track {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: #2563eb;
-      transition: width 0.2s;
-    }
-
-    .question-box {
-      text-align: center;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 25px 15px;
-      margin-bottom: 18px;
-    }
-
-    .question-label {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 12px;
-    }
-
-    .question {
-      font-size: 30px;
-      font-weight: bold;
-      overflow-wrap: anywhere;
-    }
-
-    .pos {
-      display: inline-block;
-      font-size: 13px;
-      color: #475569;
-      background: #e2e8f0;
-      padding: 5px 10px;
-      border-radius: 20px;
-      margin-top: 12px;
-    }
-
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 18px 0;
-    }
-
-    .option-button {
-      background: #f1f5f9;
-      color: #1e293b;
-      min-height: 60px;
-      border: 2px solid transparent;
-      overflow-wrap: anywhere;
-    }
-
-    .option-button:hover:not(:disabled) {
-      background: #dbeafe;
-      border-color: #93c5fd;
-    }
-
-    .option-button.correct {
-      background: #dcfce7;
-      border-color: #16a34a;
-      color: #166534;
-    }
-
-    .option-button.wrong {
-      background: #fee2e2;
-      border-color: #dc2626;
-      color: #991b1b;
-    }
-
-    .answer-area {
-      margin-top: 18px;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 18px;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #2563eb;
-    }
-
-    .main-button {
-      width: 100%;
-      background: #2563eb;
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .main-button:hover:not(:disabled) {
-      background: #1d4ed8;
-    }
-
-    .secondary-button {
-      width: 100%;
-      background: #e2e8f0;
-      color: #334155;
-    }
-
-    .feedback {
-      margin-top: 18px;
-      padding: 15px;
-      border-radius: 10px;
-      font-weight: bold;
-      text-align: center;
-      display: none;
-    }
-
-    .feedback.correct {
-      display: block;
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .feedback.wrong {
-      display: block;
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .explain {
-      margin-top: 12px;
-      padding: 16px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      line-height: 1.7;
-      overflow-wrap: anywhere;
-    }
-
-    .explain-title {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .result-summary {
-      text-align: center;
-      padding: 20px;
-      background: #eff6ff;
-      border-radius: 14px;
-      margin-bottom: 20px;
-    }
-
-    .result-summary h2 {
-      margin-top: 0;
-      color: #1d4ed8;
-    }
-
-    .result-score {
-      font-size: 34px;
-      font-weight: bold;
-      margin: 12px 0;
-    }
-
-    .result-section {
-      margin-top: 20px;
-    }
-
-    .result-section h3 {
-      margin-bottom: 10px;
-    }
-
-    .result-card {
-      padding: 14px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .result-card.correct-card {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-    }
-
-    .result-card.wrong-card {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-    }
-
-    .result-card.skipped-card {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-    }
-
-    .result-word {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .result-detail {
-      color: #475569;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    .footer {
-      text-align: center;
-      color: #94a3b8;
-      font-size: 12px;
-      margin-top: 22px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WORD QUEST</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:#eef3fa;color:#18263e;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.app{max-width:760px;margin:12px auto;background:white;border-radius:20px;padding:22px;box-shadow:0 8px 30px #152b4a15}
+h1{text-align:center;color:#2563eb;margin:0}
+.subtitle{text-align:center;color:#64748b}
+.tabs,.actions,.modes{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+button,.filebutton{border:0;border-radius:10px;padding:12px 15px;font-size:15px;font-weight:bold;background:#e7eef8;color:#203250;cursor:pointer}
+button.primary,.filebutton{background:#2563eb;color:white}
+button.active{background:#173f9d;color:white}
+button:disabled{opacity:.5}
+[hidden]{display:none!important}
+.panel{background:#f7faff;border:1px solid #e2e8f0;border-radius:14px;padding:17px;margin:14px 0}
+.muted{color:#64748b;font-size:14px}
+.stats{display:flex;gap:8px}
+.stats div{flex:1;text-align:center;background:#eff6ff;padding:12px 5px;border-radius:12px;font-size:13px}
+.stats strong{display:block;font-size:23px;color:#1d4ed8}
+.question{text-align:center;font-size:28px;font-weight:bold;margin:22px 0;overflow-wrap:anywhere}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choices button{min-height:60px;overflow-wrap:anywhere}
+.right{background:#dcfce7!important;border:2px solid #16a34a}
+.wrong{background:#fee2e2!important;border:2px solid #dc2626}
+input[type=text],textarea,select{width:100%;padding:12px;border:1px solid #bac8db;border-radius:10px;font:inherit;margin:6px 0}
+textarea{min-height:100px}
+.message{padding:13px;border-radius:10px;margin:12px 0;background:#eef4ff;white-space:pre-wrap;overflow-wrap:anywhere}
+.good{background:#dcfce7}
+.bad{background:#fee2e2}
+.wordrow{border:1px solid #dce5f2;border-radius:12px;padding:12px;margin:10px 0;overflow-wrap:anywhere}
+.wordrow strong{color:#1d4ed8}
+.fields{display:grid;grid-template-columns:1fr 1fr 100px;gap:8px}
+.fields label{font-size:13px}
+.progress{height:9px;background:#dbe5f3;border-radius:10px;overflow:hidden}
+.progress div{height:100%;background:#2563eb;transition:width .2s}
+.filebutton{display:inline-block}
+.filebutton input{display:none}
+hr{border:0;border-top:1px solid #ddd;margin:20px 0}
+@media(max-width:520px){
+.app{padding:15px}
+.fields{grid-template-columns:1fr 1fr}
+.fields label:last-child{grid-column:span 2}
+.choices{grid-template-columns:1fr}
+.question{font-size:24px}
+}
+</style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>WORD QUEST</h1>
-    <p class="subtitle">영어 단어 실력을 키워 보자!</p>
+<main class="app">
+<header>
+<h1>WORD QUEST</h1>
+<p class="subtitle">내 자료로 만드는 영어 단어 게임</p>
+</header>
 
-    <!-- 게임 화면 -->
-    <div id="gameScreen">
+<nav class="tabs">
+<button class="active" data-tab="play">🎮 학습</button>
+<button data-tab="upload">📤 자료 추가</button>
+<button data-tab="library">📚 단어장</button>
+</nav>
 
-      <div class="score-board">
-        <div class="score-item">
-          <div class="score-label">점수</div>
-          <div class="score-number" id="score">0</div>
-        </div>
+<section id="play">
+<div class="stats">
+<div>점수<strong id="score">0</strong></div>
+<div>연속 정답<strong id="streak">0</strong></div>
+<div>진행<strong id="count">0/20</strong></div>
+</div>
 
-        <div class="score-item">
-          <div class="score-label">연속 정답</div>
-          <div class="score-number" id="streak">0</div>
-        </div>
+<div class="modes">
+<button id="modeType" class="active">뜻 → 영어</button>
+<button id="modeChoice">영어 → 뜻</button>
+</div>
 
-        <div class="score-item">
-          <div class="score-label">푼 문제</div>
-          <div class="score-number" id="total">0 / 20</div>
-        </div>
-      </div>
+<div class="actions">
+<label>학습할 단어장
+<select id="deckSelect"></select>
+</label>
+<button id="start" class="primary">새 20문제 시작</button>
+</div>
 
-      <div class="mode-buttons">
-        <button class="mode-button active" id="meaningMode">
-          뜻 → 영어
-        </button>
+<div id="gameArea" hidden>
+<div class="progress"><div id="bar"></div></div>
+<p class="muted" id="progressText"></p>
 
-        <button class="mode-button" id="spellingMode">
-          영어 → 뜻
-        </button>
-      </div>
+<div class="panel">
+<p class="muted" id="prompt"></p>
+<div class="question" id="question"></div>
+<p class="muted" id="posLabel"></p>
+</div>
 
-      <div class="progress-area">
-        <div class="progress-text">
-          <span id="progressText">1 / 20 문제</span>
-          <span id="progressPercent">5%</span>
-        </div>
+<div id="typing">
+<input id="answer" type="text" placeholder="영어 단어 입력" autocomplete="off" autocapitalize="off" spellcheck="false">
+<button id="check" class="primary">정답 확인</button>
+</div>
 
-        <div class="progress-track">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-      </div>
+<div class="choices" id="choices" hidden></div>
+<div id="feedback" class="message" hidden></div>
 
-      <div class="question-box">
-        <div class="question-label" id="questionLabel">
-          다음 뜻에 해당하는 영어 단어를 입력하세요.
-        </div>
+<div class="actions">
+<button id="skip">건너뛰기</button>
+<button id="next" class="primary" hidden>다음 문제</button>
+</div>
+</div>
 
-        <div class="question" id="question">준비 중...</div>
+<div id="welcome" class="panel">
+단어장을 선택하고 <b>새 20문제 시작</b>을 눌러 주세요.
+</div>
 
-        <div class="pos hidden" id="questionPos"></div>
-      </div>
+<div id="results" hidden>
+<h2>학습 결과</h2>
+<div class="panel" id="summary"></div>
+<h3>✅ 맞힌 단어</h3>
+<div id="correctList"></div>
+<h3>❌ 틀린 단어</h3>
+<div id="wrongList"></div>
+<h3>⏭️ 건너뛴 단어</h3>
+<div id="skippedList"></div>
+<button id="restart" class="primary">새 세트 시작</button>
+</div>
+</section>
 
-      <div class="options hidden" id="options">
-        <button class="option-button" id="option0"></button>
-        <button class="option-button" id="option1"></button>
-        <button class="option-button" id="option2"></button>
-        <button class="option-button" id="option3"></button>
-      </div>
+<section id="upload" hidden>
+<h2>자료에서 단어 추출</h2>
+<p class="muted">
+PDF, DOCX, TXT, JPG, PNG, WEBP 지원.
+영어 단어와 한국어 뜻이 나란히 적힌 자료가 가장 정확합니다.
+</p>
 
-      <div class="answer-area hidden" id="answerArea">
-        <input
-          type="text"
-          id="answerInput"
-          placeholder="영어 단어를 입력하세요"
-          autocomplete="off"
-          autocapitalize="off"
-        >
+<label class="filebutton">
+파일 선택
+<input id="files" type="file" accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,.webp" multiple>
+</label>
 
-        <button class="main-button" id="checkButton">
-          정답 확인
-        </button>
-      </div>
+<p id="uploadStatus" class="message">
+파일을 선택하면 분석을 시작합니다.
+사진과 스캔 PDF는 OCR을 사용합니다.
+</p>
 
-      <div class="feedback" id="feedback"></div>
+<details>
+<summary>텍스트 직접 붙여 넣기</summary>
+<textarea id="paste" placeholder="apple - 사과&#10;contribute: 기여하다 (v)&#10;significant | 중요한 | a"></textarea>
+<button id="parsePaste">텍스트 분석</button>
+</details>
 
-      <div class="explain hidden" id="explain"></div>
+<h3>추출 후보 <span id="candidateCount">0</span>개</h3>
+<p class="muted">
+자동 추출 결과는 반드시 확인해 주세요.
+영어 지문만 있는 경우 한국어 뜻을 자동 번역하지는 않습니다.
+</p>
 
-      <button class="main-button hidden" id="nextButton">
-        다음 문제
-      </button>
+<div id="candidates"></div>
 
-      <button class="secondary-button" id="skipButton">
-        문제 건너뛰기
-      </button>
-    </div>
+<div class="fields">
+<label>영어<input id="addEn" type="text" placeholder="example"></label>
+<label>뜻<input id="addKo" type="text" placeholder="예시"></label>
+<label>품사
+<select id="addPos">
+<option value="?">미확인</option>
+<option value="n">n 명사</option>
+<option value="v">v 동사</option>
+<option value="a">a 형용사</option>
+<option value="ad">ad 부사</option>
+</select>
+</label>
+</div>
 
-    <!-- 결과 화면 -->
-    <div id="resultScreen" class="hidden">
-      <div class="result-summary">
-        <h2>20문제 완료!</h2>
-        <div class="result-score" id="finalScore">0점</div>
-        <div id="finalMessage"></div>
-        <p id="finalCounts"></p>
-      </div>
+<div class="actions">
+<button id="addManual">후보 직접 추가</button>
+<button id="clearCandidates">후보 비우기</button>
+</div>
 
-      <div class="result-section">
-        <h3>✅ 맞힌 단어</h3>
-        <div id="correctResults"></div>
-      </div>
+<hr>
 
-      <div class="result-section">
-        <h3>❌ 틀린 단어</h3>
-        <div id="wrongResults"></div>
-      </div>
+<label>저장할 단어장 이름
+<input id="deckName" type="text" placeholder="예: 10월 모의고사">
+</label>
+<button id="saveCandidates" class="primary">
+확인한 후보를 단어장에 저장
+</button>
+</section>
 
-      <div class="result-section">
-        <h3>⏭️ 건너뛴 단어</h3>
-        <div id="skippedResults"></div>
-      </div>
+<section id="library" hidden>
+<h2>내 단어장</h2>
+<p class="muted">
+단어는 현재 브라우저에 저장됩니다.
+다른 기기와 자동 동기화되지 않으므로 백업을 권장합니다.
+</p>
 
-      <button class="main-button" id="restartButton">
-        새 20문제 시작
-      </button>
-    </div>
+<div class="actions">
+<button id="export">전체 단어장 JSON 백업</button>
+<label class="filebutton">
+백업 가져오기
+<input id="import" type="file" accept=".json">
+</label>
+</div>
+<div id="libraryList"></div>
+</section>
 
-    <p class="footer">
-      WORD QUEST · 영어 어휘 학습 게임
-    </p>
-  </div>
+</main>
 
-  <script>
-    // =====================================
-    // 1. 단어 데이터
-    // pos: n(명사), v(동사), a(형용사), ad(부사)
-    // =====================================
+<script>
+"use strict";
 
-    const words = [
-      { en: "various", ko: "다양한", pos: "a" },
-      { en: "significant", ko: "중요한, 상당한", pos: "a" },
-      { en: "contribute", ko: "기여하다", pos: "v" },
-      { en: "accurate", ko: "정확한", pos: "a" },
-      { en: "maintain", ko: "유지하다", pos: "v" },
-      { en: "reluctant", ko: "꺼리는, 마지못한", pos: "a" },
-      { en: "interpret", ko: "해석하다", pos: "v" },
-      { en: "efficient", ko: "효율적인", pos: "a" },
-      { en: "consequence", ko: "결과, 영향", pos: "n" },
-      { en: "emerge", ko: "나타나다, 발생하다", pos: "v" },
-      { en: "perspective", ko: "관점", pos: "n" },
-      { en: "relevant", ko: "관련 있는", pos: "a" },
-      { en: "potential", ko: "잠재적인", pos: "a" },
-      { en: "alter", ko: "바꾸다, 변경하다", pos: "v" },
-      { en: "establish", ko: "설립하다, 확립하다", pos: "v" },
-      { en: "scarce", ko: "부족한, 드문", pos: "a" },
-      { en: "justify", ko: "정당화하다", pos: "v" },
-      { en: "consume", ko: "소비하다", pos: "v" },
-      { en: "evaluate", ko: "평가하다", pos: "v" },
-      { en: "indicate", ko: "나타내다, 가리키다", pos: "v" }
-    ];
+// 기본 단어장
+const DEFAULT = [
+["various","다양한","a"],
+["significant","중요한, 상당한","a"],
+["contribute","기여하다","v"],
+["accurate","정확한","a"],
+["maintain","유지하다","v"],
+["reluctant","꺼리는, 마지못한","a"],
+["interpret","해석하다","v"],
+["efficient","효율적인","a"],
+["consequence","결과, 영향","n"],
+["emerge","나타나다, 발생하다","v"],
+["perspective","관점","n"],
+["relevant","관련 있는","a"],
+["potential","잠재적인","a"],
+["alter","바꾸다, 변경하다","v"],
+["establish","설립하다, 확립하다","v"],
+["scarce","부족한, 드문","a"],
+["justify","정당화하다","v"],
+["consume","소비하다","v"],
+["evaluate","평가하다","v"],
+["indicate","나타내다, 가리키다","v"]
+].map(([en,ko,pos])=>({en,ko,pos}));
 
+const $ = id => document.getElementById(id);
+const KEY = "wordquest_decks_v3";
 
-    // =====================================
-    // 2. 게임 상태
-    // =====================================
+let decks;
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY));
+  decks = saved && typeof saved === "object" &&
+    !Array.isArray(saved)
+    ? saved
+    : {"기본 단어장":DEFAULT};
+} catch {
+  decks = {"기본 단어장":DEFAULT};
+}
 
-    const QUESTION_COUNT = 20;
+if (!Object.keys(decks).length) {
+  decks = {"기본 단어장":DEFAULT};
+}
 
-    let mode = "meaning";
-    let currentWord = null;
-    let choices = [];
+function valid(w) {
+  return w &&
+    typeof w.en === "string" &&
+    typeof w.ko === "string" &&
+    w.en.trim() &&
+    w.ko.trim();
+}
 
-    let score = 0;
-    let streak = 0;
-    let total = 0;
-    let answered = false;
+function normalize(w) {
+  return {
+    en:w.en.trim().toLowerCase(),
+    ko:w.ko.trim(),
+    pos:["n","v","a","ad"].includes(w.pos)
+      ? w.pos : "?"
+  };
+}
 
-    // 이번 세트에 사용할 단어와 결과
-    let questionSet = [];
-    let results = [];
+function posText(p) {
+  return {
+    n:"n · 명사",
+    v:"v · 동사",
+    a:"a · 형용사",
+    ad:"ad · 부사",
+    "?":"품사 미확인"
+  }[p] || "품사 미확인";
+}
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
 
-    // =====================================
-    // 3. HTML 요소
-    // =====================================
+function persist() {
+  try {
+    localStorage.setItem(KEY,JSON.stringify(decks));
+    return true;
+  } catch {
+    alert("브라우저 저장에 실패했습니다. 저장 공간을 확인하세요.");
+    return false;
+  }
+}
 
-    const $ = (id) => document.getElementById(id);
+// 탭 전환
+function showTab(name) {
+  document.querySelectorAll("[data-tab]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===name);
+  });
+  ["play","upload","library"].forEach(id=>{
+    $(id).hidden = id!==name;
+  });
+  if (name==="library") renderLibrary();
+  if (name==="play") updateDeckSelect();
+}
 
-    const meaningMode = $("meaningMode");
-    const spellingMode = $("spellingMode");
+document.querySelectorAll("[data-tab]").forEach(b=>{
+  b.onclick=()=>showTab(b.dataset.tab);
+});
 
-    const questionLabel = $("questionLabel");
-    const question = $("question");
-    const questionPos = $("questionPos");
+function updateDeckSelect() {
+  const s=$("deckSelect");
+  const old=s.value;
+  s.replaceChildren();
 
-    const options = $("options");
-    const answerArea = $("answerArea");
-    const answerInput = $("answerInput");
+  for (const [name,arr] of Object.entries(decks)) {
+    const option=document.createElement("option");
+    option.value=name;
+    option.textContent=`${name} (${arr.length}개)`;
+    s.append(option);
+  }
+  if (decks[old]) s.value=old;
+}
 
-    const checkButton = $("checkButton");
-    const nextButton = $("nextButton");
-    const skipButton = $("skipButton");
+// 단어 추출
+let candidates=[];
 
-    const feedback = $("feedback");
-    const explain = $("explain");
+function parseWords(text) {
+  const output=[];
 
-    const gameScreen = $("gameScreen");
-    const resultScreen = $("resultScreen");
+  for (const raw of text.split(/\r?\n/)) {
+    let line=raw.trim()
+      .replace(/^[\s\d.)①-⑳•*]+/u,"")
+      .trim();
 
+    if (!line) continue;
 
-    // =====================================
-    // 4. 품사 표시
-    // =====================================
+    const match=line.match(
+      /^([A-Za-z][A-Za-z '-]{0,45}?)\s*(?:\||\t|\s[-–—:]\s*|\s{2,})\s*(.+)$/
+    );
 
-    function getPOS(pos) {
-      const names = {
-        n: "n · 명사",
-        v: "v · 동사",
-        a: "a · 형용사",
-        ad: "ad · 부사"
+    if (!match) continue;
+
+    const en=match[1].trim();
+    let ko=match[2].trim();
+    let pos="?";
+
+    if (!/[가-힣]/.test(ko)) continue;
+
+    const pm=ko.match(
+      /(?:\(|\[)\s*(n|v|a|ad|adj|adv|noun|verb)\s*(?:\)|\])/i
+    );
+
+    if (pm) {
+      const map={adj:"a",adv:"ad",noun:"n",verb:"v"};
+      pos=map[pm[1].toLowerCase()] ||
+          pm[1].toLowerCase();
+      ko=ko.replace(pm[0],"").trim();
+    }
+
+    const extra=ko.match(
+      /\s*\|\s*(n|v|a|ad)\s*$/i
+    );
+    if (extra) {
+      pos=extra[1].toLowerCase();
+      ko=ko.slice(0,extra.index).trim();
+    }
+
+    if (en && ko && en.length<50 && ko.length<120) {
+      output.push({en,ko,pos});
+    }
+  }
+
+  return output;
+}
+
+function mergeCandidates(items) {
+  const seen=new Set(
+    candidates.map(w=>w.en.toLowerCase())
+  );
+  let added=0;
+
+  for (const w of items) {
+    if (!valid(w)) continue;
+    const n=normalize(w);
+    if (!seen.has(n.en)) {
+      candidates.push(n);
+      seen.add(n.en);
+      added++;
+    }
+  }
+
+  renderCandidates();
+  return added;
+}
+
+function makeInput(value,callback) {
+  const input=document.createElement("input");
+  input.type="text";
+  input.value=value;
+  input.oninput=()=>callback(input.value);
+  return input;
+}
+
+function renderCandidates() {
+  const root=$("candidates");
+  root.replaceChildren();
+  $("candidateCount").textContent=candidates.length;
+
+  candidates.forEach((w,i)=>{
+    const card=document.createElement("div");
+    card.className="wordrow";
+
+    const grid=document.createElement("div");
+    grid.className="fields";
+
+    const enLabel=document.createElement("label");
+    enLabel.textContent="영어";
+    enLabel.append(makeInput(w.en,v=>w.en=v));
+
+    const koLabel=document.createElement("label");
+    koLabel.textContent="뜻";
+    koLabel.append(makeInput(w.ko,v=>w.ko=v));
+
+    const posLabel=document.createElement("label");
+    posLabel.textContent="품사";
+
+    const select=document.createElement("select");
+    ["?","n","v","a","ad"].forEach(p=>{
+      const option=document.createElement("option");
+      option.value=p;
+      option.textContent=posText(p);
+      select.append(option);
+    });
+    select.value=w.pos;
+    select.onchange=()=>w.pos=select.value;
+    posLabel.append(select);
+
+    grid.append(enLabel,koLabel,posLabel);
+
+    const del=document.createElement("button");
+    del.textContent="삭제";
+    del.onclick=()=>{
+      candidates.splice(i,1);
+      renderCandidates();
+    };
+
+    card.append(grid,del);
+    root.append(card);
+  });
+}
+
+$("parsePaste").onclick=()=>{
+  const n=mergeCandidates(parseWords($("paste").value));
+  $("uploadStatus").textContent=
+    `텍스트에서 ${n}개 단어를 추가했습니다.`;
+};
+
+$("addManual").onclick=()=>{
+  const w={
+    en:$("addEn").value,
+    ko:$("addKo").value,
+    pos:$("addPos").value
+  };
+  if (!valid(w)) {
+    alert("영어와 뜻을 입력하세요.");
+    return;
+  }
+  if (!mergeCandidates([w])) {
+    alert("이미 후보에 있는 단어입니다.");
+    return;
+  }
+  $("addEn").value="";
+  $("addKo").value="";
+};
+
+$("clearCandidates").onclick=()=>{
+  if (confirm("후보를 모두 비울까요?")) {
+    candidates=[];
+    renderCandidates();
+  }
+};
+
+$("saveCandidates").onclick=()=>{
+  const name=$("deckName").value.trim();
+  if (!name) return alert("단어장 이름을 입력하세요.");
+  if (!candidates.length) return alert("저장할 단어가 없습니다.");
+  if (candidates.some(w=>!valid(w))) {
+    return alert("영어 또는 뜻이 비어 있는 단어가 있습니다.");
+  }
+
+  const map=new Map(
+    (decks[name]||[]).map(w=>[
+      w.en.toLowerCase(),normalize(w)
+    ])
+  );
+
+  candidates.forEach(w=>{
+    const n=normalize(w);
+    map.set(n.en,n);
+  });
+
+  decks[name]=[...map.values()];
+
+  if (persist()) {
+    candidates=[];
+    renderCandidates();
+    $("deckName").value="";
+    updateDeckSelect();
+    $("deckSelect").value=name;
+    alert(`${name} 단어장 저장 완료!`);
+    showTab("library");
+  }
+};
+
+// 파일 처리 라이브러리
+const scripts={
+  pdf:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+  docx:"https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js",
+  ocr:"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
+};
+
+const loading={};
+
+function loadScript(type) {
+  if (loading[type]) return loading[type];
+
+  loading[type]=new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=scripts[type];
+    script.onload=resolve;
+    script.onerror=()=>{
+      delete loading[type];
+      reject(new Error("라이브러리를 불러오지 못했습니다."));
+    };
+    document.head.append(script);
+  });
+
+  return loading[type];
+}
+
+// 사진 OCR
+async function ocrImage(image) {
+  await loadScript("ocr");
+
+  const worker=await Tesseract.createWorker("eng+kor");
+
+  try {
+    const result=await worker.recognize(image);
+    return result.data.text;
+  } finally {
+    await worker.terminate();
+  }
+}
+
+// PDF 처리
+async function pdfText(file) {
+  await loadScript("pdf");
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc=
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const pdf=await pdfjsLib.getDocument({
+    data:new Uint8Array(await file.arrayBuffer())
+  }).promise;
+
+  let text="";
+
+  for (let i=1;i<=pdf.numPages;i++) {
+    const page=await pdf.getPage(i);
+    const content=await page.getTextContent();
+
+    let prevY=null;
+    for (const item of content.items) {
+      const y=item.transform?.[5];
+      if (prevY!==null && Math.abs(y-prevY)>3) {
+        text+="\n";
+      }
+      text+=item.str+" ";
+      prevY=y;
+    }
+    text+="\n";
+  }
+
+  // 텍스트를 읽을 수 없는 PDF는 OCR 사용
+  if (parseWords(text).length===0) {
+    text="";
+    for (let i=1;i<=pdf.numPages;i++) {
+      const page=await pdf.getPage(i);
+      const viewport=page.getViewport({scale:2});
+      const canvas=document.createElement("canvas");
+
+      canvas.width=viewport.width;
+      canvas.height=viewport.height;
+
+      await page.render({
+        canvasContext:canvas.getContext("2d"),
+        viewport
+      }).promise;
+
+      text+=await ocrImage(canvas)+"\n";
+    }
+  }
+
+  return text;
+}
+
+// 파일 형식별 추출
+async function extract(file) {
+  const name=file.name.toLowerCase();
+
+  if (name.endsWith(".txt")) {
+    return await file.text();
+  }
+
+  if (name.endsWith(".docx")) {
+    await loadScript("docx");
+    const result=await mammoth.extractRawText({
+      arrayBuffer:await file.arrayBuffer()
+    });
+    return result.value;
+  }
+
+  if (name.endsWith(".pdf")) {
+    return await pdfText(file);
+  }
+
+  if (/\.(jpg|jpeg|png|webp)$/.test(name)) {
+    return await ocrImage(file);
+  }
+
+  throw new Error("지원하지 않는 파일 형식입니다.");
+}
+
+// 업로드 이벤트
+$("files").onchange=async event=>{
+  const files=[...event.target.files];
+  if (!files.length) return;
+
+  let totalAdded=0;
+  const errors=[];
+
+  for (let i=0;i<files.length;i++) {
+    const file=files[i];
+
+    $("uploadStatus").textContent=
+      `${i+1}/${files.length}: ${file.name} 분석 중...`;
+
+    try {
+      const text=await extract(file);
+      totalAdded+=mergeCandidates(parseWords(text));
+    } catch (err) {
+      errors.push(`${file.name}: ${err.message}`);
+    }
+  }
+
+  $("uploadStatus").textContent=
+    `분석 완료! 새 후보 ${totalAdded}개.\n`+
+    (errors.length ? errors.join("\n") : "")+
+    "\n철자와 뜻을 확인한 뒤 저장하세요.";
+
+  event.target.value="";
+};
+
+// 단어장 관리
+function renderLibrary() {
+  const root=$("libraryList");
+  root.replaceChildren();
+
+  for (const [name,words] of Object.entries(decks)) {
+    const panel=document.createElement("div");
+    panel.className="panel";
+
+    const heading=document.createElement("h3");
+    heading.textContent=`${name} (${words.length}개)`;
+
+    const actions=document.createElement("div");
+    actions.className="actions";
+
+    const use=document.createElement("button");
+    use.textContent="이 단어장 학습";
+    use.onclick=()=>{
+      showTab("play");
+      $("deckSelect").value=name;
+      startGame();
+    };
+
+    const del=document.createElement("button");
+    del.textContent="단어장 삭제";
+    del.onclick=()=>{
+      if (!confirm(`${name} 단어장을 삭제할까요?`)) return;
+      delete decks[name];
+      if (!Object.keys(decks).length) {
+        decks={"기본 단어장":DEFAULT};
+      }
+      persist();
+      updateDeckSelect();
+      renderLibrary();
+    };
+
+    actions.append(use,del);
+    panel.append(heading,actions);
+
+    const details=document.createElement("details");
+    const summary=document.createElement("summary");
+    summary.textContent="단어 보기 및 삭제";
+    details.append(summary);
+
+    words.forEach((w,i)=>{
+      const row=document.createElement("div");
+      row.className="wordrow";
+
+      const text=document.createElement("span");
+      text.textContent=
+        `${w.en} (${posText(w.pos)}) — ${w.ko}`;
+
+      const remove=document.createElement("button");
+      remove.textContent="삭제";
+      remove.style.marginLeft="10px";
+      remove.onclick=()=>{
+        words.splice(i,1);
+        persist();
+        updateDeckSelect();
+        renderLibrary();
       };
 
-      return names[pos] || pos;
-    }
-
-
-    // =====================================
-    // 5. 단어 섞기
-    // =====================================
-
-    function shuffle(array) {
-      const copy = [...array];
-
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-
-      return copy;
-    }
-
-
-    // =====================================
-    // 6. 새 20문제 세트 시작
-    // =====================================
-
-    function startGame() {
-      score = 0;
-      streak = 0;
-      total = 0;
-      answered = false;
-
-      // 20개 단어를 무작위로 섞음
-      // 현재 단어 목록이 20개이므로 각 단어가 한 번씩 나옴
-      questionSet = shuffle(words).slice(0, QUESTION_COUNT);
-
-      results = [];
-
-      gameScreen.classList.remove("hidden");
-      resultScreen.classList.add("hidden");
-
-      meaningMode.classList.toggle("active", mode === "meaning");
-      spellingMode.classList.toggle("active", mode === "spelling");
-
-      updateScore();
-      newQuestion();
-    }
-
-
-    // =====================================
-    // 7. 점수 및 진행도 업데이트
-    // =====================================
-
-    function updateScore() {
-      $("score").textContent = score;
-      $("streak").textContent = streak;
-      $("total").textContent = total + " / " + QUESTION_COUNT;
-
-      const percent = Math.round(
-        (total / QUESTION_COUNT) * 100
-      );
-
-      $("progressText").textContent =
-        Math.min(total + 1, QUESTION_COUNT) +
-        " / " + QUESTION_COUNT + " 문제";
-
-      if (total === QUESTION_COUNT) {
-        $("progressText").textContent =
-          QUESTION_COUNT + " / " + QUESTION_COUNT + " 문제";
-      }
-
-      $("progressPercent").textContent = percent + "%";
-      $("progressFill").style.width = percent + "%";
-    }
-
-
-    // =====================================
-    // 8. 다음 문제 표시
-    // =====================================
-
-    function newQuestion() {
-      // 20문제를 모두 풀었으면 결과 화면
-      if (total >= QUESTION_COUNT) {
-        showResults();
-        return;
-      }
-
-      answered = false;
-
-      feedback.className = "feedback";
-      feedback.textContent = "";
-
-      explain.classList.add("hidden");
-      explain.replaceChildren();
-
-      nextButton.classList.add("hidden");
-
-      answerInput.value = "";
-      answerInput.disabled = false;
-
-      checkButton.disabled = false;
-      checkButton.classList.remove("hidden");
-
-      // 이번 세트에서 다음 단어를 꺼냄
-      currentWord = questionSet[total];
-
-      if (mode === "meaning") {
-        questionLabel.textContent =
-          "다음 뜻에 해당하는 영어 단어를 입력하세요.";
-
-        question.textContent = currentWord.ko;
-        questionPos.classList.add("hidden");
-
-        options.classList.add("hidden");
-        answerArea.classList.remove("hidden");
-
-        answerInput.placeholder = "영어 단어를 입력하세요";
-        checkButton.textContent = "정답 확인";
-
-      } else {
-        questionLabel.textContent =
-          "다음 영어 단어의 뜻을 고르세요.";
-
-        question.textContent = currentWord.en;
-
-        questionPos.textContent = getPOS(currentWord.pos);
-        questionPos.classList.remove("hidden");
-
-        answerArea.classList.add("hidden");
-        options.classList.remove("hidden");
-
-        // 이번 문제의 정답을 제외한 오답 3개 선택
-        const wrongWords = words.filter(
-          word => word.en !== currentWord.en
-        );
-
-        choices = shuffle([
-          currentWord,
-          ...shuffle(wrongWords).slice(0, 3)
-        ]);
-
-        for (let i = 0; i < 4; i++) {
-          const button = $("option" + i);
-
-          button.textContent = choices[i].ko;
-          button.disabled = false;
-          button.className = "option-button";
-
-          button.onclick = function() {
-            choose(i);
-          };
-        }
-      }
-
-      updateScore();
-
-      // 입력 모드일 때 입력창에 커서
-      if (mode === "meaning") {
-        answerInput.focus();
-      }
-    }
-
-
-    // =====================================
-    // 9. 해설 표시
-    // =====================================
-
-    function showExplanation(myAnswer, correctWord) {
-      explain.classList.remove("hidden");
-      explain.replaceChildren();
-
-      const title = document.createElement("div");
-      title.className = "explain-title";
-      title.textContent = "정답 해설";
-
-      const myLine = document.createElement("div");
-
-      if (myAnswer) {
-        myLine.textContent =
-          "내 답: " + myAnswer.en +
-          " (" + getPOS(myAnswer.pos) + ") — " +
-          myAnswer.ko;
-      } else {
-        myLine.textContent =
-          "내 답: 입력한 단어의 뜻을 단어 목록에서 찾을 수 없습니다.";
-      }
-
-      const correctLine = document.createElement("div");
-      correctLine.textContent =
-        "정답: " + correctWord.en +
-        " (" + getPOS(correctWord.pos) + ") — " +
-        correctWord.ko;
-
-      explain.append(title, myLine, correctLine);
-    }
-
-
-    // =====================================
-    // 10. 문제 결과 기록
-    // =====================================
-
-    function recordResult(status, myAnswer) {
-      results.push({
-        word: currentWord,
-        status: status,
-        myAnswer: myAnswer
-      });
-    }
-
-
-    // =====================================
-    // 11. 정답 / 오답 처리
-    // =====================================
-
-    function checkResult(isCorrect, myAnswer) {
-      if (answered) return;
-
-      answered = true;
-
-      const status = isCorrect ? "correct" : "wrong";
-
-      total++;
-
-      // 모든 입력 잠금
-      answerInput.disabled = true;
-      checkButton.disabled = true;
-
-      for (let i = 0; i < 4; i++) {
-        $("option" + i).disabled = true;
-      }
-
-      recordResult(status, myAnswer);
-
-      if (isCorrect) {
-        score += 10;
-        streak++;
-
-        feedback.className = "feedback correct";
-        feedback.textContent = "정답! +10점 🎉";
-
-      } else {
-        streak = 0;
-
-        feedback.className = "feedback wrong";
-        feedback.textContent = "오답! 정답은 " + currentWord.en;
-
-        // 틀린 답의 해설을 즉시 표시
-        showExplanation(myAnswer, currentWord);
-      }
-
-      // 영어 → 뜻 모드에서 정답 선택지 강조
-      if (mode === "spelling") {
-        for (let i = 0; i < 4; i++) {
-          const button = $("option" + i);
-
-          if (choices[i].en === currentWord.en) {
-            button.classList.add("correct");
-          }
-        }
-      }
-
-      updateScore();
-
-      checkButton.classList.add("hidden");
-      nextButton.classList.remove("hidden");
-
-      // 마지막 문제라면 버튼 문구 변경
-      if (total === QUESTION_COUNT) {
-        nextButton.textContent = "결과 보기";
-      } else {
-        nextButton.textContent = "다음 문제";
-      }
-    }
-
-
-    // =====================================
-    // 12. 뜻 → 영어 모드
-    // =====================================
-
-    function checkSpelling() {
-      if (answered) return;
-
-      const input = answerInput.value.trim();
-
-      if (input === "") {
-        feedback.className = "feedback wrong";
-        feedback.textContent = "영어 단어를 입력해 주세요.";
-        return;
-      }
-
-      const isCorrect =
-        input.toLowerCase() === currentWord.en.toLowerCase();
-
-      // 입력한 단어가 게임 목록에 있는지 찾음
-      const myWord = words.find(
-        word => word.en.toLowerCase() === input.toLowerCase()
-      );
-
-      checkResult(isCorrect, myWord || {
-        en: input,
-        ko: "뜻을 단어 목록에서 찾을 수 없음",
-        pos: "?"
-      });
-    }
-
-
-    // =====================================
-    // 13. 영어 → 뜻 모드
-    // =====================================
-
-    function choose(index) {
-      if (answered) return;
-
-      const selectedWord = choices[index];
-
-      const isCorrect =
-        selectedWord.en === currentWord.en;
-
-      if (!isCorrect) {
-        $("option" + index).classList.add("wrong");
-      }
-
-      checkResult(
-        isCorrect,
-        isCorrect ? currentWord : selectedWord
-      );
-    }
-
-
-    // =====================================
-    // 14. 건너뛰기
-    // =====================================
-
-    function skipQuestion() {
-      if (answered) {
-        newQuestion();
-        return;
-      }
-
-      answered = true;
-
-      total++;
-      streak = 0;
-
-      recordResult("skipped", null);
-
-      feedback.className = "feedback wrong";
-      feedback.textContent =
-        "건너뛰었습니다. 정답은 " + currentWord.en;
-
-      // 건너뛴 문제도 정답 해설 표시
-      showExplanation(null, currentWord);
-
-      answerInput.disabled = true;
-      checkButton.disabled = true;
-
-      for (let i = 0; i < 4; i++) {
-        $("option" + i).disabled = true;
-
-        // 영어 → 뜻 모드에서는 정답 선택지도 강조
-        if (mode === "spelling") {
-          if (choices[i].en === currentWord.en) {
-            $("option" + i).classList.add("correct");
-          }
-        }
-      }
-
-      checkButton.classList.add("hidden");
-      nextButton.classList.remove("hidden");
-
-      if (total === QUESTION_COUNT) {
-        nextButton.textContent = "결과 보기";
-      } else {
-        nextButton.textContent = "다음 문제";
-      }
-
-      updateScore();
-    }
-
-
-    // =====================================
-    // 15. 결과 카드 생성
-    // =====================================
-
-    function makeResultCard(result) {
-      const card = document.createElement("div");
-      card.className = "result-card";
-
-      if (result.status === "correct") {
-        card.classList.add("correct-card");
-      } else if (result.status === "wrong") {
-        card.classList.add("wrong-card");
-      } else {
-        card.classList.add("skipped-card");
-      }
-
-      const wordLine = document.createElement("div");
-      wordLine.className = "result-word";
-
-      wordLine.textContent =
-        result.word.en + " (" + getPOS(result.word.pos) + ")";
-
-      const meaningLine = document.createElement("div");
-      meaningLine.textContent = "뜻: " + result.word.ko;
-
-      const answerLine = document.createElement("div");
-      answerLine.className = "result-detail";
-
-      if (result.status === "correct") {
-        answerLine.textContent = "내 답: " + result.word.en;
-
-      } else if (result.status === "wrong") {
-        if (result.myAnswer) {
-          answerLine.textContent =
-            "내 답: " + result.myAnswer.en +
-            " (" + getPOS(result.myAnswer.pos) + ") — " +
-            result.myAnswer.ko;
-        } else {
-          answerLine.textContent =
-            "내 답: 확인할 수 없음";
-        }
-
-        const correctLine = document.createElement("div");
-        correctLine.className = "result-detail";
-        correctLine.textContent =
-          "정답: " + result.word.en +
-          " (" + getPOS(result.word.pos) + ") — " +
-          result.word.ko;
-
-        card.append(wordLine, meaningLine, answerLine, correctLine);
-        return card;
-
-      } else {
-        answerLine.textContent = "상태: 건너뜀";
-
-        const correctLine = document.createElement("div");
-        correctLine.className = "result-detail";
-        correctLine.textContent =
-          "정답: " + result.word.en +
-          " (" + getPOS(result.word.pos) + ") — " +
-          result.word.ko;
-
-        card.append(wordLine, meaningLine, answerLine, correctLine);
-        return card;
-      }
-
-      card.append(wordLine, meaningLine, answerLine);
-      return card;
-    }
-
-
-    // =====================================
-    // 16. 20문제 결과 화면
-    // =====================================
-
-    function showResults() {
-      gameScreen.classList.add("hidden");
-      resultScreen.classList.remove("hidden");
-
-      const correctResults = results.filter(
-        result => result.status === "correct"
-      );
-
-      const wrongResults = results.filter(
-        result => result.status === "wrong"
-      );
-
-      const skippedResults = results.filter(
-        result => result.status === "skipped"
-      );
-
-      $("finalScore").textContent = score + "점";
-
-      $("finalMessage").textContent =
-        correctResults.length + "개 정답 / " +
-        wrongResults.length + "개 오답 / " +
-        skippedResults.length + "개 건너뜀";
-
-      $("finalCounts").textContent =
-        "총 " + QUESTION_COUNT + "문제";
-
-      // 결과 영역 초기화
-      $("correctResults").replaceChildren();
-      $("wrongResults").replaceChildren();
-      $("skippedResults").replaceChildren();
-
-      // 맞힌 단어
-      if (correctResults.length === 0) {
-        $("correctResults").textContent = "맞힌 단어가 없습니다.";
-      } else {
-        correctResults.forEach(result => {
-          $("correctResults").appendChild(
-            makeResultCard(result)
-          );
-        });
-      }
-
-      // 틀린 단어
-      if (wrongResults.length === 0) {
-        $("wrongResults").textContent = "틀린 단어가 없습니다.";
-      } else {
-        wrongResults.forEach(result => {
-          $("wrongResults").appendChild(
-            makeResultCard(result)
-          );
-        });
-      }
-
-      // 건너뛴 단어
-      if (skippedResults.length === 0) {
-        $("skippedResults").textContent =
-          "건너뛴 단어가 없습니다.";
-      } else {
-        skippedResults.forEach(result => {
-          $("skippedResults").appendChild(
-            makeResultCard(result)
-          );
-        });
-      }
-    }
-
-
-    // =====================================
-    // 17. 모드 변경
-    // =====================================
-
-    function changeMode(newMode) {
-      // 진행 중인 세트를 버리고 새 20문제 시작
-      mode = newMode;
-
-      meaningMode.classList.toggle(
-        "active",
-        mode === "meaning"
-      );
-
-      spellingMode.classList.toggle(
-        "active",
-        mode === "spelling"
-      );
-
-      startGame();
-    }
-
-
-    // =====================================
-    // 18. 버튼 이벤트
-    // =====================================
-
-    meaningMode.addEventListener("click", function() {
-      if (mode !== "meaning") {
-        changeMode("meaning");
-      }
+      row.append(text,remove);
+      details.append(row);
     });
 
-    spellingMode.addEventListener("click", function() {
-      if (mode !== "spelling") {
-        changeMode("spelling");
+    panel.append(details);
+    root.append(panel);
+  }
+}
+
+// JSON 백업
+$("export").onclick=()=>{
+  const data=JSON.stringify({
+    format:"wordquest-v3",
+    decks
+  },null,2);
+
+  const blob=new Blob([data],{
+    type:"application/json"
+  });
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="word-quest-backup.json";
+  a.click();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+
+$("import").onchange=async event=>{
+  const file=event.target.files[0];
+  if (!file) return;
+
+  try {
+    const data=JSON.parse(await file.text());
+
+    if (data.format!=="wordquest-v3" ||
+        !data.decks ||
+        typeof data.decks!=="object" ||
+        Array.isArray(data.decks)) {
+      throw new Error("올바른 백업 파일이 아닙니다.");
+    }
+
+    for (const [name,arr] of Object.entries(data.decks)) {
+      if (!name.trim() || !Array.isArray(arr)) continue;
+
+      const map=new Map(
+        (decks[name]||[])
+          .filter(valid)
+          .map(w=>[w.en.toLowerCase(),normalize(w)])
+      );
+
+      for (const w of arr.filter(valid)) {
+        const n=normalize(w);
+        map.set(n.en,n);
       }
+
+      decks[name]=[...map.values()];
+    }
+
+    persist();
+    updateDeckSelect();
+    renderLibrary();
+    alert("백업 가져오기 완료!");
+  } catch (err) {
+    alert("가져오기 실패: "+err.message);
+  }
+
+  event.target.value="";
+};
+
+// 게임 상태
+let mode="type";
+let set=[];
+let index=0;
+let answered=false;
+let choices=[];
+let history=[];
+let score=0;
+let streak=0;
+
+function current() {
+  return set[index];
+}
+
+function startGame() {
+  const deck=decks[$("deckSelect").value]||[];
+
+  if (deck.length<20) {
+    alert(`단어가 ${deck.length}개입니다. 20개 이상 필요합니다.`);
+    return;
+  }
+
+  set=shuffle(deck).slice(0,20);
+  index=0;
+  score=0;
+  streak=0;
+  history=[];
+
+  $("results").hidden=true;
+  $("welcome").hidden=true;
+  $("gameArea").hidden=false;
+
+  renderQuestion();
+}
+
+function updateStats() {
+  $("score").textContent=score;
+  $("streak").textContent=streak;
+  $("count").textContent=`${history.length}/20`;
+
+  $("bar").style.width=
+    `${history.length/20*100}%`;
+
+  $("progressText").textContent=
+    `${Math.min(index+1,20)} / 20 문제`;
+}
+
+function renderQuestion() {
+  answered=false;
+  const w=current();
+
+  $("feedback").hidden=true;
+  $("next").hidden=true;
+  $("skip").hidden=false;
+
+  $("answer").value="";
+  $("answer").disabled=false;
+  $("check").disabled=false;
+
+  $("question").textContent=
+    mode==="type" ? w.ko : w.en;
+
+  $("prompt").textContent=
+    mode==="type"
+      ? "뜻을 보고 영어 철자를 입력하세요."
+      : "영어 단어의 뜻을 선택하세요.";
+
+  $("posLabel").textContent=posText(w.pos);
+
+  $("typing").hidden=mode!=="type";
+  $("choices").hidden=mode!=="choice";
+
+  if (mode==="choice") {
+    const deck=decks[$("deckSelect").value]||[];
+
+    choices=shuffle([
+      w,
+      ...shuffle(deck.filter(x=>
+        x.en!==w.en && x.ko!==w.ko
+      )).slice(0,3)
+    ]);
+
+    if (choices.length<4) {
+      alert("서로 다른 뜻의 단어가 4개 이상 필요합니다.");
+      return;
+    }
+
+    const root=$("choices");
+    root.replaceChildren();
+
+    choices.forEach((x,i)=>{
+      const button=document.createElement("button");
+      button.textContent=x.ko;
+      button.onclick=()=>answerChoice(i);
+      root.append(button);
     });
+  }
 
-    checkButton.addEventListener("click", checkSpelling);
+  updateStats();
+}
 
-    nextButton.addEventListener("click", newQuestion);
+function describe(w) {
+  return `${w.en} (${posText(w.pos)}) — ${w.ko}`;
+}
 
-    skipButton.addEventListener("click", skipQuestion);
+function finish(status,answerText,chosen) {
+  if (answered) return;
 
-    $("restartButton").addEventListener("click", startGame);
+  answered=true;
+  const w=current();
 
-    // Enter 키로 정답 확인
-    answerInput.addEventListener("keydown", function(event) {
-      if (event.key === "Enter" && !answered) {
-        checkSpelling();
-      }
-    });
+  history.push({
+    word:w,
+    status,
+    answerText,
+    chosen
+  });
 
+  if (status==="correct") {
+    score+=10;
+    streak++;
+  } else {
+    streak=0;
+  }
 
-    // =====================================
-    // 19. 게임 시작
-    // =====================================
+  const msg=$("feedback");
+  msg.hidden=false;
+  msg.className=
+    "message "+(status==="correct"?"good":"bad");
 
+  let content=
+    status==="correct"
+      ? "정답! +10점 🎉"
+      : status==="skipped"
+      ? "건너뛴 문제입니다."
+      : "오답입니다.";
+
+  content+=`\n정답: ${describe(w)}`;
+
+  if (status==="wrong") {
+    content+=`\n내 답: ${
+      chosen ? describe(chosen) : answerText
+    }`;
+
+    if (!chosen) {
+      content+="\n입력한 단어의 뜻은 등록된 단어장에서 확인되지 않습니다.";
+    }
+  }
+
+  msg.textContent=content;
+
+  $("answer").disabled=true;
+  $("check").disabled=true;
+
+  [...$("choices").children].forEach((b,i)=>{
+    b.disabled=true;
+
+    if (choices[i].en===w.en) {
+      b.classList.add("right");
+    }
+
+    if (chosen &&
+        choices[i].en===chosen.en &&
+        status==="wrong") {
+      b.classList.add("wrong");
+    }
+  });
+
+  $("skip").hidden=true;
+  $("next").hidden=false;
+  $("next").textContent=
+    history.length===20 ? "결과 보기" : "다음 문제";
+
+  updateStats();
+}
+
+function checkTyped() {
+  if (answered || mode!=="type") return;
+
+  const value=$("answer").value.trim();
+  if (!value) {
+    alert("영어 단어를 입력하세요.");
+    return;
+  }
+
+  const w=current();
+
+  const found=Object.values(decks)
+    .flat()
+    .find(x=>x.en.toLowerCase()===value.toLowerCase());
+
+  finish(
+    value.toLowerCase()===w.en.toLowerCase()
+      ? "correct" : "wrong",
+    value,
+    found||null
+  );
+}
+
+function answerChoice(i) {
+  if (answered) return;
+
+  const chosen=choices[i];
+
+  finish(
+    chosen.en===current().en ? "correct" : "wrong",
+    chosen.ko,
+    chosen
+  );
+}
+
+function nextQuestion() {
+  if (history.length===20) {
+    showResults();
+    return;
+  }
+  index++;
+  renderQuestion();
+}
+
+// 결과 카드
+function resultRow(r) {
+  const card=document.createElement("div");
+  card.className="wordrow";
+
+  const title=document.createElement("strong");
+  title.textContent=describe(r.word);
+  card.append(title);
+
+  if (r.status!=="correct") {
+    const p=document.createElement("p");
+
+    p.textContent=
+      r.status==="skipped"
+        ? "건너뜀"
+        : `내 답: ${
+            r.chosen
+              ? describe(r.chosen)
+              : r.answerText
+          }`;
+
+    card.append(p);
+  }
+
+  return card;
+}
+
+// 결과 화면
+function showResults() {
+  $("gameArea").hidden=true;
+  $("results").hidden=false;
+
+  const good=history.filter(r=>r.status==="correct");
+  const bad=history.filter(r=>r.status==="wrong");
+  const skip=history.filter(r=>r.status==="skipped");
+
+  $("summary").textContent=
+    `${score}점 / 200점\n`+
+    `정답 ${good.length}개 · `+
+    `오답 ${bad.length}개 · `+
+    `건너뜀 ${skip.length}개\n`+
+    `정답률 ${Math.round(good.length/20*100)}%`;
+
+  const groups=[
+    ["correctList",good],
+    ["wrongList",bad],
+    ["skippedList",skip]
+  ];
+
+  for (const [id,arr] of groups) {
+    const root=$(id);
+    root.replaceChildren();
+
+    if (!arr.length) {
+      root.textContent="없음";
+    } else {
+      arr.forEach(r=>root.append(resultRow(r)));
+    }
+  }
+}
+
+// 모드 변경
+function setMode(newMode) {
+  if (mode===newMode) return;
+
+  if (set.length &&
+      history.length<20 &&
+      !$("gameArea").hidden) {
+    if (!confirm("모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?")) {
+      return;
+    }
+  }
+
+  mode=newMode;
+
+  $("modeType").classList.toggle(
+    "active",mode==="type"
+  );
+  $("modeChoice").classList.toggle(
+    "active",mode==="choice"
+  );
+
+  if (!$("gameArea").hidden) {
     startGame();
+  }
+}
 
-  </script>
+// 이벤트
+$("start").onclick=startGame;
+$("restart").onclick=startGame;
+$("check").onclick=checkTyped;
+$("skip").onclick=()=>finish("skipped","",null);
+$("next").onclick=nextQuestion;
+
+$("answer").onkeydown=event=>{
+  if (event.key==="Enter") checkTyped();
+};
+
+$("modeType").onclick=()=>setMode("type");
+$("modeChoice").onclick=()=>setMode("choice");
+
+// 초기화
+updateDeckSelect();
+</script>
 </body>
 </html>
