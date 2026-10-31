@@ -7,28 +7,29 @@
 <title>WORD QUEST</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:16px;background:#eef3fa;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
-.app{max-width:760px;margin:10px auto;background:white;padding:20px;border-radius:18px;box-shadow:0 8px 30px #0001}
-h1{text-align:center;color:#2563eb;margin:0}
+body{margin:0;padding:15px;background:#eef3f9;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.app{max-width:760px;margin:auto;background:#fff;padding:20px;border-radius:18px;box-shadow:0 8px 30px #0001}
+h1{text-align:center;color:#2563eb;margin:5px}
+h2{font-size:21px}
 .subtitle{text-align:center;color:#64748b}
-nav,.actions,.modes{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
-button,.filebtn{border:0;border-radius:10px;padding:12px 14px;font-size:14px;font-weight:bold;background:#e2e8f0;color:#1e293b;cursor:pointer}
+nav,.row{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+button,.filebtn{border:0;border-radius:10px;padding:12px 14px;background:#e2e8f0;color:#1e293b;font-size:14px;font-weight:bold;cursor:pointer}
 button.primary,.filebtn{background:#2563eb;color:white}
 button.active{background:#1e40af;color:white}
 button:disabled{opacity:.5}
 [hidden]{display:none!important}
 .panel{background:#f8fafc;border:1px solid #dbe3ee;border-radius:12px;padding:15px;margin:12px 0}
-.muted{color:#64748b;font-size:13px;line-height:1.6}
+.muted{color:#64748b;font-size:13px;line-height:1.7}
 .stats{display:flex;gap:8px}
 .stats div{flex:1;text-align:center;background:#eff6ff;padding:12px 4px;border-radius:10px;font-size:12px}
-.stats strong{display:block;color:#1d4ed8;font-size:23px}
-.question{text-align:center;font-size:27px;font-weight:bold;margin:25px 0;overflow-wrap:anywhere}
+.stats strong{display:block;font-size:23px;color:#1d4ed8}
+.question{text-align:center;font-size:28px;font-weight:bold;margin:25px 0;overflow-wrap:anywhere}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .choices button{min-height:60px;overflow-wrap:anywhere}
 .correct{background:#dcfce7!important;border:2px solid #16a34a!important}
 .wrong{background:#fee2e2!important;border:2px solid #dc2626!important}
 input[type=text],textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;margin:5px 0}
-textarea{min-height:110px}
+textarea{min-height:150px}
 .message{background:#eff6ff;padding:12px;border-radius:10px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .good{background:#dcfce7}
 .bad{background:#fee2e2}
@@ -39,8 +40,10 @@ textarea{min-height:110px}
 .progress div{height:100%;background:#2563eb}
 .filebtn{display:inline-block}
 .filebtn input{display:none}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:320px;overflow:auto}
+details{margin:12px 0}
+summary{cursor:pointer;font-weight:bold}
 hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
+.preview{max-width:100%;max-height:300px;object-fit:contain;border-radius:10px}
 @media(max-width:520px){
 .app{padding:14px}
 .fields{grid-template-columns:1fr 1fr}
@@ -68,7 +71,7 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
 <div>진행<strong id="count">0/20</strong></div>
 </div>
 
-<div class="modes">
+<div class="row">
 <button id="typeMode" class="active">뜻 → 영어</button>
 <button id="choiceMode">영어 → 뜻</button>
 </div>
@@ -93,14 +96,14 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
 </div>
 
 <div id="typing">
-<input id="answer" type="text" placeholder="영어 단어 입력" autocomplete="off" autocapitalize="off" spellcheck="false">
+<input id="answer" type="text" placeholder="영어 단어 또는 숙어 입력" autocomplete="off" autocapitalize="off" spellcheck="false">
 <button id="check" class="primary">정답 확인</button>
 </div>
 
 <div id="choices" class="choices" hidden></div>
 <div id="feedback" class="message" hidden></div>
 
-<div class="actions">
+<div class="row">
 <button id="skip">건너뛰기</button>
 <button id="next" class="primary" hidden>다음 문제</button>
 </div>
@@ -122,8 +125,9 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
 <section id="upload" hidden>
 <h2>사진·문서에서 단어 추출</h2>
 <p class="muted">
-JPG, PNG, WEBP, PDF, DOCX, TXT를 지원합니다.
-사진은 왼쪽과 오른쪽 영역을 나눠 OCR로 분석합니다.
+JPG, PNG, WEBP, PDF, DOCX, TXT 지원.
+무료 OCR을 사용하며 전체 이미지와 좌우 영역을 비교합니다.
+인식 결과는 반드시 확인한 뒤 저장하세요.
 </p>
 
 <label class="filebtn">
@@ -132,21 +136,19 @@ JPG, PNG, WEBP, PDF, DOCX, TXT를 지원합니다.
 </label>
 
 <div id="uploadStatus" class="message">
-파일을 선택하면 자동 분석을 시작합니다.
+파일을 선택하면 분석을 시작합니다.
 </div>
 
 <details>
 <summary>OCR 원문 확인 및 직접 수정</summary>
-<textarea id="rawText" placeholder="OCR로 읽은 글자가 여기에 표시됩니다."></textarea>
-<button id="parseRaw">이 텍스트 다시 분석</button>
+<textarea id="rawText" placeholder="OCR로 읽은 글자가 표시됩니다."></textarea>
+<button id="parseRaw">수정한 텍스트 다시 분석</button>
 </details>
 
 <h3>추출한 단어: <span id="candidateCount">0</span>개</h3>
 <p class="muted">
-추출 결과를 확인한 뒤 저장하세요.
-자동 인식이 틀린 경우 직접 수정할 수 있습니다.
+자동 추출 결과에서 영어·뜻·품사를 수정하거나 삭제할 수 있습니다.
 </p>
-
 <div id="candidates"></div>
 
 <h3>단어 직접 추가</h3>
@@ -163,7 +165,7 @@ JPG, PNG, WEBP, PDF, DOCX, TXT를 지원합니다.
 </select>
 </label>
 </div>
-<div class="actions">
+<div class="row">
 <button id="addManual">후보 추가</button>
 <button id="clearCandidates">후보 비우기</button>
 </div>
@@ -178,10 +180,10 @@ JPG, PNG, WEBP, PDF, DOCX, TXT를 지원합니다.
 <section id="library" hidden>
 <h2>내 단어장</h2>
 <p class="muted">
-단어장은 현재 브라우저에 저장됩니다.
-브라우저 데이터가 삭제되면 사라질 수 있으니 백업하세요.
+단어장은 이 브라우저에 저장됩니다.
+브라우저 데이터 삭제에 대비해 JSON 백업을 권장합니다.
 </p>
-<div class="actions">
+<div class="row">
 <button id="export">JSON 백업</button>
 <label class="filebtn">백업 가져오기
 <input id="import" type="file" accept=".json">
@@ -291,7 +293,7 @@ function updateDeckSelect(){
 }
 
 // =====================================
-// OCR 라이브러리
+// 무료 OCR 라이브러리
 // =====================================
 
 const LIB={
@@ -317,12 +319,11 @@ function loadScript(type){
 }
 
 // =====================================
-// OCR 결과의 단어·뜻 연결
+// 영어·한국어 단어 분석
 // =====================================
 
 const englishPattern=/^[A-Za-z][A-Za-z '-]*$/;
 const koreanPattern=/[가-힣]/;
-const posPattern=/^\(?\s*(n|v|a|ad|adj|adv)\s*\)?$/i;
 
 function cleanLine(s){
   return s.replace(/\s+/g," ").trim()
@@ -332,6 +333,7 @@ function cleanLine(s){
 function makePair(en,ko){
   en=cleanLine(en).replace(/^[\d.)]+\s*/,"");
   ko=cleanLine(ko);
+
   if(!englishPattern.test(en))return null;
   if(!koreanPattern.test(ko))return null;
   if(en.length>65||ko.length>150)return null;
@@ -348,7 +350,6 @@ function makePair(en,ko){
 }
 
 function parseSameLine(line){
-  // 영어 표현 뒤에 한국어 뜻이 나오는 형태
   const m=line.match(
     /^([A-Za-z][A-Za-z '-]*?)\s*(?:[:|–—-]\s*|\s+)([~∼\-]?\s*[가-힣].*)$/
   );
@@ -371,13 +372,11 @@ function parseWords(text){
       continue;
     }
 
-    // 영어만 있는 줄: 다음 한국어 줄과 연결
     if(englishPattern.test(line)){
       pending=line;
       continue;
     }
 
-    // 한국어만 있는 줄
     if(pending&&koreanPattern.test(line)){
       const pair=makePair(pending,line);
       if(pair)output.push(pair);
@@ -385,8 +384,7 @@ function parseWords(text){
       continue;
     }
 
-    // 제목이나 불명확한 줄
-    if(!posPattern.test(line))pending=null;
+    pending=null;
   }
 
   const map=new Map();
@@ -397,7 +395,54 @@ function parseWords(text){
 }
 
 // =====================================
-// 사진을 영역별로 OCR 분석
+// 이미지 전처리
+// =====================================
+
+function drawRegion(source,x,y,w,h,scale=2,enhance=false){
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(w*scale));
+  canvas.height=Math.max(1,Math.round(h*scale));
+
+  const ctx=canvas.getContext("2d",{
+    willReadFrequently:true
+  });
+
+  ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(
+    source,x,y,w,h,
+    0,0,canvas.width,canvas.height
+  );
+
+  if(enhance){
+    const image=ctx.getImageData(
+      0,0,canvas.width,canvas.height
+    );
+    const d=image.data;
+
+    // 밝기 및 대비 향상
+    for(let i=0;i<d.length;i+=4){
+      const gray=
+        d[i]*0.299+
+        d[i+1]*0.587+
+        d[i+2]*0.114;
+
+      const contrast=(gray-128)*1.45+128;
+      const v=Math.max(0,Math.min(255,contrast));
+
+      d[i]=v;
+      d[i+1]=v;
+      d[i+2]=v;
+    }
+    ctx.putImageData(image,0,0);
+  }
+  return canvas;
+}
+
+// =====================================
+// OCR 실행 및 비교
 // =====================================
 
 async function createOCRWorker(){
@@ -405,18 +450,71 @@ async function createOCRWorker(){
   return await Tesseract.createWorker("eng+kor");
 }
 
-function cropCanvas(image,sx,sy,sw,sh){
-  const canvas=document.createElement("canvas");
-  canvas.width=Math.max(1,Math.round(sw*2));
-  canvas.height=Math.max(1,Math.round(sh*2));
-  const ctx=canvas.getContext("2d");
-  ctx.fillStyle="white";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(
-    image,sx,sy,sw,sh,
-    0,0,canvas.width,canvas.height
+async function recognize(worker,canvas){
+  const result=await worker.recognize(canvas);
+  return result.data.text||"";
+}
+
+function scoreOCR(text){
+  const pairs=parseWords(text);
+  const englishChars=(text.match(/[A-Za-z]/g)||[]).length;
+  const koreanChars=(text.match(/[가-힣]/g)||[]).length;
+
+  // 단어쌍을 많이 찾고 양쪽 언어가 함께 읽힌 결과를 우선
+  return pairs.length*100+
+    Math.min(englishChars,koreanChars)*0.1;
+}
+
+async function recognizeImage(source,worker){
+  const w=source.width;
+  const h=source.height;
+
+  // 1. 전체 이미지 원본
+  const whole=drawRegion(source,0,0,w,h,2,false);
+  const wholeText=await recognize(worker,whole);
+
+  // 2. 전체 이미지 대비 향상
+  const enhanced=drawRegion(source,0,0,w,h,2,true);
+  const enhancedText=await recognize(worker,enhanced);
+
+  // 3. 좌우 분리: 중앙을 조금 겹치게 잘라
+  // 경계에 걸친 글자가 잘리지 않도록 함
+  const overlap=w*0.08;
+
+  const left=drawRegion(
+    source,0,0,w/2+overlap,h,2,true
   );
-  return canvas;
+  const right=drawRegion(
+    source,w/2-overlap,0,w/2+overlap,h,2,true
+  );
+
+  const leftText=await recognize(worker,left);
+  const rightText=await recognize(worker,right);
+  const columnText=leftText+"\n"+rightText;
+
+  // 4. 가장 유용한 OCR 결과 선택
+  const results=[
+    {name:"전체 원본",text:wholeText},
+    {name:"전체 대비 향상",text:enhancedText},
+    {name:"좌우 분리",text:columnText}
+  ];
+
+  results.sort((a,b)=>scoreOCR(b.text)-scoreOCR(a.text));
+
+  // 서로 다른 결과에서 발견된 단어도 병합
+  const merged=new Map();
+  for(const result of results){
+    for(const word of parseWords(result.text)){
+      if(!merged.has(word.en))
+        merged.set(word.en,word);
+    }
+  }
+
+  return {
+    text:results[0].text,
+    words:[...merged.values()],
+    method:results[0].name
+  };
 }
 
 async function imageFromFile(file){
@@ -434,35 +532,8 @@ async function imageFromFile(file){
   }
 }
 
-async function recognizeCanvas(worker,canvas){
-  const result=await worker.recognize(canvas);
-  return result.data.text||"";
-}
-
-async function recognizeColumns(image,worker){
-  const w=image.width;
-  const h=image.height;
-
-  // 왼쪽과 오른쪽을 각각 OCR
-  const left=cropCanvas(image,0,0,w/2,h);
-  const right=cropCanvas(image,w/2,0,w/2,h);
-
-  const leftText=await recognizeCanvas(worker,left);
-  const rightText=await recognizeCanvas(worker,right);
-
-  const combined=leftText+"\n"+rightText;
-
-  // 영역별 인식이 실패하면 전체 이미지도 시도
-  if(parseWords(combined).length===0){
-    const whole=cropCanvas(image,0,0,w,h);
-    const wholeText=await recognizeCanvas(worker,whole);
-    return combined+"\n"+wholeText;
-  }
-  return combined;
-}
-
 // =====================================
-// 문서 분석
+// PDF 및 문서 처리
 // =====================================
 
 async function extractPDF(file,worker){
@@ -474,7 +545,8 @@ async function extractPDF(file,worker){
     data:new Uint8Array(await file.arrayBuffer())
   }).promise;
 
-  let output="";
+  let allText="";
+  const allWords=[];
 
   for(let i=1;i<=pdf.numPages;i++){
     $("uploadStatus").textContent=
@@ -485,6 +557,7 @@ async function extractPDF(file,worker){
 
     let text="";
     let previousY=null;
+
     for(const item of content.items){
       const y=item.transform?.[5];
       if(previousY!==null&&Math.abs(y-previousY)>3)
@@ -494,33 +567,45 @@ async function extractPDF(file,worker){
     }
 
     if(parseWords(text).length){
-      output+=text+"\n";
+      allText+=text+"\n";
+      allWords.push(...parseWords(text));
     }else{
       const viewport=page.getViewport({scale:2});
       const canvas=document.createElement("canvas");
       canvas.width=Math.ceil(viewport.width);
       canvas.height=Math.ceil(viewport.height);
+
       await page.render({
         canvasContext:canvas.getContext("2d"),
         viewport
       }).promise;
-      output+=await recognizeColumns(canvas,worker)+"\n";
+
+      const result=await recognizeImage(canvas,worker);
+      allText+=result.text+"\n";
+      allWords.push(...result.words);
     }
   }
-  return output;
+
+  return {text:allText,words:allWords};
 }
 
 async function extractFile(file,worker){
   const name=file.name.toLowerCase();
 
-  if(name.endsWith(".txt"))return await file.text();
+  if(name.endsWith(".txt")){
+    const text=await file.text();
+    return {text,words:parseWords(text)};
+  }
 
   if(name.endsWith(".docx")){
     await loadScript("docx");
     const result=await mammoth.extractRawText({
       arrayBuffer:await file.arrayBuffer()
     });
-    return result.value;
+    return {
+      text:result.value,
+      words:parseWords(result.value)
+    };
   }
 
   if(name.endsWith(".pdf"))
@@ -528,20 +613,22 @@ async function extractFile(file,worker){
 
   if(/\.(jpg|jpeg|png|webp)$/.test(name)){
     const img=await imageFromFile(file);
-    return await recognizeColumns(img,worker);
+    return await recognizeImage(img,worker);
   }
 
   throw Error("지원하지 않는 파일입니다.");
 }
 
 // =====================================
-// 추출 후보 관리
+// 후보 단어 관리
 // =====================================
 
 let candidates=[];
 
 function mergeCandidates(items){
-  const seen=new Set(candidates.map(w=>w.en.toLowerCase()));
+  const seen=new Set(
+    candidates.map(w=>w.en.toLowerCase())
+  );
   let count=0;
 
   for(const w of items){
@@ -553,6 +640,7 @@ function mergeCandidates(items){
       count++;
     }
   }
+
   renderCandidates();
   return count;
 }
@@ -573,6 +661,7 @@ function renderCandidates(){
   candidates.forEach((w,i)=>{
     const row=document.createElement("div");
     row.className="wordrow";
+
     const fields=document.createElement("div");
     fields.className="fields";
 
@@ -586,12 +675,13 @@ function renderCandidates(){
 
     const pl=document.createElement("label");
     pl.textContent="품사";
+
     const select=document.createElement("select");
     ["?","n","v","a","ad"].forEach(p=>{
-      const option=document.createElement("option");
-      option.value=p;
-      option.textContent=p==="?"?"미확인":p+" "+posText(p);
-      select.append(option);
+      const opt=document.createElement("option");
+      opt.value=p;
+      opt.textContent=p==="?"?"미확인":p+" "+posText(p);
+      select.append(opt);
     });
     select.value=w.pos;
     select.onchange=()=>w.pos=select.value;
@@ -624,26 +714,30 @@ $("files").onchange=async event=>{
     const needsOCR=files.some(f=>
       /\.(jpg|jpeg|png|webp|pdf)$/i.test(f.name)
     );
+
     if(needsOCR){
-      $("uploadStatus").textContent="OCR 엔진 준비 중...";
+      $("uploadStatus").textContent=
+        "OCR 엔진 준비 중... 잠시 기다려 주세요.";
       worker=await createOCRWorker();
     }
 
     for(let i=0;i<files.length;i++){
       const file=files[i];
+
       $("uploadStatus").textContent=
         `${i+1}/${files.length}: ${file.name} 분석 중...`;
 
       try{
-        const text=await extractFile(file,worker);
-        allText+="\n"+text;
-        added+=mergeCandidates(parseWords(text));
+        const result=await extractFile(file,worker);
+        allText+="\n"+result.text;
+        added+=mergeCandidates(result.words);
       }catch(err){
         errors.push(file.name+": "+err.message);
       }
     }
 
     $("rawText").value=allText.trim();
+
     $("uploadStatus").textContent=
       `분석 완료! 새 단어 ${added}개.\n`+
       (errors.length?errors.join("\n")+"\n":"")+
@@ -651,7 +745,8 @@ $("files").onchange=async event=>{
         ?"단어가 인식되지 않았습니다. OCR 원문을 확인해 주세요."
         :"추출 결과를 확인하고 단어장에 저장하세요.");
   }catch(err){
-    $("uploadStatus").textContent="오류: "+err.message;
+    $("uploadStatus").textContent=
+      "분석 오류: "+err.message;
   }finally{
     if(worker)await worker.terminate();
     event.target.value="";
@@ -659,8 +754,11 @@ $("files").onchange=async event=>{
 };
 
 $("parseRaw").onclick=()=>{
-  const n=mergeCandidates(parseWords($("rawText").value));
-  $("uploadStatus").textContent=`다시 분석하여 ${n}개를 추가했습니다.`;
+  const n=mergeCandidates(
+    parseWords($("rawText").value)
+  );
+  $("uploadStatus").textContent=
+    `다시 분석하여 ${n}개를 추가했습니다.`;
 };
 
 $("addManual").onclick=()=>{
@@ -669,15 +767,19 @@ $("addManual").onclick=()=>{
     ko:$("addKo").value,
     pos:$("addPos").value
   };
-  if(!valid(w))return alert("영어와 뜻을 입력하세요.");
+
+  if(!valid(w))
+    return alert("영어와 뜻을 입력하세요.");
+
   if(!mergeCandidates([w]))
     return alert("이미 등록된 후보입니다.");
+
   $("addEn").value="";
   $("addKo").value="";
 };
 
 $("clearCandidates").onclick=()=>{
-  if(confirm("후보를 모두 비울까요?")){
+  if(confirm("추출 후보를 모두 비울까요?")){
     candidates=[];
     renderCandidates();
   }
@@ -685,18 +787,27 @@ $("clearCandidates").onclick=()=>{
 
 $("saveCandidates").onclick=()=>{
   const name=$("deckName").value.trim();
-  if(!name)return alert("단어장 이름을 입력하세요.");
-  if(!candidates.length)return alert("저장할 단어가 없습니다.");
+
+  if(!name)
+    return alert("단어장 이름을 입력하세요.");
+
+  if(!candidates.length)
+    return alert("저장할 단어가 없습니다.");
+
   if(candidates.some(w=>!valid(w)))
     return alert("영어와 뜻이 비어 있는 항목을 확인하세요.");
 
   const map=new Map(
-    (decks[name]||[]).map(w=>[w.en.toLowerCase(),normalize(w)])
+    (decks[name]||[]).map(w=>[
+      w.en.toLowerCase(),normalize(w)
+    ])
   );
+
   candidates.forEach(w=>{
     const n=normalize(w);
     map.set(n.en,n);
   });
+
   decks[name]=[...map.values()];
 
   if(persist()){
@@ -736,10 +847,14 @@ function renderLibrary(){
     const del=document.createElement("button");
     del.textContent="단어장 삭제";
     del.onclick=()=>{
-      if(!confirm(`${name} 단어장을 삭제할까요?`))return;
+      if(!confirm(`${name} 단어장을 삭제할까요?`))
+        return;
+
       delete decks[name];
+
       if(!Object.keys(decks).length)
         decks={"기본 단어장":DEFAULT};
+
       persist();
       updateDeckSelect();
       renderLibrary();
@@ -779,7 +894,10 @@ function renderLibrary(){
 
 $("export").onclick=()=>{
   const blob=new Blob([
-    JSON.stringify({format:"wordquest-v3",decks},null,2)
+    JSON.stringify({
+      format:"wordquest-v3",
+      decks
+    },null,2)
   ],{type:"application/json"});
 
   const url=URL.createObjectURL(blob);
@@ -796,6 +914,7 @@ $("import").onchange=async event=>{
 
   try{
     const data=JSON.parse(await file.text());
+
     if(data.format!=="wordquest-v3"||
        !data.decks||
        typeof data.decks!=="object"||
@@ -803,15 +922,22 @@ $("import").onchange=async event=>{
       throw Error("올바른 백업 파일이 아닙니다.");
 
     for(const [name,arr] of Object.entries(data.decks)){
-      if(!name.trim()||!Array.isArray(arr))continue;
+      if(!name.trim()||!Array.isArray(arr))
+        continue;
+
       const map=new Map(
-        (decks[name]||[]).filter(valid)
-          .map(w=>[w.en.toLowerCase(),normalize(w)])
+        (decks[name]||[])
+          .filter(valid)
+          .map(w=>[
+            w.en.toLowerCase(),normalize(w)
+          ])
       );
+
       arr.filter(valid).forEach(w=>{
         const n=normalize(w);
         map.set(n.en,n);
       });
+
       decks[name]=[...map.values()];
     }
 
@@ -822,6 +948,7 @@ $("import").onchange=async event=>{
   }catch(err){
     alert("가져오기 실패: "+err.message);
   }
+
   event.target.value="";
 };
 
@@ -838,7 +965,9 @@ let history=[];
 let score=0;
 let streak=0;
 
-function current(){return questions[index];}
+function current(){
+  return questions[index];
+}
 
 function updateStats(){
   $("score").textContent=score;
@@ -851,12 +980,17 @@ function updateStats(){
 
 function startGame(){
   const deck=decks[$("deckSelect").value]||[];
+
   const unique=[...new Map(
-    deck.filter(valid).map(w=>[w.en.toLowerCase(),w])
+    deck.filter(valid).map(w=>[
+      w.en.toLowerCase(),w
+    ])
   ).values()];
 
   if(unique.length<20)
-    return alert(`현재 단어 ${unique.length}개입니다. 20개 이상 필요합니다.`);
+    return alert(
+      `현재 단어 ${unique.length}개입니다. 20개 이상 필요합니다.`
+    );
 
   questions=shuffle(unique).slice(0,20);
   index=0;
@@ -867,6 +1001,7 @@ function startGame(){
   $("welcome").hidden=true;
   $("results").hidden=true;
   $("game").hidden=false;
+
   renderQuestion();
 }
 
@@ -883,10 +1018,12 @@ function renderQuestion(){
 
   $("question").textContent=
     mode==="type"?w.ko:w.en;
+
   $("prompt").textContent=
     mode==="type"
     ?"뜻을 보고 영어 단어 또는 숙어를 입력하세요."
     :"영어 표현의 뜻을 선택하세요.";
+
   $("posLabel").textContent=posText(w.pos);
 
   $("typing").hidden=mode!=="type";
@@ -894,17 +1031,18 @@ function renderQuestion(){
 
   if(mode==="choice"){
     const deck=decks[$("deckSelect").value]||[];
-    const others=shuffle(deck.filter(x=>
-      x.en!==w.en&&x.ko!==w.ko
-    ));
-    choices=shuffle([w,...others.slice(0,3)]);
+    const others=shuffle(
+      deck.filter(x=>
+        x.en!==w.en&&x.ko!==w.ko
+      )
+    );
 
-    if(choices.length<4){
-      alert("선택지를 만들 단어가 부족합니다.");
-      return;
-    }
+    choices=shuffle([
+      w,...others.slice(0,3)
+    ]);
 
     $("choices").replaceChildren();
+
     choices.forEach((x,i)=>{
       const b=document.createElement("button");
       b.textContent=x.ko;
@@ -912,6 +1050,7 @@ function renderQuestion(){
       $("choices").append(b);
     });
   }
+
   updateStats();
 }
 
@@ -924,17 +1063,24 @@ function finish(status,myAnswer,selected){
   answered=true;
 
   const w=current();
-  history.push({word:w,status,myAnswer,selected});
+
+  history.push({
+    word:w,status,myAnswer,selected
+  });
 
   if(status==="correct"){
     score+=10;
     streak++;
-  }else streak=0;
+  }else{
+    streak=0;
+  }
 
   const feedback=$("feedback");
   feedback.hidden=false;
   feedback.className=
-    "message "+(status==="correct"?"good":"bad");
+    "message "+(
+      status==="correct"?"good":"bad"
+    );
 
   let text=status==="correct"
     ?"정답! +10점 🎉"
@@ -945,70 +1091,100 @@ function finish(status,myAnswer,selected){
   text+="\n정답: "+describe(w);
 
   if(status==="wrong"){
-    text+="\n내 답: "+
-      (selected?describe(selected):myAnswer);
+    text+="\n내 답: "+(
+      selected
+        ?describe(selected)
+        :myAnswer
+    );
+
     if(!selected)
       text+="\n입력한 단어는 현재 단어장에서 뜻을 확인할 수 없습니다.";
   }
 
   feedback.textContent=text;
+
   $("answer").disabled=true;
   $("check").disabled=true;
 
   [...$("choices").children].forEach((b,i)=>{
     b.disabled=true;
-    if(choices[i].en===w.en)b.classList.add("correct");
-    if(selected&&choices[i].en===selected.en&&
-       status==="wrong")b.classList.add("wrong");
+
+    if(choices[i].en===w.en)
+      b.classList.add("correct");
+
+    if(selected&&
+       choices[i].en===selected.en&&
+       status==="wrong")
+      b.classList.add("wrong");
   });
 
   $("skip").hidden=true;
   $("next").hidden=false;
   $("next").textContent=
-    history.length===20?"결과 보기":"다음 문제";
+    history.length===20
+      ?"결과 보기"
+      :"다음 문제";
+
   updateStats();
 }
 
 function checkTyped(){
   if(answered||mode!=="type")return;
+
   const value=$("answer").value.trim();
-  if(!value)return alert("영어 단어를 입력하세요.");
+  if(!value)
+    return alert("영어 단어를 입력하세요.");
 
   const w=current();
-  const found=Object.values(decks).flat()
-    .find(x=>x.en.toLowerCase()===value.toLowerCase());
+
+  const found=Object.values(decks)
+    .flat()
+    .find(x=>
+      x.en.toLowerCase()===value.toLowerCase()
+    );
 
   finish(
     value.toLowerCase()===w.en.toLowerCase()
       ?"correct":"wrong",
-    value,found||null
+    value,
+    found||null
   );
 }
 
 function choose(i){
   if(answered)return;
+
   const selected=choices[i];
+
   finish(
-    selected.en===current().en?"correct":"wrong",
-    selected.ko,selected
+    selected.en===current().en
+      ?"correct":"wrong",
+    selected.ko,
+    selected
   );
 }
 
 function resultRow(r){
   const div=document.createElement("div");
   div.className="wordrow";
+
   const strong=document.createElement("strong");
   strong.textContent=describe(r.word);
   div.append(strong);
 
   if(r.status!=="correct"){
     const p=document.createElement("p");
-    p.textContent=r.status==="skipped"
+    p.textContent=
+      r.status==="skipped"
       ?"건너뜀"
-      :"내 답: "+(r.selected?
-        describe(r.selected):r.myAnswer);
+      :"내 답: "+(
+        r.selected
+          ?describe(r.selected)
+          :r.myAnswer
+      );
     div.append(p);
   }
+
   return div;
 }
 
@@ -1016,13 +1192,21 @@ function showResults(){
   $("game").hidden=true;
   $("results").hidden=false;
 
-  const good=history.filter(x=>x.status==="correct");
-  const bad=history.filter(x=>x.status==="wrong");
-  const skip=history.filter(x=>x.status==="skipped");
+  const good=history.filter(
+    x=>x.status==="correct"
+  );
+  const bad=history.filter(
+    x=>x.status==="wrong"
+  );
+  const skip=history.filter(
+    x=>x.status==="skipped"
+  );
 
   $("summary").textContent=
     `${score}점 / 200점\n`+
-    `정답 ${good.length}개 · 오답 ${bad.length}개 · 건너뜀 ${skip.length}개\n`+
+    `정답 ${good.length}개 · `+
+    `오답 ${bad.length}개 · `+
+    `건너뜀 ${skip.length}개\n`+
     `정답률 ${Math.round(good.length/20*100)}%`;
 
   [
@@ -1032,27 +1216,44 @@ function showResults(){
   ].forEach(([id,arr])=>{
     const root=$(id);
     root.replaceChildren();
-    if(!arr.length)root.textContent="없음";
-    else arr.forEach(r=>root.append(resultRow(r)));
+
+    if(!arr.length)
+      root.textContent="없음";
+    else
+      arr.forEach(r=>
+        root.append(resultRow(r))
+      );
   });
 }
 
 function nextQuestion(){
-  if(history.length===20)return showResults();
+  if(history.length===20)
+    return showResults();
+
   index++;
   renderQuestion();
 }
 
 function setMode(newMode){
   if(mode===newMode)return;
+
   if(!$("game").hidden&&history.length<20){
-    if(!confirm("모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?"))
-      return;
+    if(!confirm(
+      "모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?"
+    ))return;
   }
+
   mode=newMode;
-  $("typeMode").classList.toggle("active",mode==="type");
-  $("choiceMode").classList.toggle("active",mode==="choice");
-  if(!$("game").hidden)startGame();
+
+  $("typeMode").classList.toggle(
+    "active",mode==="type"
+  );
+  $("choiceMode").classList.toggle(
+    "active",mode==="choice"
+  );
+
+  if(!$("game").hidden)
+    startGame();
 }
 
 $("start").onclick=startGame;
@@ -1062,8 +1263,10 @@ $("skip").onclick=()=>finish("skipped","",null);
 $("next").onclick=nextQuestion;
 $("typeMode").onclick=()=>setMode("type");
 $("choiceMode").onclick=()=>setMode("choice");
+
 $("answer").onkeydown=e=>{
-  if(e.key==="Enter")checkTyped();
+  if(e.key==="Enter")
+    checkTyped();
 };
 
 updateDeckSelect();
