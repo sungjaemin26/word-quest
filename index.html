@@ -3,1274 +3,925 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WORD QUEST</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:15px;background:#eef3f9;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
-.app{max-width:760px;margin:auto;background:#fff;padding:20px;border-radius:18px;box-shadow:0 8px 30px #0001}
-h1{text-align:center;color:#2563eb;margin:5px}
-h2{font-size:21px}
-.subtitle{text-align:center;color:#64748b}
-nav,.row{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
-button,.filebtn{border:0;border-radius:10px;padding:12px 14px;background:#e2e8f0;color:#1e293b;font-size:14px;font-weight:bold;cursor:pointer}
-button.primary,.filebtn{background:#2563eb;color:white}
-button.active{background:#1e40af;color:white}
-button:disabled{opacity:.5}
-[hidden]{display:none!important}
-.panel{background:#f8fafc;border:1px solid #dbe3ee;border-radius:12px;padding:15px;margin:12px 0}
-.muted{color:#64748b;font-size:13px;line-height:1.7}
-.stats{display:flex;gap:8px}
-.stats div{flex:1;text-align:center;background:#eff6ff;padding:12px 4px;border-radius:10px;font-size:12px}
-.stats strong{display:block;font-size:23px;color:#1d4ed8}
-.question{text-align:center;font-size:28px;font-weight:bold;margin:25px 0;overflow-wrap:anywhere}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.choices button{min-height:60px;overflow-wrap:anywhere}
-.correct{background:#dcfce7!important;border:2px solid #16a34a!important}
-.wrong{background:#fee2e2!important;border:2px solid #dc2626!important}
-input[type=text],textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;margin:5px 0}
-textarea{min-height:150px}
-.message{background:#eff6ff;padding:12px;border-radius:10px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.good{background:#dcfce7}
-.bad{background:#fee2e2}
-.wordrow{padding:12px;border:1px solid #dbe3ee;border-radius:10px;margin:8px 0;overflow-wrap:anywhere}
-.fields{display:grid;grid-template-columns:1fr 1fr 110px;gap:8px}
-.fields label{font-size:12px}
-.progress{height:9px;background:#dbeafe;border-radius:9px;overflow:hidden}
-.progress div{height:100%;background:#2563eb}
-.filebtn{display:inline-block}
-.filebtn input{display:none}
-details{margin:12px 0}
+body{margin:0;padding:16px;background:#f1f5f9;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.container{max-width:700px;margin:15px auto;background:white;padding:22px;border-radius:18px;box-shadow:0 8px 25px #0001}
+h1{text-align:center;color:#2563eb;margin:0}
+.subtitle{text-align:center;color:#64748b;font-size:14px}
+.tabs,.modes{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:12px 15px;font-size:15px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.tab,.mode{background:#e2e8f0;color:#334155;flex:1}
+.active,.primary{background:#2563eb!important;color:white!important}
+.primary,.secondary{width:100%;margin:7px 0}
+.secondary{background:#e2e8f0;color:#334155}
+.danger{background:#fee2e2;color:#b91c1c}
+.small{padding:8px 12px;font-size:13px}
+.hidden{display:none!important}
+.stats{display:flex;justify-content:space-around;background:#eff6ff;border-radius:12px;padding:14px;margin:16px 0}
+.stat{text-align:center}
+.stat strong{display:block;color:#1d4ed8;font-size:24px}
+.stat span{font-size:12px;color:#64748b}
+.question{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:25px 12px;text-align:center;margin:15px 0}
+.question small{color:#64748b}
+.question h2{font-size:28px;overflow-wrap:anywhere}
+.pos{font-size:13px;color:#64748b}
+input,textarea,select{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px;background:white;color:#1e293b}
+textarea{min-height:190px;resize:vertical;line-height:1.6}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}
+.option{min-height:65px;background:#f1f5f9;color:#1e293b;overflow-wrap:anywhere}
+.option.correct{background:#dcfce7;color:#166534}
+.option.wrong{background:#fee2e2;color:#991b1b}
+.notice{padding:14px;border-radius:10px;background:#eff6ff;margin:13px 0;line-height:1.6;white-space:pre-wrap}
+.success{background:#dcfce7;color:#166534}
+.error{background:#fee2e2;color:#991b1b}
+.card{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0;overflow-wrap:anywhere}
+.card strong{color:#1d4ed8}
+.card p{margin:8px 0}
+.muted{color:#64748b;font-size:13px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid label{font-size:13px}
+.form-grid input,.form-grid select{margin-top:5px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+hr{border:0;border-top:1px solid #e2e8f0;margin:22px 0}
+details{margin:15px 0}
 summary{cursor:pointer;font-weight:bold}
-hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
-.preview{max-width:100%;max-height:300px;object-fit:contain;border-radius:10px}
-@media(max-width:520px){
-.app{padding:14px}
-.fields{grid-template-columns:1fr 1fr}
-.fields label:last-child{grid-column:span 2}
-.choices{grid-template-columns:1fr}
-.question{font-size:23px}
-}
+.badge{display:inline-block;background:#e2e8f0;border-radius:20px;padding:4px 9px;font-size:12px}
+@media(max-width:440px){.container{padding:15px}.question h2{font-size:24px}.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<main class="app">
+<div class="container">
 <h1>WORD QUEST</h1>
-<p class="subtitle">나만의 영어 단어 학습 게임</p>
+<p class="subtitle">나만의 영어 단어장과 20문제 학습 게임</p>
 
-<nav>
-<button data-tab="play" class="active">🎮 학습</button>
-<button data-tab="upload">📷 자료 추가</button>
-<button data-tab="library">📚 단어장</button>
-</nav>
+<div class="tabs">
+<button class="tab active" id="gameTab">게임</button>
+<button class="tab" id="bookTab">단어장</button>
+<button class="tab" id="importTab">텍스트 추가</button>
+</div>
 
-<section id="play">
+<section id="gamePage">
 <div class="stats">
-<div>점수<strong id="score">0</strong></div>
-<div>연속 정답<strong id="streak">0</strong></div>
-<div>진행<strong id="count">0/20</strong></div>
+<div class="stat"><strong id="score">0</strong><span>점수</span></div>
+<div class="stat"><strong id="streak">0</strong><span>연속 정답</span></div>
+<div class="stat"><strong id="progress">0/20</strong><span>진행 상황</span></div>
 </div>
 
-<div class="row">
-<button id="typeMode" class="active">뜻 → 영어</button>
-<button id="choiceMode">영어 → 뜻</button>
+<div class="modes">
+<button class="mode active" id="meaningMode">뜻 → 영어</button>
+<button class="mode" id="englishMode">영어 → 뜻</button>
 </div>
 
-<label>학습 단어장
-<select id="deckSelect"></select>
-</label>
-<button id="start" class="primary">새 20문제 시작</button>
-
-<div id="welcome" class="panel">
-단어장을 선택하고 게임을 시작하세요.
+<div id="playArea">
+<div class="question">
+<small id="questionLabel"></small>
+<h2 id="questionText"></h2>
+<div class="pos" id="questionPos"></div>
 </div>
 
-<div id="game" hidden>
-<div class="progress"><div id="bar"></div></div>
-<p id="progressText" class="muted"></p>
-
-<div class="panel">
-<p id="prompt" class="muted"></p>
-<div id="question" class="question"></div>
-<p id="posLabel" class="muted"></p>
+<div id="typingArea">
+<input id="answerInput" placeholder="영어 단어 또는 숙어를 입력하세요" autocomplete="off" autocapitalize="off">
+<button class="primary" id="checkButton">정답 확인</button>
 </div>
 
-<div id="typing">
-<input id="answer" type="text" placeholder="영어 단어 또는 숙어 입력" autocomplete="off" autocapitalize="off" spellcheck="false">
-<button id="check" class="primary">정답 확인</button>
+<div class="options hidden" id="options"></div>
+<div id="feedback" class="notice hidden"></div>
+<button class="primary hidden" id="nextButton">다음 문제</button>
+<button class="secondary" id="skipButton">건너뛰기</button>
 </div>
 
-<div id="choices" class="choices" hidden></div>
-<div id="feedback" class="message" hidden></div>
-
-<div class="row">
-<button id="skip">건너뛰기</button>
-<button id="next" class="primary" hidden>다음 문제</button>
-</div>
+<div id="resultArea" class="hidden">
+<h2>20문제 학습 결과</h2>
+<div class="notice" id="resultSummary"></div>
+<div id="resultList"></div>
+<button class="primary" id="restartButton">새로운 20문제 시작</button>
 </div>
 
-<div id="results" hidden>
-<h2>학습 결과</h2>
-<div id="summary" class="panel"></div>
-<h3>✅ 맞힌 단어</h3>
-<div id="correctList"></div>
-<h3>❌ 틀린 단어</h3>
-<div id="wrongList"></div>
-<h3>⏭️ 건너뛴 단어</h3>
-<div id="skippedList"></div>
-<button id="restart" class="primary">새 세트 시작</button>
-</div>
+<button class="secondary" id="resetButton">현재 세트 처음부터 다시 시작</button>
 </section>
 
-<section id="upload" hidden>
-<h2>사진·문서에서 단어 추출</h2>
-<p class="muted">
-JPG, PNG, WEBP, PDF, DOCX, TXT 지원.
-무료 OCR을 사용하며 전체 이미지와 좌우 영역을 비교합니다.
-인식 결과는 반드시 확인한 뒤 저장하세요.
-</p>
+<section id="bookPage" class="hidden">
+<h2>내 단어장</h2>
+<div class="notice" id="bookCount"></div>
 
-<label class="filebtn">
-파일 선택
-<input id="files" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx,.txt" multiple>
+<div class="form-grid">
+<label>영어 단어 / 숙어
+<input id="wordEn" placeholder="in light of">
 </label>
-
-<div id="uploadStatus" class="message">
-파일을 선택하면 분석을 시작합니다.
+<label>한국어 뜻
+<input id="wordKo" placeholder="~을 고려하여">
+</label>
 </div>
 
-<details>
-<summary>OCR 원문 확인 및 직접 수정</summary>
-<textarea id="rawText" placeholder="OCR로 읽은 글자가 표시됩니다."></textarea>
-<button id="parseRaw">수정한 텍스트 다시 분석</button>
-</details>
-
-<h3>추출한 단어: <span id="candidateCount">0</span>개</h3>
-<p class="muted">
-자동 추출 결과에서 영어·뜻·품사를 수정하거나 삭제할 수 있습니다.
-</p>
-<div id="candidates"></div>
-
-<h3>단어 직접 추가</h3>
-<div class="fields">
-<label>영어<input id="addEn" type="text"></label>
-<label>뜻<input id="addKo" type="text"></label>
 <label>품사
-<select id="addPos">
-<option value="?">미확인</option>
-<option value="n">n 명사</option>
-<option value="v">v 동사</option>
-<option value="a">a 형용사</option>
-<option value="ad">ad 부사</option>
+<select id="wordPos">
+<option value="">미확인 / 숙어</option>
+<option value="n">n · 명사</option>
+<option value="v">v · 동사</option>
+<option value="a">a · 형용사</option>
+<option value="ad">ad · 부사</option>
 </select>
 </label>
-</div>
-<div class="row">
-<button id="addManual">후보 추가</button>
-<button id="clearCandidates">후보 비우기</button>
+
+<div class="row" style="margin-top:10px">
+<button class="primary" id="saveWord">단어 저장</button>
+<button class="secondary" id="cancelEdit">입력 취소</button>
 </div>
 
 <hr>
-<label>저장할 단어장 이름
-<input id="deckName" type="text" placeholder="예: 수능 숙어">
-</label>
-<button id="saveCandidates" class="primary">단어장 저장</button>
+<input id="searchWord" placeholder="단어 또는 뜻 검색">
+<div id="wordList"></div>
+
+<hr>
+<button class="secondary" id="exportButton">단어장 텍스트 복사</button>
+<button class="danger" id="clearButton">내 단어장 전체 삭제</button>
 </section>
 
-<section id="library" hidden>
-<h2>내 단어장</h2>
-<p class="muted">
-단어장은 이 브라우저에 저장됩니다.
-브라우저 데이터 삭제에 대비해 JSON 백업을 권장합니다.
-</p>
-<div class="row">
-<button id="export">JSON 백업</button>
-<label class="filebtn">백업 가져오기
-<input id="import" type="file" accept=".json">
-</label>
+<section id="importPage" class="hidden">
+<h2>텍스트로 단어 추가</h2>
+<p class="muted">영어 표현과 한국어 뜻을 한 줄씩 붙여 넣으세요. 숙어와 여러 단어로 된 표현도 인식합니다.</p>
+
+<textarea id="importText" placeholder="proof 증거
+prove 증명하다
+in light of ~을 고려하여
+in spite of ~에도 불구하고
+due to ~때문에"></textarea>
+
+<button class="primary" id="parseButton">텍스트 분석하기</button>
+
+<details>
+<summary>지원하는 입력 형식 보기</summary>
+<div class="notice">proof 증거
+prove 증명하다
+in light of ~을 고려하여
+regardless of ~에 상관없이
+proof | 증거 | n
+prove, 증명하다, v
+
+영어와 뜻을 탭 또는 쉼표로 구분해도 됩니다.
+단, 영어와 한국어가 한 줄에 함께 있어야 합니다.</div>
+</details>
+
+<div id="importStatus" class="notice hidden"></div>
+
+<div id="previewArea" class="hidden">
+<h3 id="previewTitle">분석 결과</h3>
+<p class="muted">잘못 인식한 단어는 아래에서 직접 수정하거나 삭제하세요.</p>
+<div id="previewList"></div>
+<button class="primary" id="confirmImport">확인한 단어를 단어장에 저장</button>
 </div>
-<div id="libraryList"></div>
 </section>
-</main>
+
+<p class="subtitle">WORD QUEST · 데이터는 현재 브라우저에 저장됩니다.</p>
+</div>
 
 <script>
 "use strict";
 
-const $=id=>document.getElementById(id);
-const KEY="wordquest_decks_v3";
+// 기본 단어 20개
+const DEFAULT_WORDS = [
+{en:"various",ko:"다양한",pos:"a"},
+{en:"significant",ko:"중요한, 상당한",pos:"a"},
+{en:"contribute",ko:"기여하다",pos:"v"},
+{en:"accurate",ko:"정확한",pos:"a"},
+{en:"maintain",ko:"유지하다",pos:"v"},
+{en:"reluctant",ko:"꺼리는",pos:"a"},
+{en:"interpret",ko:"해석하다",pos:"v"},
+{en:"efficient",ko:"효율적인",pos:"a"},
+{en:"consequence",ko:"결과, 영향",pos:"n"},
+{en:"emerge",ko:"나타나다",pos:"v"},
+{en:"perspective",ko:"관점",pos:"n"},
+{en:"relevant",ko:"관련 있는",pos:"a"},
+{en:"potential",ko:"잠재적인",pos:"a"},
+{en:"alter",ko:"변경하다",pos:"v"},
+{en:"establish",ko:"확립하다",pos:"v"},
+{en:"scarce",ko:"부족한",pos:"a"},
+{en:"justify",ko:"정당화하다",pos:"v"},
+{en:"consume",ko:"소비하다",pos:"v"},
+{en:"evaluate",ko:"평가하다",pos:"v"},
+{en:"indicate",ko:"나타내다",pos:"v"}
+];
 
-const DEFAULT=[
-["various","다양한","a"],
-["significant","중요한, 상당한","a"],
-["contribute","기여하다","v"],
-["accurate","정확한","a"],
-["maintain","유지하다","v"],
-["reluctant","꺼리는","a"],
-["interpret","해석하다","v"],
-["efficient","효율적인","a"],
-["consequence","결과, 영향","n"],
-["emerge","나타나다","v"],
-["perspective","관점","n"],
-["relevant","관련 있는","a"],
-["potential","잠재적인","a"],
-["alter","바꾸다","v"],
-["establish","확립하다","v"],
-["scarce","부족한","a"],
-["justify","정당화하다","v"],
-["consume","소비하다","v"],
-["evaluate","평가하다","v"],
-["indicate","나타내다","v"]
-].map(([en,ko,pos])=>({en,ko,pos}));
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "wordQuestTextV1";
 
-let decks;
-try{
-  decks=JSON.parse(localStorage.getItem(KEY));
-  if(!decks||typeof decks!=="object"||Array.isArray(decks))
-    throw Error();
-}catch{
-  decks={"기본 단어장":DEFAULT};
-}
-if(!Object.keys(decks).length)
-  decks={"기본 단어장":DEFAULT};
+let words = loadWords();
+let previewWords = [];
+let editingIndex = -1;
+let mode = "meaning";
+let deck = [];
+let questionIndex = 0;
+let results = [];
+let score = 0;
+let streak = 0;
+let answered = false;
 
-function valid(w){
-  return w&&typeof w.en==="string"&&
-    typeof w.ko==="string"&&w.en.trim()&&w.ko.trim();
+function normalizeEn(text){
+ return String(text).trim().replace(/\s+/g," ").toLowerCase();
 }
-function normalize(w){
-  return {
-    en:w.en.trim().toLowerCase(),
-    ko:w.ko.trim(),
-    pos:["n","v","a","ad"].includes(w.pos)?w.pos:"?"
-  };
+
+function normalizeKo(text){
+ return String(text).trim().replace(/\s+/g," ");
 }
-function posText(p){
-  return {n:"명사",v:"동사",a:"형용사",ad:"부사","?":"품사 미확인"}[p]||"품사 미확인";
-}
-function shuffle(arr){
-  const a=[...arr];
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+
+function loadWords(){
+ try{
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved){
+   const parsed = JSON.parse(saved);
+   if(Array.isArray(parsed)) return parsed;
   }
-  return a;
-}
-function persist(){
-  try{
-    localStorage.setItem(KEY,JSON.stringify(decks));
-    return true;
-  }catch{
-    alert("브라우저 저장에 실패했습니다.");
-    return false;
-  }
+ }catch(e){
+  console.warn("저장된 단어장 읽기 실패",e);
+ }
+ return DEFAULT_WORDS.map(w=>({...w}));
 }
 
-function showTab(tab){
-  ["play","upload","library"].forEach(id=>{
-    $(id).hidden=id!==tab;
-  });
-  document.querySelectorAll("[data-tab]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.tab===tab);
-  });
-  if(tab==="library")renderLibrary();
-  if(tab==="play")updateDeckSelect();
-}
-document.querySelectorAll("[data-tab]").forEach(b=>{
-  b.onclick=()=>showTab(b.dataset.tab);
-});
-
-function updateDeckSelect(){
-  const select=$("deckSelect");
-  const old=select.value;
-  select.replaceChildren();
-  for(const [name,arr] of Object.entries(decks)){
-    const opt=document.createElement("option");
-    opt.value=name;
-    opt.textContent=`${name} (${arr.length}개)`;
-    select.append(opt);
-  }
-  if(decks[old])select.value=old;
+function saveStorage(){
+ try{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(words));
+  return true;
+ }catch(e){
+  alert("브라우저 저장에 실패했습니다. 저장 공간 또는 개인정보 보호 설정을 확인하세요.");
+  return false;
+ }
 }
 
-// =====================================
-// 무료 OCR 라이브러리
-// =====================================
-
-const LIB={
-  ocr:"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",
-  pdf:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
-  docx:"https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"
-};
-const loading={};
-
-function loadScript(type){
-  if(loading[type])return loading[type];
-  loading[type]=new Promise((resolve,reject)=>{
-    const s=document.createElement("script");
-    s.src=LIB[type];
-    s.onload=resolve;
-    s.onerror=()=>{
-      delete loading[type];
-      reject(Error("라이브러리 로딩 실패: "+type));
-    };
-    document.head.append(s);
-  });
-  return loading[type];
+function posName(pos){
+ return {n:"n · 명사",v:"v · 동사",a:"a · 형용사",ad:"ad · 부사"}[pos] || "미확인 / 숙어";
 }
 
-// =====================================
-// 영어·한국어 단어 분석
-// =====================================
-
-const englishPattern=/^[A-Za-z][A-Za-z '-]*$/;
-const koreanPattern=/[가-힣]/;
-
-function cleanLine(s){
-  return s.replace(/\s+/g," ").trim()
-    .replace(/^[•·▪●]\s*/,"");
+function shuffle(array){
+ const copy = [...array];
+ for(let i=copy.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [copy[i],copy[j]]=[copy[j],copy[i]];
+ }
+ return copy;
 }
 
-function makePair(en,ko){
-  en=cleanLine(en).replace(/^[\d.)]+\s*/,"");
-  ko=cleanLine(ko);
-
-  if(!englishPattern.test(en))return null;
-  if(!koreanPattern.test(ko))return null;
-  if(en.length>65||ko.length>150)return null;
-
-  let pos="?";
-  const match=ko.match(/\((n|v|a|ad|adj|adv)\)/i);
-  if(match){
-    pos=match[1].toLowerCase();
-    if(pos==="adj")pos="a";
-    if(pos==="adv")pos="ad";
-    ko=ko.replace(match[0],"").trim();
-  }
-  return {en:en.toLowerCase(),ko,pos};
+function showPage(page){
+ for(const p of ["game","book","import"]){
+  $(p+"Page").classList.toggle("hidden",p!==page);
+  $(p+"Tab").classList.toggle("active",p===page);
+ }
+ if(page==="book") renderBook();
 }
 
-function parseSameLine(line){
-  const m=line.match(
-    /^([A-Za-z][A-Za-z '-]*?)\s*(?:[:|–—-]\s*|\s+)([~∼\-]?\s*[가-힣].*)$/
-  );
-  if(!m)return null;
-  return makePair(m[1],m[2]);
+$("gameTab").onclick=()=>showPage("game");
+$("bookTab").onclick=()=>showPage("book");
+$("importTab").onclick=()=>showPage("import");
+
+// ===================================
+// 텍스트 자동 분리
+// ===================================
+
+// 영어 단어, 공백, 하이픈, 아포스트로피로 된 표현
+const ENGLISH_PATTERN =
+ /^([A-Za-z][A-Za-z\s'’\-]*?)(?=\s*[가-힣~])/;
+
+// 한 줄에 영어 + 한국어가 들어있는지 확인
+function parseLine(line){
+ let raw=line.trim();
+
+ if(!raw) return null;
+
+ // 목록 번호 제거: 1. proof 증거
+ raw=raw.replace(/^\s*(?:\d+[.)]|[-•*])\s*/,"");
+
+ let en="",ko="",pos="";
+
+ // 구분자 | 또는 탭 우선
+ let parts=null;
+
+ if(raw.includes("|")){
+  parts=raw.split("|").map(s=>s.trim());
+ }else if(raw.includes("\t")){
+  parts=raw.split(/\t+/).map(s=>s.trim());
+ }else if(/^[A-Za-z][^,]*,\s*[가-힣~]/.test(raw)){
+  parts=raw.split(",").map(s=>s.trim());
+ }
+
+ if(parts && parts.length>=2){
+  en=parts[0];
+  ko=parts[1];
+  pos=(parts[2]||"").toLowerCase();
+ }else{
+  // 영어 부분과 한국어 부분 사이에서 분리
+  const match=raw.match(ENGLISH_PATTERN);
+  if(!match) return null;
+
+  en=match[1].trim();
+  ko=raw.slice(match[0].length).trim();
+ }
+
+ // 영어 표현 뒤에 붙은 구분 기호 제거
+ en=en.replace(/[\s:：\-–]+$/,"").trim();
+ ko=ko.replace(/^[:：\-–\s]+/,"").trim();
+
+ if(!en || !ko) return null;
+
+ // 영어 표현에 한글이나 숫자 등이 섞이면 제외
+ if(!/^[A-Za-z][A-Za-z\s'’\-]*$/.test(en)) return null;
+
+ // 한국어 뜻이 없는 줄은 제외
+ if(!/[가-힣]/.test(ko)) return null;
+
+ // 불필요한 품사 값 제거
+ if(!["n","v","a","ad"].includes(pos)) pos="";
+
+ return {en:normalizeEn(en),ko:normalizeKo(ko),pos};
 }
 
-function parseWords(text){
-  const lines=text.split(/\r?\n/)
-    .map(cleanLine).filter(Boolean);
+function parseText(text){
+ const lines=text.replace(/\r/g,"").split("\n");
+ const found=[];
+ const failed=[];
+ const seen=new Set();
 
-  const output=[];
-  let pending=null;
+ for(const line of lines){
+  if(!line.trim()) continue;
 
-  for(const line of lines){
-    const same=parseSameLine(line);
-    if(same){
-      output.push(same);
-      pending=null;
-      continue;
-    }
+  const word=parseLine(line);
 
-    if(englishPattern.test(line)){
-      pending=line;
-      continue;
-    }
-
-    if(pending&&koreanPattern.test(line)){
-      const pair=makePair(pending,line);
-      if(pair)output.push(pair);
-      pending=null;
-      continue;
-    }
-
-    pending=null;
+  if(!word){
+   failed.push(line.trim());
+   continue;
   }
 
-  const map=new Map();
-  output.forEach(w=>{
-    if(!map.has(w.en))map.set(w.en,w);
-  });
-  return [...map.values()];
+  const key=normalizeEn(word.en);
+  if(seen.has(key)) continue;
+
+  seen.add(key);
+  found.push(word);
+ }
+
+ return {found,failed};
 }
 
-// =====================================
-// 이미지 전처리
-// =====================================
-
-function drawRegion(source,x,y,w,h,scale=2,enhance=false){
-  const canvas=document.createElement("canvas");
-  canvas.width=Math.max(1,Math.round(w*scale));
-  canvas.height=Math.max(1,Math.round(h*scale));
-
-  const ctx=canvas.getContext("2d",{
-    willReadFrequently:true
-  });
-
-  ctx.fillStyle="#fff";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.imageSmoothingEnabled=true;
-  ctx.imageSmoothingQuality="high";
-  ctx.drawImage(
-    source,x,y,w,h,
-    0,0,canvas.width,canvas.height
-  );
-
-  if(enhance){
-    const image=ctx.getImageData(
-      0,0,canvas.width,canvas.height
-    );
-    const d=image.data;
-
-    // 밝기 및 대비 향상
-    for(let i=0;i<d.length;i+=4){
-      const gray=
-        d[i]*0.299+
-        d[i+1]*0.587+
-        d[i+2]*0.114;
-
-      const contrast=(gray-128)*1.45+128;
-      const v=Math.max(0,Math.min(255,contrast));
-
-      d[i]=v;
-      d[i+1]=v;
-      d[i+2]=v;
-    }
-    ctx.putImageData(image,0,0);
-  }
-  return canvas;
+function makeField(label,value,onChange){
+ const wrap=document.createElement("label");
+ wrap.textContent=label;
+ const input=document.createElement("input");
+ input.value=value;
+ input.addEventListener("input",()=>onChange(input.value));
+ wrap.appendChild(input);
+ return wrap;
 }
 
-// =====================================
-// OCR 실행 및 비교
-// =====================================
-
-async function createOCRWorker(){
-  await loadScript("ocr");
-  return await Tesseract.createWorker("eng+kor");
+function makePosSelect(value,onChange){
+ const select=document.createElement("select");
+ for(const [v,label] of [
+  ["","미확인 / 숙어"],
+  ["n","n · 명사"],
+  ["v","v · 동사"],
+  ["a","a · 형용사"],
+  ["ad","ad · 부사"]
+ ]){
+  const option=document.createElement("option");
+  option.value=v;
+  option.textContent=label;
+  select.appendChild(option);
+ }
+ select.value=value||"";
+ select.onchange=()=>onChange(select.value);
+ return select;
 }
 
-async function recognize(worker,canvas){
-  const result=await worker.recognize(canvas);
-  return result.data.text||"";
-}
+function renderPreview(){
+ const list=$("previewList");
+ list.replaceChildren();
 
-function scoreOCR(text){
-  const pairs=parseWords(text);
-  const englishChars=(text.match(/[A-Za-z]/g)||[]).length;
-  const koreanChars=(text.match(/[가-힣]/g)||[]).length;
+ $("previewTitle").textContent=
+  "추출한 단어: "+previewWords.length+"개";
 
-  // 단어쌍을 많이 찾고 양쪽 언어가 함께 읽힌 결과를 우선
-  return pairs.length*100+
-    Math.min(englishChars,koreanChars)*0.1;
-}
+ previewWords.forEach((word,index)=>{
+  const card=document.createElement("div");
+  card.className="card";
 
-async function recognizeImage(source,worker){
-  const w=source.width;
-  const h=source.height;
+  const grid=document.createElement("div");
+  grid.className="form-grid";
 
-  // 1. 전체 이미지 원본
-  const whole=drawRegion(source,0,0,w,h,2,false);
-  const wholeText=await recognize(worker,whole);
-
-  // 2. 전체 이미지 대비 향상
-  const enhanced=drawRegion(source,0,0,w,h,2,true);
-  const enhancedText=await recognize(worker,enhanced);
-
-  // 3. 좌우 분리: 중앙을 조금 겹치게 잘라
-  // 경계에 걸친 글자가 잘리지 않도록 함
-  const overlap=w*0.08;
-
-  const left=drawRegion(
-    source,0,0,w/2+overlap,h,2,true
-  );
-  const right=drawRegion(
-    source,w/2-overlap,0,w/2+overlap,h,2,true
+  grid.append(
+   makeField("영어",word.en,v=>word.en=v),
+   makeField("뜻",word.ko,v=>word.ko=v)
   );
 
-  const leftText=await recognize(worker,left);
-  const rightText=await recognize(worker,right);
-  const columnText=leftText+"\n"+rightText;
-
-  // 4. 가장 유용한 OCR 결과 선택
-  const results=[
-    {name:"전체 원본",text:wholeText},
-    {name:"전체 대비 향상",text:enhancedText},
-    {name:"좌우 분리",text:columnText}
-  ];
-
-  results.sort((a,b)=>scoreOCR(b.text)-scoreOCR(a.text));
-
-  // 서로 다른 결과에서 발견된 단어도 병합
-  const merged=new Map();
-  for(const result of results){
-    for(const word of parseWords(result.text)){
-      if(!merged.has(word.en))
-        merged.set(word.en,word);
-    }
-  }
-
-  return {
-    text:results[0].text,
-    words:[...merged.values()],
-    method:results[0].name
-  };
-}
-
-async function imageFromFile(file){
-  const url=URL.createObjectURL(file);
-  try{
-    const img=new Image();
-    await new Promise((resolve,reject)=>{
-      img.onload=resolve;
-      img.onerror=reject;
-      img.src=url;
-    });
-    return img;
-  }finally{
-    URL.revokeObjectURL(url);
-  }
-}
-
-// =====================================
-// PDF 및 문서 처리
-// =====================================
-
-async function extractPDF(file,worker){
-  await loadScript("pdf");
-  pdfjsLib.GlobalWorkerOptions.workerSrc=
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-  const pdf=await pdfjsLib.getDocument({
-    data:new Uint8Array(await file.arrayBuffer())
-  }).promise;
-
-  let allText="";
-  const allWords=[];
-
-  for(let i=1;i<=pdf.numPages;i++){
-    $("uploadStatus").textContent=
-      `PDF ${i}/${pdf.numPages}페이지 분석 중...`;
-
-    const page=await pdf.getPage(i);
-    const content=await page.getTextContent();
-
-    let text="";
-    let previousY=null;
-
-    for(const item of content.items){
-      const y=item.transform?.[5];
-      if(previousY!==null&&Math.abs(y-previousY)>3)
-        text+="\n";
-      text+=item.str+" ";
-      previousY=y;
-    }
-
-    if(parseWords(text).length){
-      allText+=text+"\n";
-      allWords.push(...parseWords(text));
-    }else{
-      const viewport=page.getViewport({scale:2});
-      const canvas=document.createElement("canvas");
-      canvas.width=Math.ceil(viewport.width);
-      canvas.height=Math.ceil(viewport.height);
-
-      await page.render({
-        canvasContext:canvas.getContext("2d"),
-        viewport
-      }).promise;
-
-      const result=await recognizeImage(canvas,worker);
-      allText+=result.text+"\n";
-      allWords.push(...result.words);
-    }
-  }
-
-  return {text:allText,words:allWords};
-}
-
-async function extractFile(file,worker){
-  const name=file.name.toLowerCase();
-
-  if(name.endsWith(".txt")){
-    const text=await file.text();
-    return {text,words:parseWords(text)};
-  }
-
-  if(name.endsWith(".docx")){
-    await loadScript("docx");
-    const result=await mammoth.extractRawText({
-      arrayBuffer:await file.arrayBuffer()
-    });
-    return {
-      text:result.value,
-      words:parseWords(result.value)
-    };
-  }
-
-  if(name.endsWith(".pdf"))
-    return await extractPDF(file,worker);
-
-  if(/\.(jpg|jpeg|png|webp)$/.test(name)){
-    const img=await imageFromFile(file);
-    return await recognizeImage(img,worker);
-  }
-
-  throw Error("지원하지 않는 파일입니다.");
-}
-
-// =====================================
-// 후보 단어 관리
-// =====================================
-
-let candidates=[];
-
-function mergeCandidates(items){
-  const seen=new Set(
-    candidates.map(w=>w.en.toLowerCase())
+  const label=document.createElement("label");
+  label.textContent="품사";
+  label.appendChild(
+   makePosSelect(word.pos,v=>word.pos=v)
   );
-  let count=0;
 
-  for(const w of items){
-    if(!valid(w))continue;
-    const n=normalize(w);
-    if(!seen.has(n.en)){
-      candidates.push(n);
-      seen.add(n.en);
-      count++;
-    }
-  }
-
-  renderCandidates();
-  return count;
-}
-
-function makeInput(value,callback){
-  const input=document.createElement("input");
-  input.type="text";
-  input.value=value;
-  input.oninput=()=>callback(input.value);
-  return input;
-}
-
-function renderCandidates(){
-  const root=$("candidates");
-  root.replaceChildren();
-  $("candidateCount").textContent=candidates.length;
-
-  candidates.forEach((w,i)=>{
-    const row=document.createElement("div");
-    row.className="wordrow";
-
-    const fields=document.createElement("div");
-    fields.className="fields";
-
-    const en=document.createElement("label");
-    en.textContent="영어";
-    en.append(makeInput(w.en,v=>w.en=v));
-
-    const ko=document.createElement("label");
-    ko.textContent="뜻";
-    ko.append(makeInput(w.ko,v=>w.ko=v));
-
-    const pl=document.createElement("label");
-    pl.textContent="품사";
-
-    const select=document.createElement("select");
-    ["?","n","v","a","ad"].forEach(p=>{
-      const opt=document.createElement("option");
-      opt.value=p;
-      opt.textContent=p==="?"?"미확인":p+" "+posText(p);
-      select.append(opt);
-    });
-    select.value=w.pos;
-    select.onchange=()=>w.pos=select.value;
-    pl.append(select);
-
-    fields.append(en,ko,pl);
-
-    const del=document.createElement("button");
-    del.textContent="삭제";
-    del.onclick=()=>{
-      candidates.splice(i,1);
-      renderCandidates();
-    };
-
-    row.append(fields,del);
-    root.append(row);
-  });
-}
-
-$("files").onchange=async event=>{
-  const files=[...event.target.files];
-  if(!files.length)return;
-
-  let worker=null;
-  let added=0;
-  let allText="";
-  const errors=[];
-
-  try{
-    const needsOCR=files.some(f=>
-      /\.(jpg|jpeg|png|webp|pdf)$/i.test(f.name)
-    );
-
-    if(needsOCR){
-      $("uploadStatus").textContent=
-        "OCR 엔진 준비 중... 잠시 기다려 주세요.";
-      worker=await createOCRWorker();
-    }
-
-    for(let i=0;i<files.length;i++){
-      const file=files[i];
-
-      $("uploadStatus").textContent=
-        `${i+1}/${files.length}: ${file.name} 분석 중...`;
-
-      try{
-        const result=await extractFile(file,worker);
-        allText+="\n"+result.text;
-        added+=mergeCandidates(result.words);
-      }catch(err){
-        errors.push(file.name+": "+err.message);
-      }
-    }
-
-    $("rawText").value=allText.trim();
-
-    $("uploadStatus").textContent=
-      `분석 완료! 새 단어 ${added}개.\n`+
-      (errors.length?errors.join("\n")+"\n":"")+
-      (added===0
-        ?"단어가 인식되지 않았습니다. OCR 원문을 확인해 주세요."
-        :"추출 결과를 확인하고 단어장에 저장하세요.");
-  }catch(err){
-    $("uploadStatus").textContent=
-      "분석 오류: "+err.message;
-  }finally{
-    if(worker)await worker.terminate();
-    event.target.value="";
-  }
-};
-
-$("parseRaw").onclick=()=>{
-  const n=mergeCandidates(
-    parseWords($("rawText").value)
-  );
-  $("uploadStatus").textContent=
-    `다시 분석하여 ${n}개를 추가했습니다.`;
-};
-
-$("addManual").onclick=()=>{
-  const w={
-    en:$("addEn").value,
-    ko:$("addKo").value,
-    pos:$("addPos").value
+  const del=document.createElement("button");
+  del.className="danger small";
+  del.textContent="삭제";
+  del.onclick=()=>{
+   previewWords.splice(index,1);
+   renderPreview();
   };
 
-  if(!valid(w))
-    return alert("영어와 뜻을 입력하세요.");
+  card.append(grid,label,del);
+  list.appendChild(card);
+ });
+}
 
-  if(!mergeCandidates([w]))
-    return alert("이미 등록된 후보입니다.");
+$("parseButton").onclick=()=>{
+ const text=$("importText").value;
+ const {found,failed}=parseText(text);
 
-  $("addEn").value="";
-  $("addKo").value="";
+ previewWords=found;
+ $("previewArea").classList.toggle("hidden",found.length===0);
+
+ const status=$("importStatus");
+ status.classList.remove("hidden");
+ status.textContent=
+  "분석 완료: "+found.length+"개 인식, "+
+  failed.length+"개 줄 인식 실패.\n"+
+  "저장 전에 추출 결과를 확인하세요.";
+
+ if(failed.length){
+  const details=document.createElement("details");
+  const summary=document.createElement("summary");
+  summary.textContent="인식하지 못한 줄 보기";
+  const pre=document.createElement("div");
+  pre.className="notice";
+  pre.textContent=failed.join("\n");
+  details.append(summary,pre);
+  status.appendChild(details);
+ }
+
+ renderPreview();
 };
 
-$("clearCandidates").onclick=()=>{
-  if(confirm("추출 후보를 모두 비울까요?")){
-    candidates=[];
-    renderCandidates();
+$("confirmImport").onclick=()=>{
+ let added=0,updated=0,invalid=0;
+
+ for(const entry of previewWords){
+  const en=normalizeEn(entry.en);
+  const ko=normalizeKo(entry.ko);
+  const pos=entry.pos||"";
+
+  if(!en||!ko||!/[가-힣]/.test(ko)||
+     !/^[a-z][a-z\s'’\-]*$/i.test(en)){
+   invalid++;
+   continue;
   }
-};
 
-$("saveCandidates").onclick=()=>{
-  const name=$("deckName").value.trim();
-
-  if(!name)
-    return alert("단어장 이름을 입력하세요.");
-
-  if(!candidates.length)
-    return alert("저장할 단어가 없습니다.");
-
-  if(candidates.some(w=>!valid(w)))
-    return alert("영어와 뜻이 비어 있는 항목을 확인하세요.");
-
-  const map=new Map(
-    (decks[name]||[]).map(w=>[
-      w.en.toLowerCase(),normalize(w)
-    ])
+  const index=words.findIndex(
+   w=>normalizeEn(w.en)===en
   );
 
-  candidates.forEach(w=>{
-    const n=normalize(w);
-    map.set(n.en,n);
-  });
-
-  decks[name]=[...map.values()];
-
-  if(persist()){
-    candidates=[];
-    renderCandidates();
-    $("deckName").value="";
-    updateDeckSelect();
-    $("deckSelect").value=name;
-    alert("단어장 저장 완료!");
-    showTab("library");
+  if(index>=0){
+   words[index]={en,ko,pos};
+   updated++;
+  }else{
+   words.push({en,ko,pos});
+   added++;
   }
+ }
+
+ saveStorage();
+ alert(
+  "새 단어 "+added+"개 추가\n"+
+  "기존 단어 "+updated+"개 업데이트\n"+
+  "유효하지 않은 항목 "+invalid+"개"
+ );
+
+ previewWords=[];
+ $("previewArea").classList.add("hidden");
+ $("importText").value="";
+ $("importStatus").classList.add("hidden");
+
+ showPage("book");
 };
 
-// =====================================
-// 단어장 관리
-// =====================================
+// ===================================
+// 단어장
+// ===================================
 
-function renderLibrary(){
-  const root=$("libraryList");
-  root.replaceChildren();
+function renderBook(){
+ $("bookCount").textContent=
+  "현재 저장된 단어: "+words.length+"개";
 
-  for(const [name,words] of Object.entries(decks)){
-    const panel=document.createElement("div");
-    panel.className="panel";
+ const query=normalizeKo($("searchWord").value).toLowerCase();
+ const list=$("wordList");
+ list.replaceChildren();
 
-    const title=document.createElement("h3");
-    title.textContent=`${name} (${words.length}개)`;
+ const filtered=words.map((word,index)=>({word,index}))
+  .filter(({word})=>
+   word.en.toLowerCase().includes(query)||
+   word.ko.toLowerCase().includes(query)
+  );
 
-    const use=document.createElement("button");
-    use.textContent="이 단어장 학습";
-    use.onclick=()=>{
-      showTab("play");
-      $("deckSelect").value=name;
-      startGame();
-    };
+ if(!filtered.length){
+  list.textContent="검색 결과가 없습니다.";
+  return;
+ }
 
-    const del=document.createElement("button");
-    del.textContent="단어장 삭제";
-    del.onclick=()=>{
-      if(!confirm(`${name} 단어장을 삭제할까요?`))
-        return;
+ filtered.forEach(({word,index})=>{
+  const card=document.createElement("div");
+  card.className="card";
 
-      delete decks[name];
+  const name=document.createElement("strong");
+  name.textContent=word.en;
 
-      if(!Object.keys(decks).length)
-        decks={"기본 단어장":DEFAULT};
+  const meaning=document.createElement("p");
+  meaning.textContent=word.ko;
 
-      persist();
-      updateDeckSelect();
-      renderLibrary();
-    };
+  const pos=document.createElement("span");
+  pos.className="badge";
+  pos.textContent=posName(word.pos);
 
-    const details=document.createElement("details");
-    const summary=document.createElement("summary");
-    summary.textContent="단어 목록 보기";
-    details.append(summary);
+  const row=document.createElement("div");
+  row.className="row";
+  row.style.marginTop="10px";
 
-    words.forEach((w,i)=>{
-      const row=document.createElement("div");
-      row.className="wordrow";
+  const edit=document.createElement("button");
+  edit.className="secondary small";
+  edit.textContent="수정";
+  edit.onclick=()=>{
+   editingIndex=index;
+   $("wordEn").value=word.en;
+   $("wordKo").value=word.ko;
+   $("wordPos").value=word.pos||"";
+   $("saveWord").textContent="수정 내용 저장";
+   $("wordEn").scrollIntoView({behavior:"smooth"});
+  };
 
-      const span=document.createElement("span");
-      span.textContent=
-        `${w.en} (${posText(w.pos)}) — ${w.ko}`;
+  const del=document.createElement("button");
+  del.className="danger small";
+  del.textContent="삭제";
+  del.onclick=()=>{
+   if(!confirm(word.en+" 단어를 삭제할까요?")) return;
+   words.splice(index,1);
+   saveStorage();
+   cancelEdit();
+   renderBook();
+  };
 
-      const remove=document.createElement("button");
-      remove.textContent="삭제";
-      remove.style.marginLeft="10px";
-      remove.onclick=()=>{
-        words.splice(i,1);
-        persist();
-        updateDeckSelect();
-        renderLibrary();
-      };
-
-      row.append(span,remove);
-      details.append(row);
-    });
-
-    panel.append(title,use,del,details);
-    root.append(panel);
-  }
+  row.append(edit,del);
+  card.append(name,meaning,pos,row);
+  list.appendChild(card);
+ });
 }
 
-$("export").onclick=()=>{
-  const blob=new Blob([
-    JSON.stringify({
-      format:"wordquest-v3",
-      decks
-    },null,2)
-  ],{type:"application/json"});
-
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="word-quest-backup.json";
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-};
-
-$("import").onchange=async event=>{
-  const file=event.target.files[0];
-  if(!file)return;
-
-  try{
-    const data=JSON.parse(await file.text());
-
-    if(data.format!=="wordquest-v3"||
-       !data.decks||
-       typeof data.decks!=="object"||
-       Array.isArray(data.decks))
-      throw Error("올바른 백업 파일이 아닙니다.");
-
-    for(const [name,arr] of Object.entries(data.decks)){
-      if(!name.trim()||!Array.isArray(arr))
-        continue;
-
-      const map=new Map(
-        (decks[name]||[])
-          .filter(valid)
-          .map(w=>[
-            w.en.toLowerCase(),normalize(w)
-          ])
-      );
-
-      arr.filter(valid).forEach(w=>{
-        const n=normalize(w);
-        map.set(n.en,n);
-      });
-
-      decks[name]=[...map.values()];
-    }
-
-    persist();
-    updateDeckSelect();
-    renderLibrary();
-    alert("백업 가져오기 완료!");
-  }catch(err){
-    alert("가져오기 실패: "+err.message);
-  }
-
-  event.target.value="";
-};
-
-// =====================================
-// 20문제 게임
-// =====================================
-
-let mode="type";
-let questions=[];
-let index=0;
-let answered=false;
-let choices=[];
-let history=[];
-let score=0;
-let streak=0;
-
-function current(){
-  return questions[index];
+function cancelEdit(){
+ editingIndex=-1;
+ $("wordEn").value="";
+ $("wordKo").value="";
+ $("wordPos").value="";
+ $("saveWord").textContent="단어 저장";
 }
+
+$("cancelEdit").onclick=cancelEdit;
+
+$("saveWord").onclick=()=>{
+ const en=normalizeEn($("wordEn").value);
+ const ko=normalizeKo($("wordKo").value);
+ const pos=$("wordPos").value;
+
+ if(!en||!ko){
+  alert("영어와 뜻을 모두 입력하세요.");
+  return;
+ }
+
+ if(!/^[a-z][a-z\s'’\-]*$/i.test(en)){
+  alert("영어 단어 또는 숙어를 확인하세요.");
+  return;
+ }
+
+ const duplicate=words.findIndex(
+  (w,i)=>normalizeEn(w.en)===en&&i!==editingIndex
+ );
+
+ if(duplicate>=0){
+  alert("이미 단어장에 있는 표현입니다.");
+  return;
+ }
+
+ if(editingIndex>=0){
+  words[editingIndex]={en,ko,pos};
+ }else{
+  words.push({en,ko,pos});
+ }
+
+ saveStorage();
+ cancelEdit();
+ renderBook();
+};
+
+$("searchWord").oninput=renderBook;
+
+$("clearButton").onclick=()=>{
+ if(!confirm("단어장 전체를 삭제할까요? 복구할 수 없습니다.")) return;
+ words=[];
+ saveStorage();
+ cancelEdit();
+ renderBook();
+};
+
+$("exportButton").onclick=async()=>{
+ const text=words.map(w=>
+  w.en+" | "+w.ko+" | "+(w.pos||"")
+ ).join("\n");
+
+ try{
+  await navigator.clipboard.writeText(text);
+  alert("단어장 텍스트를 복사했습니다.");
+ }catch(e){
+  prompt("아래 텍스트를 복사하세요.",text);
+ }
+};
+
+// ===================================
+// 게임
+// ===================================
 
 function updateStats(){
-  $("score").textContent=score;
-  $("streak").textContent=streak;
-  $("count").textContent=`${history.length}/20`;
-  $("bar").style.width=`${history.length*5}%`;
-  $("progressText").textContent=
-    `${Math.min(index+1,20)} / 20 문제`;
+ $("score").textContent=score;
+ $("streak").textContent=streak;
+ $("progress").textContent=
+  Math.min(questionIndex+(answered?1:0),deck.length)+
+  "/"+deck.length;
 }
 
 function startGame(){
-  const deck=decks[$("deckSelect").value]||[];
+ if(words.length===0){
+  alert("단어장에 단어를 먼저 추가하세요.");
+  showPage("import");
+  return;
+ }
 
-  const unique=[...new Map(
-    deck.filter(valid).map(w=>[
-      w.en.toLowerCase(),w
-    ])
-  ).values()];
+ deck=shuffle(words).slice(0,20).map(w=>({...w}));
+ questionIndex=0;
+ results=[];
+ score=0;
+ streak=0;
+ answered=false;
 
-  if(unique.length<20)
-    return alert(
-      `현재 단어 ${unique.length}개입니다. 20개 이상 필요합니다.`
-    );
-
-  questions=shuffle(unique).slice(0,20);
-  index=0;
-  history=[];
-  score=0;
-  streak=0;
-
-  $("welcome").hidden=true;
-  $("results").hidden=true;
-  $("game").hidden=false;
-
-  renderQuestion();
+ $("resultArea").classList.add("hidden");
+ $("playArea").classList.remove("hidden");
+ showPage("game");
+ renderQuestion();
 }
 
 function renderQuestion(){
-  answered=false;
-  const w=current();
+ if(questionIndex>=deck.length){
+  renderResults();
+  return;
+ }
 
-  $("feedback").hidden=true;
-  $("next").hidden=true;
-  $("skip").hidden=false;
-  $("answer").value="";
-  $("answer").disabled=false;
-  $("check").disabled=false;
+ answered=false;
+ const word=deck[questionIndex];
 
-  $("question").textContent=
-    mode==="type"?w.ko:w.en;
+ $("feedback").className="notice hidden";
+ $("feedback").textContent="";
+ $("nextButton").classList.add("hidden");
+ $("skipButton").classList.remove("hidden");
 
-  $("prompt").textContent=
-    mode==="type"
-    ?"뜻을 보고 영어 단어 또는 숙어를 입력하세요."
-    :"영어 표현의 뜻을 선택하세요.";
+ $("questionText").textContent=
+  mode==="meaning"?word.ko:word.en;
 
-  $("posLabel").textContent=posText(w.pos);
+ $("questionLabel").textContent=
+  mode==="meaning"?
+  "뜻에 해당하는 영어 표현을 입력하세요.":
+  "영어 표현의 뜻을 고르세요.";
 
-  $("typing").hidden=mode!=="type";
-  $("choices").hidden=mode!=="choice";
+ $("questionPos").textContent=posName(word.pos);
 
-  if(mode==="choice"){
-    const deck=decks[$("deckSelect").value]||[];
-    const others=shuffle(
-      deck.filter(x=>
-        x.en!==w.en&&x.ko!==w.ko
-      )
-    );
+ $("typingArea").classList.toggle("hidden",mode!=="meaning");
+ $("options").classList.toggle("hidden",mode==="meaning");
 
-    choices=shuffle([
-      w,...others.slice(0,3)
-    ]);
+ $("answerInput").value="";
+ $("answerInput").disabled=false;
+ $("checkButton").disabled=false;
 
-    $("choices").replaceChildren();
+ if(mode==="english"){
+  renderOptions(word);
+ }
 
-    choices.forEach((x,i)=>{
-      const b=document.createElement("button");
-      b.textContent=x.ko;
-      b.onclick=()=>choose(i);
-      $("choices").append(b);
-    });
-  }
-
-  updateStats();
+ updateStats();
 }
 
-function describe(w){
-  return `${w.en} (${posText(w.pos)}) — ${w.ko}`;
-}
+function renderOptions(word){
+ const box=$("options");
+ box.replaceChildren();
 
-function finish(status,myAnswer,selected){
-  if(answered)return;
-  answered=true;
+ const others=shuffle(words.filter(
+  w=>normalizeEn(w.en)!==normalizeEn(word.en)
+ ));
 
-  const w=current();
+ const selected=[word];
+ const usedMeaning=new Set([normalizeKo(word.ko)]);
 
-  history.push({
-    word:w,status,myAnswer,selected
-  });
+ for(const candidate of others){
+  if(usedMeaning.has(normalizeKo(candidate.ko))) continue;
+  selected.push(candidate);
+  usedMeaning.add(normalizeKo(candidate.ko));
+  if(selected.length>=4) break;
+ }
 
-  if(status==="correct"){
-    score+=10;
-    streak++;
-  }else{
-    streak=0;
-  }
-
-  const feedback=$("feedback");
-  feedback.hidden=false;
-  feedback.className=
-    "message "+(
-      status==="correct"?"good":"bad"
-    );
-
-  let text=status==="correct"
-    ?"정답! +10점 🎉"
-    :status==="skipped"
-    ?"건너뛴 문제입니다."
-    :"오답입니다.";
-
-  text+="\n정답: "+describe(w);
-
-  if(status==="wrong"){
-    text+="\n내 답: "+(
-      selected
-        ?describe(selected)
-        :myAnswer
-    );
-
-    if(!selected)
-      text+="\n입력한 단어는 현재 단어장에서 뜻을 확인할 수 없습니다.";
-  }
-
-  feedback.textContent=text;
-
-  $("answer").disabled=true;
-  $("check").disabled=true;
-
-  [...$("choices").children].forEach((b,i)=>{
-    b.disabled=true;
-
-    if(choices[i].en===w.en)
-      b.classList.add("correct");
-
-    if(selected&&
-       choices[i].en===selected.en&&
-       status==="wrong")
-      b.classList.add("wrong");
-  });
-
-  $("skip").hidden=true;
-  $("next").hidden=false;
-  $("next").textContent=
-    history.length===20
-      ?"결과 보기"
-      :"다음 문제";
-
-  updateStats();
-}
-
-function checkTyped(){
-  if(answered||mode!=="type")return;
-
-  const value=$("answer").value.trim();
-  if(!value)
-    return alert("영어 단어를 입력하세요.");
-
-  const w=current();
-
-  const found=Object.values(decks)
-    .flat()
-    .find(x=>
-      x.en.toLowerCase()===value.toLowerCase()
-    );
-
-  finish(
-    value.toLowerCase()===w.en.toLowerCase()
-      ?"correct":"wrong",
-    value,
-    found||null
+ shuffle(selected).forEach(candidate=>{
+  const button=document.createElement("button");
+  button.className="option";
+  button.textContent=candidate.ko;
+  button.onclick=()=>finishAnswer(
+   normalizeEn(candidate.en)===normalizeEn(word.en),
+   candidate.en,
+   false
   );
+  box.appendChild(button);
+ });
 }
 
-function choose(i){
-  if(answered)return;
+function checkSpelling(){
+ if(answered||mode!=="meaning") return;
 
-  const selected=choices[i];
+ const answer=normalizeEn($("answerInput").value);
+ if(!answer){
+  alert("답을 입력하세요.");
+  return;
+ }
 
-  finish(
-    selected.en===current().en
-      ?"correct":"wrong",
-    selected.ko,
-    selected
+ finishAnswer(
+  answer===normalizeEn(deck[questionIndex].en),
+  answer,
+  false
+ );
+}
+
+function finishAnswer(correct,userAnswer,skipped){
+ if(answered) return;
+ answered=true;
+
+ const word=deck[questionIndex];
+ const status=skipped?"skip":correct?"correct":"wrong";
+
+ results.push({
+  word:{...word},
+  userAnswer,
+  status
+ });
+
+ if(correct&&!skipped){
+  score+=10;
+  streak++;
+ }else{
+  streak=0;
+ }
+
+ $("answerInput").disabled=true;
+ $("checkButton").disabled=true;
+
+ const feedback=$("feedback");
+ feedback.className="notice "+(correct?"success":"error");
+
+ const lines=[];
+ lines.push(
+  skipped?"문제를 건너뛰었습니다.":
+  correct?"정답입니다! +10점":"오답입니다."
+ );
+
+ if(!correct){
+  lines.push("내 답: "+(skipped?"건너뜀":userAnswer));
+
+  const found=words.find(
+   w=>normalizeEn(w.en)===normalizeEn(userAnswer)
   );
+
+  if(found&&mode==="meaning"){
+   lines.push("내 답의 뜻: "+found.ko);
+  }
+ }
+
+ lines.push("정답: "+word.en);
+ lines.push("뜻: "+word.ko);
+ lines.push("품사: "+posName(word.pos));
+
+ feedback.textContent=lines.join("\n");
+
+ if(mode==="english"){
+  [...$("options").children].forEach(button=>{
+   button.disabled=true;
+
+   if(button.textContent===word.ko){
+    button.classList.add("correct");
+   }else if(
+    !correct&&!skipped&&
+    words.some(w=>
+     normalizeEn(w.en)===normalizeEn(userAnswer)&&
+     w.ko===button.textContent
+    )
+   ){
+    button.classList.add("wrong");
+   }
+  });
+ }
+
+ $("skipButton").classList.add("hidden");
+ $("nextButton").classList.remove("hidden");
+ $("nextButton").textContent=
+  questionIndex===deck.length-1?
+  "결과 확인":"다음 문제";
+
+ updateStats();
 }
 
-function resultRow(r){
-  const div=document.createElement("div");
-  div.className="wordrow";
+function renderResults(){
+ $("playArea").classList.add("hidden");
+ $("resultArea").classList.remove("hidden");
 
-  const strong=document.createElement("strong");
-  strong.textContent=describe(r.word);
-  div.append(strong);
+ const correct=results.filter(r=>r.status==="correct").length;
+ const wrong=results.filter(r=>r.status==="wrong").length;
+ const skipped=results.filter(r=>r.status==="skip").length;
+
+ $("resultSummary").textContent=
+  "총 "+results.length+"문제\n"+
+  "정답 "+correct+"개 · 오답 "+wrong+"개 · 건너뜀 "+skipped+"개\n"+
+  "최종 점수: "+score+"점";
+
+ const list=$("resultList");
+ list.replaceChildren();
+
+ results.forEach((r,index)=>{
+  const card=document.createElement("div");
+  card.className="card";
+
+  const heading=document.createElement("strong");
+  heading.textContent=
+   (index+1)+". "+
+   (r.status==="correct"?"정답":
+    r.status==="wrong"?"오답":"건너뜀");
+
+  const info=document.createElement("p");
+  info.textContent=
+   r.word.en+" ("+posName(r.word.pos)+") — "+r.word.ko;
+
+  card.append(heading,info);
 
   if(r.status!=="correct"){
-    const p=document.createElement("p");
-    p.textContent=
-      r.status==="skipped"
-      ?"건너뜀"
-      :"내 답: "+(
-        r.selected
-          ?describe(r.selected)
-          :r.myAnswer
-      );
-    div.append(p);
+   const answer=document.createElement("p");
+   answer.textContent="내 답: "+
+    (r.status==="skip"?"건너뜀":r.userAnswer);
+   card.appendChild(answer);
+
+   const known=words.find(w=>
+    normalizeEn(w.en)===normalizeEn(r.userAnswer)
+   );
+
+   if(known&&mode==="meaning"){
+    const explanation=document.createElement("p");
+    explanation.textContent="입력한 단어의 뜻: "+known.ko;
+    card.appendChild(explanation);
+   }
   }
 
-  return div;
+  list.appendChild(card);
+ });
+
+ updateStats();
 }
 
-function showResults(){
-  $("game").hidden=true;
-  $("results").hidden=false;
+$("checkButton").onclick=checkSpelling;
 
-  const good=history.filter(
-    x=>x.status==="correct"
-  );
-  const bad=history.filter(
-    x=>x.status==="wrong"
-  );
-  const skip=history.filter(
-    x=>x.status==="skipped"
-  );
-
-  $("summary").textContent=
-    `${score}점 / 200점\n`+
-    `정답 ${good.length}개 · `+
-    `오답 ${bad.length}개 · `+
-    `건너뜀 ${skip.length}개\n`+
-    `정답률 ${Math.round(good.length/20*100)}%`;
-
-  [
-    ["correctList",good],
-    ["wrongList",bad],
-    ["skippedList",skip]
-  ].forEach(([id,arr])=>{
-    const root=$(id);
-    root.replaceChildren();
-
-    if(!arr.length)
-      root.textContent="없음";
-    else
-      arr.forEach(r=>
-        root.append(resultRow(r))
-      );
-  });
-}
-
-function nextQuestion(){
-  if(history.length===20)
-    return showResults();
-
-  index++;
-  renderQuestion();
-}
-
-function setMode(newMode){
-  if(mode===newMode)return;
-
-  if(!$("game").hidden&&history.length<20){
-    if(!confirm(
-      "모드를 변경하면 현재 세트가 초기화됩니다. 계속할까요?"
-    ))return;
-  }
-
-  mode=newMode;
-
-  $("typeMode").classList.toggle(
-    "active",mode==="type"
-  );
-  $("choiceMode").classList.toggle(
-    "active",mode==="choice"
-  );
-
-  if(!$("game").hidden)
-    startGame();
-}
-
-$("start").onclick=startGame;
-$("restart").onclick=startGame;
-$("check").onclick=checkTyped;
-$("skip").onclick=()=>finish("skipped","",null);
-$("next").onclick=nextQuestion;
-$("typeMode").onclick=()=>setMode("type");
-$("choiceMode").onclick=()=>setMode("choice");
-
-$("answer").onkeydown=e=>{
-  if(e.key==="Enter")
-    checkTyped();
+$("answerInput").onkeydown=e=>{
+ if(e.key==="Enter") checkSpelling();
 };
 
-updateDeckSelect();
-updateStats();
+$("skipButton").onclick=()=>{
+ if(!answered) finishAnswer(false,"",true);
+};
+
+$("nextButton").onclick=()=>{
+ questionIndex++;
+ renderQuestion();
+};
+
+$("restartButton").onclick=startGame;
+$("resetButton").onclick=startGame;
+
+function changeMode(newMode){
+ mode=newMode;
+ $("meaningMode").classList.toggle("active",mode==="meaning");
+ $("englishMode").classList.toggle("active",mode==="english");
+ startGame();
+}
+
+$("meaningMode").onclick=()=>changeMode("meaning");
+$("englishMode").onclick=()=>changeMode("english");
+
+// ===================================
+// 시작
+// ===================================
+
+renderBook();
+startGame();
 </script>
 </body>
 </html>
