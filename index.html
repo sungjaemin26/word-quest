@@ -6,6 +6,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>WORD QUEST</title>
 <style>
+ .result-correct {
+  background: #dcfce7;
+  border: 2px solid #22c55e;
+  color: #166534;
+}
+
+.result-almost {
+  background: #ffedd5;
+  border: 2px solid #f97316;
+  color: #9a3412;
+}
+
+.result-wrong {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+  color: #991b1b;
+}
 *{box-sizing:border-box}
 body{margin:0;padding:16px;background:#f1f5f9;color:#1e293b;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
 main{max-width:720px;margin:auto;padding:20px;background:white;border-radius:18px}
@@ -153,6 +170,46 @@ due to ~때문에"></textarea>
 </main>
 
 <script>
+ 
+function spellingDistance(a, b) {
+  a = String(a ?? "").trim().toLowerCase();
+  b = String(b ?? "").trim().toLowerCase();
+
+  const dp = Array.from(
+    { length: a.length + 1 },
+    () => Array(b.length + 1).fill(0)
+  );
+
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] +
+          (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+  }
+
+  return dp[a.length][b.length];
+}
+
+function getResultClass(userAnswer, correctAnswer, isCorrect, skipped, mode) {
+  if (isCorrect) return "result-correct";
+  if (skipped) return "result-wrong";
+
+  // 영어 철자 입력 문제에서만 한 글자 차이 판정
+  if (mode === "spell" &&
+      spellingDistance(userAnswer, correctAnswer) === 1) {
+    return "result-almost";
+  }
+
+  return "result-wrong";
+}
+
 "use strict";
 
 const $ = id => document.getElementById(id);
