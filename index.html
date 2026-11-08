@@ -1,3 +1,7 @@
+아래 코드를 기존 index.html 전체와 교체하면 돼. 텍스트 분석 수정, 반의어 퀴즈, 단어 모두 삭제 기능을 모두 포함했어.
+
+입력 형식은 **영어 | 뜻 | 품사 | 동의어 | 반의어**이고, 기존 단어장과 학습 기록도 같은 저장 키로 불러와.
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,7 +16,7 @@ body{
 }
 main{
  max-width:760px;margin:auto;padding:20px;
- background:white;border-radius:18px;
+ background:#fff;border-radius:18px;
 }
 h1{text-align:center;color:#2563eb;margin-bottom:5px}
 h2{font-size:21px}
@@ -94,6 +98,7 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
  background:#f0fdf4;color:#166534;padding:12px;
  border-radius:10px;font-size:13px;line-height:1.6;
 }
+pre{white-space:pre-wrap;overflow-wrap:anywhere}
 @media(max-width:450px){
  main{padding:14px}
  .two{grid-template-columns:1fr}
@@ -101,24 +106,20 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
 }
 </style>
 </head>
-
 <body>
 <main>
 <h1>WORD QUEST</h1>
 <p class="muted" style="text-align:center">
 나만의 단어장 · 동의어·반의어 퀴즈 · 매일 오답 복습
 </p>
-
 <div class="tabs">
  <button class="tab active" data-page="game">게임</button>
  <button class="tab" data-page="books">단어장</button>
  <button class="tab" data-page="import">텍스트 추가</button>
 </div>
-
 <section id="gamePage">
  <label for="gameBook">공부할 단어장</label>
  <select id="gameBook"></select>
-
  <label>퀴즈 세트</label>
  <div class="row quiz-buttons">
   <button class="primary grow" data-quiz="normal">일반 퀴즈</button>
@@ -126,9 +127,7 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
   <button class="secondary grow" data-quiz="antonym">반의어 퀴즈</button>
   <button class="secondary grow" data-quiz="wrong">오답 모음집</button>
  </div>
-
  <div id="quizInfo" class="note"></div>
-
  <div id="normalModes">
   <label>일반 문제 유형</label>
   <div class="row">
@@ -140,17 +139,13 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
    동의어·반의어 오답은 항상 스펠링 입력으로 출제됩니다.
   </p>
  </div>
-
  <button class="secondary full" id="startGame">새 퀴즈 시작</button>
-
  <div class="stats">
   <div><strong id="score">0</strong>점수</div>
   <div><strong id="streak">0</strong>연속 정답</div>
   <div><strong id="progress">0/0</strong>진행</div>
  </div>
-
  <div id="gameMessage" class="note hidden"></div>
-
  <div id="play" class="hidden">
   <div class="question">
    <span id="questionType" class="tag"></span>
@@ -158,7 +153,6 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
    <h2 id="question"></h2>
    <div class="muted" id="questionPos"></div>
   </div>
-
   <div id="typing">
    <input id="answer" placeholder="영어 단어 또는 숙어"
     autocomplete="off" autocapitalize="off"
@@ -166,63 +160,52 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
    <p id="answerHelp" class="muted"></p>
    <button class="primary full" id="check">정답 확인</button>
   </div>
-
   <div id="options" class="options hidden"></div>
   <div id="feedback" class="note hidden" aria-live="polite"></div>
   <button class="primary full hidden" id="next">다음 문제</button>
   <button class="secondary full" id="skip">건너뛰기</button>
  </div>
-
  <div id="results" class="hidden">
   <h2>학습 결과</h2>
   <div id="summary" class="note"></div>
   <div id="resultList"></div>
   <button class="primary full" id="retry">다시 공부하기</button>
  </div>
-
  <hr>
  <h3>오답 모음집 관리</h3>
  <div id="wrongCount" class="note"></div>
-
  <div class="reset-info">
   일반·동의어·반의어 문제를 함께 복습합니다.<br>
   복습에서 맞힌 문제는 해당 유형의 현재 오답에서만 제거됩니다.<br>
   오답 이력은 남으며, 다음 날 접속하거나 화면으로 돌아오면
-  다시 복습 목록에 추가됩니다. 날짜는 기기 현지 시간을 기준으로 합니다.
+  다시 복습 목록에 추가됩니다.<br>
+  날짜는 기기 현지 시간을 기준으로 합니다.
  </div>
-
  <div class="row">
   <button class="secondary grow" id="restoreWrong">오답 다시 풀기</button>
   <button class="danger grow" id="clearWrongHistory">오답 이력 전체 삭제</button>
  </div>
  <div id="wrongList"></div>
 </section>
-
 <section id="booksPage" class="hidden">
  <h2>단어장 관리</h2>
-
  <div class="row">
   <input id="newBookName" class="grow"
    style="width:55%" placeholder="새 단어장 이름">
   <button class="primary" id="createBook">만들기</button>
  </div>
-
  <label for="manageBook">관리할 단어장</label>
  <select id="manageBook"></select>
-
  <div class="row">
   <button class="secondary grow" id="renameBook">이름 변경</button>
   <button class="danger grow" id="deleteAllWords">단어 모두 삭제</button>
   <button class="danger grow" id="deleteBook">단어장 삭제</button>
  </div>
-
  <p class="muted">
-  ‘단어 모두 삭제’는 선택한 단어장의 이름은 유지하고,
-  모든 단어와 일반·동의어·반의어 학습 기록을 삭제합니다.
+  ‘단어 모두 삭제’는 선택한 단어장 이름을 유지하고,
+  모든 단어와 학습 기록을 삭제합니다.
  </p>
-
  <div class="note" id="bookCount"></div>
-
  <h3>단어 직접 추가 / 수정</h3>
  <div class="two">
   <label>영어
@@ -232,7 +215,6 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
    <input id="editKo" placeholder="빠른">
   </label>
  </div>
-
  <label for="editPos">품사</label>
  <select id="editPos">
   <option value="">미확인 / 숙어</option>
@@ -241,66 +223,52 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:20px 0}
   <option value="a">a · 형용사</option>
   <option value="ad">ad · 부사</option>
  </select>
-
  <label for="editSynonyms">동의어 — 선택 입력</label>
  <input id="editSynonyms" placeholder="fast, quick"
   autocomplete="off" autocapitalize="off" spellcheck="false">
-
  <label for="editAntonyms">반의어 — 선택 입력</label>
  <input id="editAntonyms" placeholder="slow"
   autocomplete="off" autocapitalize="off" spellcheck="false">
-
  <p class="muted">
   여러 답은 쉼표로 구분하세요.
-  등록된 뜻과 품사에 맞는 표현을 입력하세요.
   비어 있는 유형은 해당 퀴즈에서 출제하지 않습니다.
  </p>
-
  <div class="row">
   <button class="primary grow" id="saveWord">단어 저장</button>
   <button class="secondary grow" id="cancelEdit">취소</button>
  </div>
-
  <hr>
  <input id="search" placeholder="단어, 뜻, 동의어 또는 반의어 검색">
  <div id="wordList"></div>
  <button class="secondary full" id="export">현재 단어장 텍스트 복사</button>
 </section>
-
 <section id="importPage" class="hidden">
  <h2>텍스트 한꺼번에 추가</h2>
-
- <p class="muted">
-  영어 | 뜻 | 품사 | 동의어 | 반의어<br>
-  품사나 동의어가 없으면 해당 칸을 비워 두세요.<br>
-  기존의 ‘영어 | 뜻’ 및 ‘영어 뜻’ 형식도 사용할 수 있습니다.
- </p>
-
+ <div class="note">영어 | 뜻 | 품사 | 동의어 | 반의어
+rapid | 빠른 | a | fast, quick | slow
+빈 칸도 구분자 |를 남겨 주세요.
+biocultural | 생물 문화적인 | a | |</div>
  <label for="importBook">저장할 단어장</label>
  <select id="importBook"></select>
-
  <div class="row">
   <input id="importNewName" class="grow"
    style="width:55%" placeholder="새 단어장 이름">
   <button class="secondary" id="importCreate">새로 만들기</button>
  </div>
-
  <textarea id="rawText" placeholder="rapid | 빠른 | a | fast, quick | slow
 increase | 증가하다 | v | rise, grow | decrease, decline
-purchase | 구매하다 | v | buy |
+biocultural | 생물 문화적인 | a | |
+기존 형식도 지원합니다.
 proof | 증거 | n
-in light of | ~을 고려하여
-
-기존 형식도 가능
-distinct | 뚜렷한 (반의어: vague, similar) | a | clear, separate, unique"></textarea>
-
+proof 증거 grieve 슬퍼하다"></textarea>
  <button class="primary full" id="analyze">자동 분리하기</button>
-
- <div class="note muted">동의어·반의어 열을 생략하면 기존 값을 유지합니다.
-열을 만들고 비워 두면 해당 값을 지웁니다.
-뜻에 적힌 ‘(반의어: …)’는 반의어 칸으로 자동 분리합니다.
-한 줄에 같은 단어가 반복 등록되면 마지막 내용으로 갱신합니다.</div>
-
+ <p class="muted">
+  일반 |, 전각 ｜, 탭 구분을 지원합니다.<br>
+  동의어·반의어 열을 생략하면 기존 값을 유지합니다.
+  열을 만들고 비워 두면 해당 값을 지웁니다.<br>
+  뜻에 적힌 ‘(반의어: …)’는 반의어 칸으로 분리합니다.<br>
+  같은 단어가 반복되면 마지막 내용으로 갱신합니다.
+ </p>
  <div id="analysisInfo" class="note hidden"></div>
  <div id="preview" class="hidden">
   <h3 id="previewHeading"></h3>
@@ -308,35 +276,22 @@ distinct | 뚜렷한 (반의어: vague, similar) | a | clear, separate, unique">
   <button class="primary full" id="saveImport">확인한 단어 모두 저장</button>
  </div>
 </section>
-
 <p class="muted" style="text-align:center">
 단어장과 학습 기록은 현재 브라우저에 저장됩니다.
 </p>
 </main>
-
 <script>
 "use strict";
-
-/* =========================
-   저장 설정
-========================= */
-
+/* ==================================
+   기본 설정 / 기존 저장 키 유지
+================================== */
 const $=id=>document.getElementById(id);
 const KEY="wordQuestMultiBooksV1";
 const OLD="wordQuestTextV1";
 const RESET_KEY="wordQuestDailyResetV2";
-
 const TYPES=["normal","synonym","antonym"];
-const names={
- normal:"일반",
- synonym:"동의어",
- antonym:"반의어"
-};
-const relationFields={
- synonym:"synonyms",
- antonym:"antonyms"
-};
-
+const names={normal:"일반",synonym:"동의어",antonym:"반의어"};
+const relationFields={synonym:"synonyms",antonym:"antonyms"};
 const storageKeys={
  normal:{
   wrong:"wordQuestWrongAnswersV1",
@@ -354,25 +309,27 @@ const storageKeys={
   mastered:"wordQuestAntonymMasteredV1"
  }
 };
-
-const norm=s=>String(s??"").trim().replace(/\s+/g," ");
-const key=s=>norm(s).toLowerCase();
+function norm(value){
+ return String(value??"")
+  .normalize("NFKC")
+  .replace(/[\u200B-\u200D\uFEFF]/g,"")
+  .trim()
+  .replace(/\s+/g," ");
+}
+const key=value=>norm(value).toLowerCase();
 const englishPattern=/^[a-z][a-z\s'’\-]*$/i;
-
-function loadJSON(k,fallback){
+function loadJSON(storageKey,fallback){
  try{
-  const value=localStorage.getItem(k);
+  const value=localStorage.getItem(storageKey);
   return value===null?fallback:JSON.parse(value);
  }catch{
   return fallback;
  }
 }
-
 function safeObject(value){
  return value&&typeof value==="object"&&!Array.isArray(value)
   ?value:{};
 }
-
 function uniqueWords(values){
  const seen=new Set();
  return values.filter(value=>{
@@ -383,46 +340,55 @@ function uniqueWords(values){
   return true;
  }).map(norm);
 }
-
 function splitAnswers(value){
  const text=Array.isArray(value)?value.join(","):String(value??"");
  return uniqueWords(
-  text.split(/[,，、\n]+/).map(norm).filter(Boolean)
+  text.normalize("NFKC")
+   .split(/[,，、\n]+/)
+   .map(norm)
+   .filter(Boolean)
  );
 }
-
+function cleanList(value){
+ const text=norm(value);
+ return text==="-"?"":text;
+}
 function relationAnswers(w,kind){
  const field=relationFields[kind];
  if(!field)return [];
  return splitAnswers(w[field]).filter(s=>key(s)!==key(w.en));
 }
-
+function normalizePos(value){
+ const p=norm(value).toLowerCase().replace(/\.$/,"");
+ const mapping={
+  "":"",
+  n:"n",noun:"n","명사":"n",
+  v:"v",verb:"v","동사":"v",
+  a:"a",adj:"a",adjective:"a","형용사":"a",
+  ad:"ad",adv:"ad",adverb:"ad","부사":"ad"
+ };
+ return Object.prototype.hasOwnProperty.call(mapping,p)
+  ?mapping[p]:undefined;
+}
 function validWord(w){
  return englishPattern.test(norm(w.en))&&/[가-힣]/.test(w.ko);
 }
-
 function validRelations(values,en){
  return values.every(
   value=>englishPattern.test(value)&&key(value)!==key(en)
  );
 }
-
-/* 이전 뜻 칸의 반의어를 추출 */
 function extractLegacyAntonyms(meaning){
  const found=[];
- const text=String(meaning??"").replace(
-  /[（(]\s*반의어\s*[:：]\s*([^()（）]*)[)）]/g,
+ const text=norm(meaning).replace(
+  /\(\s*반의어\s*[:：]\s*([^()]*)\)/g,
   (_,inside)=>{
    found.push(...splitAnswers(inside));
    return "";
   }
  );
- return {
-  ko:norm(text),
-  antonyms:uniqueWords(found)
- };
+ return {ko:norm(text),antonyms:uniqueWords(found)};
 }
-
 const defaults=[
  ["various","다양한","a"],
  ["significant","중요한, 상당한","a"],
@@ -444,10 +410,7 @@ const defaults=[
  ["consume","소비하다","v"],
  ["evaluate","평가하다","v"],
  ["indicate","나타내다","v"]
-].map(([en,ko,pos])=>({
- en,ko,pos,synonyms:[],antonyms:[]
-}));
-
+].map(([en,ko,pos])=>({en,ko,pos,synonyms:[],antonyms:[]}));
 function loadBooks(){
  const saved=loadJSON(KEY,null);
  if(saved&&Array.isArray(saved.books)&&saved.books.length){
@@ -462,11 +425,9 @@ function loadBooks(){
   }]
  };
 }
-
 let db=loadBooks();
 let resetDates=safeObject(loadJSON(RESET_KEY,{}));
 const records={};
-
 for(const kind of TYPES){
  records[kind]={};
  for(const field of ["wrong","history","mastered"]){
@@ -475,33 +436,27 @@ for(const kind of TYPES){
   );
  }
 }
-
-/* 기존 단어장에 필드 추가 / 반의어 자동 이동 */
+/* 이전 버전 단어장 변환 */
 for(const b of db.books){
  if(!Array.isArray(b.words))b.words=[];
-
  b.words=b.words.filter(
   w=>w&&typeof w.en==="string"&&typeof w.ko==="string"
  );
-
  for(const w of b.words){
   const legacy=extractLegacyAntonyms(w.ko);
   const hasAntonyms=Object.prototype.hasOwnProperty.call(w,"antonyms");
-
   w.ko=legacy.ko||w.ko;
+  w.pos=normalizePos(w.pos||"")??"";
   w.synonyms=relationAnswers(w,"synonym");
-
   w.antonyms=splitAnswers(
    hasAntonyms?w.antonyms:legacy.antonyms
   ).filter(s=>key(s)!==key(w.en));
  }
 }
-
 function persist(){
  try{
   localStorage.setItem(KEY,JSON.stringify(db));
   localStorage.setItem(RESET_KEY,JSON.stringify(resetDates));
-
   for(const kind of TYPES){
    for(const field of ["wrong","history","mastered"]){
     localStorage.setItem(
@@ -516,16 +471,13 @@ function persist(){
   return false;
  }
 }
-
 const book=id=>db.books.find(b=>b.id===id);
-
 function posLabel(p){
  return {
   n:"n · 명사",v:"v · 동사",
   a:"a · 형용사",ad:"ad · 부사"
  }[p]||"미확인 / 숙어";
 }
-
 function shuffled(arr){
  const result=[...arr];
  for(let i=result.length-1;i>0;i--){
@@ -534,7 +486,6 @@ function shuffled(arr){
  }
  return result;
 }
-
 function addText(parent,text,className="detail"){
  const p=document.createElement("p");
  p.className=className;
@@ -542,14 +493,12 @@ function addText(parent,text,className="detail"){
  parent.append(p);
  return p;
 }
-
 function typeTag(kind){
  const span=document.createElement("span");
  span.className="tag "+kind;
  span.textContent=names[kind]+" 문제";
  return span;
 }
-
 let preview=[];
 let editing=-1;
 let mode="meaning";
@@ -564,48 +513,41 @@ let gameRunning=false;
 let activeBookId="";
 let activeQuizType="normal";
 let activeMode="meaning";
-
-/* =========================
+/* ==================================
    오답 / 숙련 / 날짜 관리
-========================= */
-
+================================== */
 function listOf(kind,field,bookId){
  const source=records[kind][field];
  if(!Array.isArray(source[bookId]))source[bookId]=[];
  return source[bookId];
 }
-
 function recordEn(record,kind){
  return kind==="normal"?record:record.en;
 }
-
 function totalRecords(bookId,field="wrong"){
  return TYPES.reduce(
   (sum,kind)=>sum+listOf(kind,field,bookId).length,0
  );
 }
-
 function cleanRecords(bookId){
  const b=book(bookId);
  if(!b)return;
-
  for(const kind of TYPES){
   const eligible=new Set(
    b.words.filter(
     w=>kind==="normal"||relationAnswers(w,kind).length
    ).map(w=>key(w.en))
   );
-
   for(const field of ["wrong","history"]){
    const values=listOf(kind,field,bookId);
-
    if(kind==="normal"){
     records[kind][field][bookId]=uniqueWords(
-     values.filter(en=>typeof en==="string"&&eligible.has(key(en)))
+     values.filter(
+      en=>typeof en==="string"&&eligible.has(key(en))
+     )
     );
    }else{
     const map=new Map();
-
     for(const r of values){
      if(!r||typeof r.en!=="string"||!eligible.has(key(r.en)))continue;
      map.set(key(r.en),{
@@ -614,11 +556,9 @@ function cleanRecords(bookId){
       skipped:!!r.skipped
      });
     }
-
     records[kind][field][bookId]=[...map.values()];
    }
   }
-
   records[kind].mastered[bookId]=uniqueWords(
    listOf(kind,"mastered",bookId).filter(
     en=>typeof en==="string"&&eligible.has(key(en))
@@ -626,18 +566,15 @@ function cleanRecords(bookId){
   );
  }
 }
-
 function markMastered(bookId,en,kind){
  records[kind].mastered[bookId]=uniqueWords([
   ...listOf(kind,"mastered",bookId),en
  ]);
 }
-
 function invalidateMastered(bookId,en,kind){
  records[kind].mastered[bookId]=listOf(kind,"mastered",bookId)
   .filter(x=>key(x)!==key(en));
 }
-
 function addWrong(bookId,en,kind,details,skipped){
  if(kind==="normal"){
   for(const field of ["wrong","history"]){
@@ -646,78 +583,70 @@ function addWrong(bookId,en,kind,details,skipped){
    ]);
   }
  }else{
-  const r={
+  const record={
    en,
    wrongAnswers:details.filter(x=>!x.correct).map(x=>x.answer),
    skipped
   };
-
   for(const field of ["wrong","history"]){
    const arr=listOf(kind,field,bookId);
    const i=arr.findIndex(x=>key(x.en)===key(en));
-   const copy={...r,wrongAnswers:[...r.wrongAnswers]};
+   const copy={
+    ...record,
+    wrongAnswers:[...record.wrongAnswers]
+   };
    if(i>=0)arr[i]=copy;
    else arr.push(copy);
   }
  }
-
  invalidateMastered(bookId,en,kind);
 }
-
 function removeWrong(bookId,en,kind){
  records[kind].wrong[bookId]=listOf(kind,"wrong",bookId)
   .filter(r=>key(recordEn(r,kind))!==key(en));
 }
-
 function migrateHistory(){
  for(const b of db.books){
   cleanRecords(b.id);
-
   for(const kind of TYPES){
    const current=listOf(kind,"wrong",b.id);
    const all=listOf(kind,"history",b.id);
-
    if(kind==="normal"){
     records[kind].history[b.id]=uniqueWords([...all,...current]);
    }else{
     const map=new Map(all.map(r=>[key(r.en),r]));
     for(const r of current){
-     map.set(key(r.en),{...r,wrongAnswers:[...r.wrongAnswers]});
+     map.set(key(r.en),{
+      ...r,wrongAnswers:[...r.wrongAnswers]
+     });
     }
     records[kind].history[b.id]=[...map.values()];
    }
   }
  }
 }
-
 function todayString(){
  const d=new Date();
  return d.getFullYear()+"-"+
   String(d.getMonth()+1).padStart(2,"0")+"-"+
   String(d.getDate()).padStart(2,"0");
 }
-
 function restoreWrongAnswers(bookId){
  if(!book(bookId))return 0;
  cleanRecords(bookId);
-
  for(const kind of TYPES){
   const all=listOf(kind,"history",bookId);
   records[kind].wrong[bookId]=kind==="normal"
    ?[...all]
    :all.map(r=>({...r,wrongAnswers:[...r.wrongAnswers]}));
  }
-
  return totalRecords(bookId);
 }
-
 function checkAllDailyResets(){
  const today=todayString();
  let changed=false;
-
  for(const b of db.books){
   const previous=resetDates[b.id];
-
   if(previous===undefined){
    resetDates[b.id]=today;
    changed=true;
@@ -727,11 +656,9 @@ function checkAllDailyResets(){
    changed=true;
   }
  }
-
  if(changed)persist();
  return changed;
 }
-
 function eraseBookRecords(bookId){
  for(const kind of TYPES){
   for(const field of ["wrong","history","mastered"]){
@@ -740,64 +667,51 @@ function eraseBookRecords(bookId){
  }
  delete resetDates[bookId];
 }
-
 $("restoreWrong").onclick=()=>{
  const b=book($("gameBook").value);
  if(!b)return;
  cleanRecords(b.id);
-
  const total=totalRecords(b.id,"history");
  if(!total){
   alert("저장된 오답 이력이 없습니다.");
   return;
  }
-
  if(!confirm(
   b.name+"의 오답 이력 "+total+"문제를 다시 복습할까요?"
  ))return;
-
  const count=restoreWrongAnswers(b.id);
  persist();
  updateQuizInfo();
  renderWrongList();
  if(quizType==="wrong")startGame();
-
  alert(count+"문제를 복습 목록에 추가했습니다.");
 };
-
 $("clearWrongHistory").onclick=()=>{
  const b=book($("gameBook").value);
  if(!b)return;
-
  if(!confirm(
   b.name+"의 일반·동의어·반의어 오답 목록과 이력을 모두 삭제할까요?\n"+
   "삭제 후에는 복원할 수 없습니다."
  ))return;
-
  for(const kind of TYPES){
   records[kind].wrong[b.id]=[];
   records[kind].history[b.id]=[];
  }
-
  persist();
  updateQuizInfo();
  renderWrongList();
  if(quizType==="wrong")startGame();
 };
-
-/* =========================
-   페이지 / 단어장
-========================= */
-
+/* ==================================
+   페이지 / 단어장 관리
+================================== */
 function showPage(name){
  for(const p of ["game","books","import"]){
   $(p+"Page").classList.toggle("hidden",p!==name);
  }
-
  document.querySelectorAll("[data-page]").forEach(button=>{
   button.classList.toggle("active",button.dataset.page===name);
  });
-
  if(name==="books")renderBook();
  if(name==="game"){
   checkAllDailyResets();
@@ -805,33 +719,26 @@ function showPage(name){
   renderWrongList();
  }
 }
-
 document.querySelectorAll("[data-page]").forEach(button=>{
  button.onclick=()=>showPage(button.dataset.page);
 });
-
 function refreshSelectors(){
  for(const id of ["gameBook","manageBook","importBook"]){
   const select=$(id);
   const previous=select.value;
   select.replaceChildren();
-
   for(const b of db.books){
    const option=document.createElement("option");
    option.value=b.id;
    option.textContent=b.name+" ("+b.words.length+"개)";
    select.append(option);
   }
-
   if(book(previous))select.value=previous;
  }
-
  updateQuizInfo();
 }
-
 function makeBook(name){
  name=norm(name);
-
  if(!name){
   alert("단어장 이름을 입력하세요.");
   return null;
@@ -840,19 +747,17 @@ function makeBook(name){
   alert("같은 이름의 단어장이 있습니다.");
   return null;
  }
-
  const b={
   id:"book_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),
-  name,words:[]
+  name,
+  words:[]
  };
-
  db.books.push(b);
  resetDates[b.id]=todayString();
  persist();
  refreshSelectors();
  return b;
 }
-
 $("createBook").onclick=()=>{
  const b=makeBook($("newBookName").value);
  if(!b)return;
@@ -861,77 +766,60 @@ $("createBook").onclick=()=>{
  clearEditor();
  renderBook();
 };
-
 $("importCreate").onclick=()=>{
  const b=makeBook($("importNewName").value);
  if(!b)return;
  $("importNewName").value="";
  $("importBook").value=b.id;
 };
-
 $("renameBook").onclick=()=>{
  const b=book($("manageBook").value);
  if(!b)return;
-
  let name=prompt("새 단어장 이름",b.name);
  if(name===null)return;
  name=norm(name);
-
  if(!name||db.books.some(x=>x.id!==b.id&&x.name===name)){
   alert("사용할 수 없는 이름입니다.");
   return;
  }
-
  b.name=name;
  persist();
  refreshSelectors();
  renderBook();
 };
-
-/* 선택한 단어장의 단어와 기록만 모두 삭제 */
 $("deleteAllWords").onclick=()=>{
  const b=book($("manageBook").value);
  if(!b)return;
-
  if(!b.words.length&&totalRecords(b.id,"history")===0){
   alert("이미 비어 있는 단어장입니다.");
   return;
  }
-
  if(!confirm(
   "'"+b.name+"'의 단어 "+b.words.length+"개를 모두 삭제할까요?\n\n"+
-  "동의어·반의어, 오답 이력, 숙련 기록도 삭제됩니다.\n"+
-  "단어장 이름은 유지됩니다. 이 작업은 되돌릴 수 없습니다."
+  "동의어·반의어와 모든 학습 기록도 삭제됩니다.\n"+
+  "단어장 이름은 유지됩니다. 되돌릴 수 없습니다."
  ))return;
-
  b.words=[];
  eraseBookRecords(b.id);
  resetDates[b.id]=todayString();
-
  clearEditor();
  $("search").value="";
- persist();
+ const saved=persist();
  refreshSelectors();
  renderBook();
-
  if(activeBookId===b.id)startGame();
-
- alert("선택한 단어장의 단어와 학습 기록을 모두 삭제했습니다.");
+ if(saved)alert("선택한 단어장의 단어와 학습 기록을 모두 삭제했습니다.");
 };
-
 $("deleteBook").onclick=()=>{
  const b=book($("manageBook").value);
  if(!b)return;
-
  if(db.books.length===1){
   alert("마지막 단어장은 삭제할 수 없습니다.\n비우려면 '단어 모두 삭제'를 사용하세요.");
   return;
  }
-
  if(!confirm(
   "'"+b.name+"' 단어장과 모든 단어·학습 기록을 삭제할까요?"
  ))return;
-
  db.books=db.books.filter(x=>x.id!==b.id);
  eraseBookRecords(b.id);
  clearEditor();
@@ -940,44 +828,39 @@ $("deleteBook").onclick=()=>{
  renderBook();
  startGame();
 };
-
 function clearEditor(){
  editing=-1;
- for(const id of ["editEn","editKo","editPos","editSynonyms","editAntonyms"]){
+ for(const id of [
+  "editEn","editKo","editPos","editSynonyms","editAntonyms"
+ ]){
   $(id).value="";
  }
  $("saveWord").textContent="단어 저장";
 }
-
 $("cancelEdit").onclick=clearEditor;
 $("manageBook").onchange=()=>{
  clearEditor();
  renderBook();
 };
-
 function applyWordUpdate(bookId,old,w){
  if(!old)return;
-
  const baseChanged=
   key(old.en)!==key(w.en)||old.ko!==w.ko||old.pos!==w.pos;
-
- if(baseChanged)invalidateMastered(bookId,old.en,"normal");
-
+ if(baseChanged){
+  invalidateMastered(bookId,old.en,"normal");
+ }
  for(const kind of ["synonym","antonym"]){
   const before=relationAnswers(old,kind).map(key).sort();
   const after=relationAnswers(w,kind).map(key).sort();
-
   if(baseChanged||JSON.stringify(before)!==JSON.stringify(after)){
    invalidateMastered(bookId,old.en,kind);
   }
  }
 }
-
 function validateEntry(w){
  if(!validWord(w)){
   return "영어 표현과 한국어 뜻을 확인하세요.";
  }
-
  for(const kind of ["synonym","antonym"]){
   if(!validRelations(splitAnswers(w[relationFields[kind]]),w.en)){
    return names[kind]+"에는 영어 표현을 쉼표로 구분해 입력하세요.\n"+
@@ -986,86 +869,68 @@ function validateEntry(w){
  }
  return "";
 }
-
 $("saveWord").onclick=()=>{
  const b=book($("manageBook").value);
  if(!b)return;
-
  const legacy=extractLegacyAntonyms($("editKo").value);
  const w={
   en:norm($("editEn").value),
   ko:legacy.ko,
   pos:$("editPos").value,
-  synonyms:splitAnswers($("editSynonyms").value),
+  synonyms:splitAnswers(cleanList($("editSynonyms").value)),
   antonyms:uniqueWords([
-   ...splitAnswers($("editAntonyms").value),
+   ...splitAnswers(cleanList($("editAntonyms").value)),
    ...legacy.antonyms
   ])
  };
-
  const error=validateEntry(w);
  if(error){
   alert(error);
   return;
  }
-
  if(b.words.some((x,i)=>i!==editing&&key(x.en)===key(w.en))){
   alert("이미 등록된 표현입니다.");
   return;
  }
-
  if(editing>=0&&b.words[editing]){
   applyWordUpdate(b.id,b.words[editing],w);
   b.words[editing]=w;
  }else{
   b.words.push(w);
  }
-
  cleanRecords(b.id);
  persist();
  clearEditor();
  refreshSelectors();
  renderBook();
-
  if(activeBookId===b.id)startGame();
 };
-
 function renderBook(){
  const b=book($("manageBook").value);
  if(!b)return;
-
  const syn=b.words.filter(w=>relationAnswers(w,"synonym").length).length;
  const ant=b.words.filter(w=>relationAnswers(w,"antonym").length).length;
-
  $("bookCount").textContent=
   b.name+" · "+b.words.length+"개\n"+
   "동의어 등록 "+syn+"개 · 반의어 등록 "+ant+"개";
-
  const query=key($("search").value);
  const root=$("wordList");
  root.replaceChildren();
-
  b.words.forEach((w,i)=>{
   const synonyms=relationAnswers(w,"synonym");
   const antonyms=relationAnswers(w,"antonym");
   const searchable=[w.en,w.ko,...synonyms,...antonyms].join(" ");
-
   if(!key(searchable).includes(query))return;
-
   const card=document.createElement("div");
   card.className="card";
-
   const title=document.createElement("strong");
   title.textContent=w.en+" — "+w.ko;
   card.append(title);
-
   addText(card,posLabel(w.pos),"muted");
   addText(card,"동의어: "+(synonyms.join(", ")||"미등록"),"muted");
   addText(card,"반의어: "+(antonyms.join(", ")||"미등록"),"muted");
-
   const row=document.createElement("div");
   row.className="row";
-
   const edit=document.createElement("button");
   edit.className="secondary small";
   edit.textContent="수정";
@@ -1079,43 +944,38 @@ function renderBook(){
    $("saveWord").textContent="수정 저장";
    $("editEn").scrollIntoView({behavior:"smooth"});
   };
-
   const del=document.createElement("button");
   del.className="danger small";
   del.textContent="삭제";
   del.onclick=()=>{
    if(!confirm(w.en+" 삭제할까요?"))return;
-
    b.words.splice(i,1);
    clearEditor();
    cleanRecords(b.id);
    persist();
    refreshSelectors();
    renderBook();
-
    if(activeBookId===b.id)startGame();
   };
-
   row.append(edit,del);
   card.append(row);
   root.append(card);
  });
-
- if(!b.words.length)addText(root,"등록된 단어가 없습니다.","muted");
+ if(!b.words.length){
+  addText(root,"등록된 단어가 없습니다.","muted");
+ }else if(!root.children.length){
+  addText(root,"검색 결과가 없습니다.","muted");
+ }
 }
-
 $("search").oninput=renderBook;
-
 $("export").onclick=async()=>{
  const b=book($("manageBook").value);
  if(!b)return;
-
  const text=b.words.map(w=>[
   w.en,w.ko,w.pos||"",
   relationAnswers(w,"synonym").join(", "),
   relationAnswers(w,"antonym").join(", ")
  ].join(" | ")).join("\n");
-
  try{
   await navigator.clipboard.writeText(text);
   alert("동의어·반의어를 포함한 단어장을 복사했습니다.");
@@ -1123,100 +983,125 @@ $("export").onclick=async()=>{
   prompt("아래 내용을 복사하세요.",text);
  }
 };
-
-/* =========================
-   텍스트 가져오기
-========================= */
-
-const ENG=
- "[A-Za-z][A-Za-z’'\\-]*"+
- "(?:\\s+[A-Za-z][A-Za-z’'\\-]*)*";
-
-const KOR=
- "[~～]?[가-힣]"+
- "[가-힣0-9\\s,·()~～\\-]*";
-
+/* ==================================
+   수정된 텍스트 분석 함수
+================================== */
 function parseText(raw){
  const found=[];
  const failed=[];
-
- for(let line of raw.replace(/\r/g,"").split("\n")){
-  line=line.trim().replace(/^\s*(?:\d+[.)]|[•*])\s*/,"");
-  if(!line)continue;
-
-  if(/[|\t]/.test(line)){
+ const lines=String(raw??"")
+  .replace(/\r\n?/g,"\n")
+  .split("\n");
+ for(const original of lines){
+  let line=original
+   .normalize("NFKC")
+   .replace(/[\u200B-\u200D\uFEFF]/g,"")
+   .trim();
+  // 빈 줄, 코드 블록 표시 제외
+  if(!line||/^```/.test(line))continue;
+  // 줄 번호 및 글머리표 제거
+  line=line.replace(/^\s*(?:\d+[.)]|[•*])\s*/,"");
+  // 유사 구분자를 일반 |로 통일
+  line=line.replace(/[｜│┃¦∣]/g,"|");
+  if(line.includes("|")||line.includes("\t")){
+   // Markdown 표의 양끝 구분자 처리
+   if(line.startsWith("|")){
+    line=line.slice(1);
+    if(line.endsWith("|"))line=line.slice(0,-1);
+   }
+   /*
+    빈 칸을 제거하지 않습니다.
+    영어 | 뜻 | | 동의어 | 반의어
+    형식에서 빈 품사 칸을 그대로 유지합니다.
+   */
    const fields=line.split(/[|\t]/).map(norm);
-
+   // Markdown 표 구분선 제외
+   if(fields.every(value=>/^:?-{2,}:?$/.test(value))){
+    continue;
+   }
+   // 제목 행 제외
+   if(
+    /^(영어|단어|word)$/i.test(fields[0])&&
+    /뜻|의미|meaning/i.test(fields[1]||"")
+   ){
+    continue;
+   }
    if(fields.length<2||fields.length>5){
-    failed.push(line);
+    failed.push(original);
     continue;
    }
-
-   const pos=(fields[2]||"").toLowerCase();
-   if(!["","n","v","a","ad"].includes(pos)){
-    failed.push(line);
+   const pos=normalizePos(fields[2]||"");
+   if(pos===undefined){
+    failed.push(original);
     continue;
    }
-
    const legacy=extractLegacyAntonyms(fields[1]);
    const w={
     en:fields[0],
     ko:legacy.ko,
     pos,
-    synonyms:fields[3]||"",
-    antonyms:fields.length>=5
-     ?fields[4]
-     :legacy.antonyms.join(", "),
+    synonyms:cleanList(fields[3]||""),
+    antonyms:cleanList(
+     fields.length>=5
+      ?fields[4]
+      :legacy.antonyms.join(", ")
+    ),
     hasSynonyms:fields.length>=4,
     hasAntonyms:fields.length>=5||legacy.antonyms.length>0
    };
-
    if(validWord(w))found.push(w);
-   else failed.push(line);
+   else failed.push(original);
    continue;
   }
-
-  const re=new RegExp(
-   "("+ENG+")\\s+("+KOR+")"+
-   "(?=\\s+(?:"+ENG+")\\s+[~～가-힣]|$)","g"
+  /*
+   기존 공백 구분 형식
+   예: proof 증거 grieve 슬퍼하다
+  */
+  const english=
+   "[A-Za-z][A-Za-z’'\\-]*"+
+   "(?:\\s+[A-Za-z][A-Za-z’'\\-]*)*";
+  const korean=
+   "[~～]?[가-힣]"+
+   "[가-힣0-9\\s,·()~～\\-]*";
+  const regex=new RegExp(
+   "("+english+")\\s+("+korean+")"+
+   "(?=\\s+(?:"+english+")\\s+[~～가-힣]|$)",
+   "g"
   );
-  const matches=[...line.matchAll(re)];
-
-  if(!matches.length){
-   failed.push(line);
+  const matches=[...line.matchAll(regex)];
+  // 일부 내용만 읽고 나머지를 버리지 않도록 확인
+  if(!matches.length||line.replace(regex,"").trim()){
+   failed.push(original);
    continue;
   }
-
-  for(const m of matches){
-   const w={
-    en:norm(m[1]),ko:norm(m[2]),pos:"",
-    synonyms:"",antonyms:"",
-    hasSynonyms:false,hasAntonyms:false
-   };
-   if(validWord(w))found.push(w);
+  for(const match of matches){
+   found.push({
+    en:norm(match[1]),
+    ko:norm(match[2]),
+    pos:"",
+    synonyms:"",
+    antonyms:"",
+    hasSynonyms:false,
+    hasAntonyms:false
+   });
   }
  }
-
  return {found,failed};
 }
-
 function textField(label,value,callback){
  const box=document.createElement("label");
  box.textContent=label;
-
  const input=document.createElement("input");
  input.value=Array.isArray(value)?value.join(", "):value;
  input.oninput=()=>callback(input.value);
-
  box.append(input);
  return box;
 }
-
 function posField(value,callback){
  const select=document.createElement("select");
-
  for(const [v,t] of [
-  ["","미확인 / 숙어"],["n","n 명사"],["v","v 동사"],
+  ["","미확인 / 숙어"],
+  ["n","n 명사"],["v","v 동사"],
   ["a","a 형용사"],["ad","ad 부사"]
  ]){
   const option=document.createElement("option");
@@ -1224,42 +1109,34 @@ function posField(value,callback){
   option.textContent=t;
   select.append(option);
  }
-
  select.value=value||"";
  select.onchange=()=>callback(select.value);
  return select;
 }
-
 function renderPreview(){
  const root=$("previewList");
  root.replaceChildren();
  $("previewHeading").textContent="분리된 표현 "+preview.length+"개";
-
  preview.forEach((w,i)=>{
   const card=document.createElement("div");
   card.className="card";
-
   const grid=document.createElement("div");
   grid.className="two";
   grid.append(
    textField("영어",w.en,v=>w.en=v),
    textField("뜻",w.ko,v=>w.ko=v)
   );
-
   const pos=document.createElement("label");
   pos.textContent="품사";
   pos.append(posField(w.pos,v=>w.pos=v));
-
   const synonyms=textField("동의어",w.synonyms,v=>{
    w.synonyms=v;
    w.hasSynonyms=true;
   });
-
   const antonyms=textField("반의어",w.antonyms,v=>{
    w.antonyms=v;
    w.hasAntonyms=true;
   });
-
   const del=document.createElement("button");
   del.className="danger small";
   del.textContent="제외";
@@ -1267,92 +1144,89 @@ function renderPreview(){
    preview.splice(i,1);
    renderPreview();
   };
-
   card.append(grid,pos,synonyms,antonyms,del);
   root.append(card);
  });
 }
-
 $("analyze").onclick=()=>{
- const result=parseText($("rawText").value);
- preview=result.found;
-
- $("preview").classList.toggle("hidden",!preview.length);
-
  const info=$("analysisInfo");
  info.classList.remove("hidden");
  info.replaceChildren();
-
- addText(
-  info,
-  "분석 결과: "+preview.length+"개 인식 · "+
-  result.failed.length+"줄 확인 필요"
- );
-
- if(result.failed.length){
-  const details=document.createElement("details");
-  const summary=document.createElement("summary");
-  const pre=document.createElement("pre");
-
-  summary.textContent="인식하지 못한 줄 보기";
-  pre.style.whiteSpace="pre-wrap";
-  pre.textContent=result.failed.join("\n");
-
-  details.append(summary,pre);
-  info.append(details);
+ try{
+  const result=parseText($("rawText").value);
+  preview=result.found;
+  $("preview").classList.toggle("hidden",!preview.length);
+  addText(
+   info,
+   "분석 결과: "+preview.length+"개 인식 · "+
+   result.failed.length+"줄 확인 필요"
+  );
+  if(result.failed.length){
+   const details=document.createElement("details");
+   const summary=document.createElement("summary");
+   const pre=document.createElement("pre");
+   summary.textContent="인식하지 못한 줄 보기";
+   pre.textContent=result.failed.join("\n");
+   details.append(summary,pre);
+   info.append(details);
+  }
+  if(!preview.length){
+   addText(
+    info,
+    "입력 예시:\nrapid | 빠른 | a | fast, quick | slow\n"+
+    "한 줄에 한 단어씩 넣고, 품사는 n / v / a / ad 또는 빈칸을 사용하세요."
+   );
+  }
+  renderPreview();
+ }catch(error){
+  preview=[];
+  $("preview").classList.add("hidden");
+  info.className="note bad";
+  addText(info,"분석 중 오류가 발생했습니다: "+error.message);
+  return;
  }
-
- renderPreview();
+ info.className="note";
 };
-
 $("saveImport").onclick=()=>{
  const b=book($("importBook").value);
  if(!b)return;
-
  if(!preview.length){
   alert("저장할 단어가 없습니다.");
   return;
  }
-
- /* 실제 반영 전에 전체 후보를 검증 */
+ // 전체 후보를 먼저 검증한 뒤 반영
  const staged=b.words.map(w=>({
   ...w,
   synonyms:[...relationAnswers(w,"synonym")],
   antonyms:[...relationAnswers(w,"antonym")]
  }));
-
  let added=0;
  let updated=0;
  const changes=[];
-
  for(let i=0;i<preview.length;i++){
   const raw=preview[i];
   const index=staged.findIndex(x=>key(x.en)===key(raw.en));
   const old=index>=0?staged[index]:null;
   const legacy=extractLegacyAntonyms(raw.ko);
-
   const w={
    en:norm(raw.en),
    ko:legacy.ko,
    pos:raw.pos||"",
    synonyms:raw.hasSynonyms
-    ?splitAnswers(raw.synonyms)
+    ?splitAnswers(cleanList(raw.synonyms))
     :old?relationAnswers(old,"synonym"):[],
    antonyms:raw.hasAntonyms
-    ?splitAnswers(raw.antonyms)
+    ?splitAnswers(cleanList(raw.antonyms))
     :legacy.antonyms.length
      ?legacy.antonyms
      :old?relationAnswers(old,"antonym"):[]
   };
-
   const error=validateEntry(w);
   if(error){
    alert((i+1)+"번째 후보를 확인하세요.\n"+error);
    return;
   }
-
   changes.push({old,w});
-
   if(index>=0){
    staged[index]=w;
    updated++;
@@ -1361,41 +1235,36 @@ $("saveImport").onclick=()=>{
    added++;
   }
  }
-
  for(const change of changes){
   applyWordUpdate(b.id,change.old,change.w);
  }
-
  b.words=staged;
  cleanRecords(b.id);
- persist();
+ const saved=persist();
  refreshSelectors();
  clearEditor();
-
+ if(activeBookId===b.id)startGame();
+ if(!saved){
+  // 저장 실패 시 입력 내용은 남겨 둠
+  return;
+ }
  preview=[];
  $("preview").classList.add("hidden");
  $("analysisInfo").classList.add("hidden");
  $("rawText").value="";
  $("manageBook").value=b.id;
-
- if(activeBookId===b.id)startGame();
  showPage("books");
-
  alert(
   b.name+"\n새 단어 "+added+"개\n기존 단어 갱신 "+updated+"회"
  );
 };
-
-/* =========================
+/* ==================================
    채점 도구
-========================= */
-
+================================== */
 function spellingDistance(a,b){
  a=key(a);
  b=key(b);
-
  if(Math.abs(a.length-b.length)>1)return 2;
-
  let previous=Array.from({length:b.length+1},(_,i)=>i);
  for(let i=1;i<=a.length;i++){
   const current=[i];
@@ -1410,7 +1279,6 @@ function spellingDistance(a,b){
  }
  return previous[b.length];
 }
-
 function gradeRelations(raw,w){
  const accepted=new Set(relationAnswers(w,w.kind).map(key));
  return splitAnswers(raw).map(answer=>({
@@ -1418,11 +1286,9 @@ function gradeRelations(raw,w){
   correct:accepted.has(key(answer))
  }));
 }
-
 function resultClass(r){
  if(r.status==="correct")return "result-correct";
  if(r.status==="skip")return "result-wrong";
-
  if(
   r.kind==="normal"&&r.mode==="meaning"&&
   spellingDistance(r.answer,r.word.en)===1
@@ -1431,18 +1297,18 @@ function resultClass(r){
  }
  return "result-wrong";
 }
-
 function resultLabel(r){
  if(r.status==="correct")return "정답";
  if(r.status==="skip")return "건너뜀";
- if(r.kind!=="normal"&&r.details.some(x=>x.correct))return "일부 오답";
- return resultClass(r)==="result-almost"?"철자 한 글자 차이":"오답";
+ if(r.kind!=="normal"&&r.details.some(x=>x.correct)){
+  return "일부 오답";
+ }
+ return resultClass(r)==="result-almost"
+  ?"철자 한 글자 차이":"오답";
 }
-
 function renderAnswerDetails(parent,details){
  const list=document.createElement("div");
  list.className="answer-list";
-
  for(const item of details){
   const chip=document.createElement("span");
   chip.className="answer-chip "+(item.correct?"ok":"bad");
@@ -1451,29 +1317,23 @@ function renderAnswerDetails(parent,details){
    (item.correct?" · 정답":" · 오답");
   list.append(chip);
  }
-
  parent.append(list);
 }
-
-/* =========================
+/* ==================================
    게임 정보 / 오답 목록
-========================= */
-
+================================== */
 function updateStats(){
  $("score").textContent=score;
  $("streak").textContent=streak;
  $("progress").textContent=history.length+"/"+deck.length;
 }
-
 function updateQuizInfo(){
  const b=book($("gameBook").value);
  if(!b)return;
  cleanRecords(b.id);
-
  const counts=TYPES.map(
   kind=>names[kind]+" "+listOf(kind,"wrong",b.id).length+"개"
  ).join(" · ");
-
  if(quizType==="wrong"){
   $("quizInfo").textContent=
    "오답 모음집 · "+b.name+"\n"+
@@ -1486,38 +1346,36 @@ function updateQuizInfo(){
    "최대 20문제 · 아직 맞히지 않은 단어 우선\n"+
    "현재 오답: "+counts;
  }else{
-  const count=b.words.filter(w=>relationAnswers(w,quizType).length).length;
+  const count=b.words.filter(
+   w=>relationAnswers(w,quizType).length
+  ).length;
   $("quizInfo").textContent=
    names[quizType]+" 퀴즈 · "+b.name+"\n"+
    "출제 가능 단어 "+count+"개 · 최대 20문제\n"+
    "쉼표로 여러 답 입력 · 등록된 답만 인정\n"+
    "입력한 답이 모두 맞으면 정답, 하나라도 틀리면 오답";
  }
-
  $("normalModes").classList.toggle(
   "hidden",quizType==="synonym"||quizType==="antonym"
  );
- $("reviewModeInfo").classList.toggle("hidden",quizType!=="wrong");
+ $("reviewModeInfo").classList.toggle(
+  "hidden",quizType!=="wrong"
+ );
 }
-
 function renderWrongList(){
  const b=book($("gameBook").value);
  if(!b)return;
  cleanRecords(b.id);
-
  const counts=TYPES.map(
   kind=>names[kind]+" "+listOf(kind,"wrong",b.id).length+"개"
  ).join(" · ");
-
  $("wrongCount").textContent=
   b.name+"\n현재 오답: "+totalRecords(b.id)+"문제\n"+
   counts+"\n"+
   "전체 오답 이력: "+totalRecords(b.id,"history")+"문제\n"+
   "오늘 날짜: "+todayString();
-
  const root=$("wrongList");
  root.replaceChildren();
-
  if(!totalRecords(b.id)){
   addText(
    root,
@@ -1528,27 +1386,24 @@ function renderWrongList(){
   );
   return;
  }
-
  for(const kind of TYPES){
   for(const r of listOf(kind,"wrong",b.id)){
    const en=recordEn(r,kind);
    const w=b.words.find(x=>key(x.en)===key(en));
    if(!w)continue;
-
    const card=document.createElement("div");
    card.className="card";
    card.append(typeTag(kind));
    addText(card,w.en+" — "+w.ko);
    addText(card,posLabel(w.pos),"muted");
-
    if(kind!=="normal"){
     addText(
      card,
-     r.skipped?"이전 응답: 건너뜀":
-      "최근 틀린 답: "+(r.wrongAnswers.join(", ")||"기록 없음"),
+     r.skipped
+      ?"이전 응답: 건너뜀"
+      :"최근 틀린 답: "+(r.wrongAnswers.join(", ")||"기록 없음"),
      "muted"
     );
-
     const details=document.createElement("details");
     const summary=document.createElement("summary");
     summary.textContent="등록된 "+names[kind]+" 보기";
@@ -1556,7 +1411,6 @@ function renderWrongList(){
     addText(details,relationAnswers(w,kind).join(", "));
     card.append(details);
    }
-
    const del=document.createElement("button");
    del.className="secondary small";
    del.textContent="현재 오답에서 제거";
@@ -1567,84 +1421,71 @@ function renderWrongList(){
     renderWrongList();
     if(quizType==="wrong")startGame();
    };
-
    card.append(del);
    root.append(card);
   }
  }
 }
-
-/* =========================
+/* ==================================
    게임 시작 / 문제 출력
-========================= */
-
+================================== */
 function copyQuestion(w,kind){
  return {
-  ...w,kind,
+  ...w,
+  kind,
   synonyms:[...relationAnswers(w,"synonym")],
   antonyms:[...relationAnswers(w,"antonym")]
  };
 }
-
 function startGame(){
  checkAllDailyResets();
-
  const b=book($("gameBook").value);
  if(!b)return;
-
  activeBookId=b.id;
  activeQuizType=quizType;
  activeMode=mode;
  cleanRecords(b.id);
-
  if(quizType==="wrong"){
   const questions=[];
-
   for(const kind of TYPES){
    const wrongKeys=new Set(
-    listOf(kind,"wrong",b.id).map(r=>key(recordEn(r,kind)))
+    listOf(kind,"wrong",b.id).map(
+     r=>key(recordEn(r,kind))
+    )
    );
-
    for(const w of b.words){
     if(wrongKeys.has(key(w.en))){
      questions.push(copyQuestion(w,kind));
     }
    }
   }
-
   deck=shuffled(questions).slice(0,20);
  }else{
   const pool=b.words.filter(
    w=>quizType==="normal"||relationAnswers(w,quizType).length
   );
-
   const masteredKeys=new Set(
    listOf(quizType,"mastered",b.id).map(key)
   );
-
   const notMastered=shuffled(
    pool.filter(w=>!masteredKeys.has(key(w.en)))
   );
   const mastered=shuffled(
    pool.filter(w=>masteredKeys.has(key(w.en)))
   );
-
-  deck=[...notMastered,...mastered].slice(0,20).map(
-   w=>copyQuestion(w,quizType)
-  );
+  deck=[...notMastered,...mastered]
+   .slice(0,20)
+   .map(w=>copyQuestion(w,quizType));
  }
-
  qi=0;
  score=0;
  streak=0;
  history=[];
  answered=false;
  gameRunning=deck.length>0;
-
  $("results").classList.add("hidden");
  $("play").classList.toggle("hidden",!deck.length);
  $("gameMessage").classList.toggle("hidden",!!deck.length);
-
  if(!deck.length){
   $("gameMessage").textContent=
    quizType==="wrong"
@@ -1653,34 +1494,27 @@ function startGame(){
      ?"단어장이 비어 있습니다. 먼저 단어를 추가하세요."
      :"이 단어장에 "+names[quizType]+"가 등록된 단어가 없습니다.\n"+
       "단어장 → 수정에서 "+names[quizType]+"를 추가하세요.";
-
   updateStats();
  }else{
   renderQuestion();
  }
-
  updateQuizInfo();
  renderWrongList();
 }
-
 function currentMode(w=deck[qi]){
  return w?.kind==="normal"?activeMode:w?.kind;
 }
-
 function renderQuestion(){
  if(qi>=deck.length){
   showResults();
   return;
  }
-
  answered=false;
  const w=deck[qi];
  const qMode=currentMode(w);
  const relation=w.kind!=="normal";
-
  $("questionType").className="tag "+w.kind;
  $("questionType").textContent=names[w.kind]+" 문제";
-
  $("question").textContent=qMode==="meaning"?w.ko:w.en;
  $("questionLabel").textContent=
   relation
@@ -1688,14 +1522,11 @@ function renderQuestion(){
    :qMode==="meaning"
     ?"뜻을 보고 영어 표현을 입력하세요"
     :"영어 표현의 뜻을 선택하세요";
-
  $("questionPos").textContent=
   posLabel(w.pos)+(relation?" · "+w.ko:"");
-
  $("typing").classList.toggle("hidden",qMode==="english");
  $("options").classList.toggle("hidden",qMode!=="english");
  $("options").replaceChildren();
-
  $("answer").value="";
  $("answer").disabled=false;
  $("check").disabled=false;
@@ -1703,29 +1534,24 @@ function renderQuestion(){
   relation
    ?(w.kind==="synonym"?"예: fast, quick":"예: slow")
    :"영어 단어 또는 숙어";
-
  $("answerHelp").textContent=
   relation
    ?"쉼표로 구분하세요. 중복 답은 한 번만 채점합니다. 등록된 답을 전부 입력할 필요는 없습니다."
    :"대소문자와 앞뒤 공백은 구분하지 않습니다.";
-
  $("feedback").className="note hidden";
  $("feedback").replaceChildren();
  $("next").classList.add("hidden");
  $("skip").classList.remove("hidden");
-
  if(qMode==="english"){
   const b=book(activeBookId);
   const choices=[w];
   const used=new Set([key(w.ko)]);
-
   for(const x of shuffled(b?.words||[])){
    if(key(x.en)===key(w.en)||used.has(key(x.ko)))continue;
    choices.push(x);
    used.add(key(x.ko));
    if(choices.length===4)break;
   }
-
   for(const x of shuffled(choices)){
    const button=document.createElement("button");
    button.className="option";
@@ -1737,26 +1563,20 @@ function renderQuestion(){
    $("options").append(button);
   }
  }
-
  updateStats();
 }
-
-/* =========================
-   답 제출
-========================= */
-
+/* ==================================
+   답 제출 / 기록
+================================== */
 function finish(correct,answer,skipped,details=[]){
  if(answered||!gameRunning||!deck[qi])return;
-
  checkAllDailyResets();
  answered=true;
-
  const w=deck[qi];
  const qMode=currentMode(w);
  const status=skipped?"skip":correct?"correct":"wrong";
  const b=book(activeBookId);
  const selected=b?.words.find(x=>key(x.en)===key(answer));
-
  history.push({
   word:copyQuestion(w,w.kind),
   kind:w.kind,
@@ -1766,12 +1586,10 @@ function finish(correct,answer,skipped,details=[]){
   status,
   details:details.map(x=>({...x}))
  });
-
  if(correct&&!skipped){
   score+=10;
   streak++;
   markMastered(activeBookId,w.en,w.kind);
-
   if(activeQuizType==="wrong"){
    removeWrong(activeBookId,w.en,w.kind);
   }
@@ -1779,48 +1597,47 @@ function finish(correct,answer,skipped,details=[]){
   streak=0;
   addWrong(activeBookId,w.en,w.kind,details,skipped);
  }
-
  persist();
-
  $("answer").disabled=true;
  $("check").disabled=true;
-
  const feedback=$("feedback");
  feedback.className="note "+(correct&&!skipped?"ok":"bad");
  feedback.replaceChildren();
-
  addText(
   feedback,
-  skipped?"건너뛴 문제입니다.":
-   correct?"정답! +10점":
-    w.kind==="normal"?"오답입니다.":"오답이 포함되어 있습니다."
+  skipped
+   ?"건너뛴 문제입니다."
+   :correct
+    ?"정답! +10점"
+    :w.kind==="normal"
+     ?"오답입니다."
+     :"오답이 포함되어 있습니다."
  );
-
  if(w.kind!=="normal"){
   const accepted=relationAnswers(w,w.kind);
-
   if(!skipped){
    renderAnswerDetails(feedback,details);
    const good=details.filter(x=>x.correct).length;
    addText(
     feedback,
-    "입력한 답: 정답 "+good+"개 · 오답 "+(details.length-good)+"개"
+    "입력한 답: 정답 "+good+"개 · 오답 "+
+    (details.length-good)+"개"
    );
   }
-
   addText(feedback,"문제 단어: "+w.en+" — "+w.ko);
-  addText(feedback,"등록된 "+names[w.kind]+": "+accepted.join(", "));
-
+  addText(
+   feedback,
+   "등록된 "+names[w.kind]+": "+accepted.join(", ")
+  );
   const submitted=new Set(details.map(x=>key(x.answer)));
   const missing=accepted.filter(x=>!submitted.has(key(x)));
-
   if(!skipped&&missing.length){
    addText(
     feedback,
-    "입력하지 않은 참고 정답: "+missing.join(", ")+" (오답 처리하지 않음)"
+    "입력하지 않은 참고 정답: "+missing.join(", ")+
+    " (오답 처리하지 않음)"
    );
   }
-
   if(!correct){
    addText(
     feedback,
@@ -1832,57 +1649,52 @@ function finish(correct,answer,skipped,details=[]){
    addText(
     feedback,
     "내 답: "+(
-     skipped?"건너뜀":
-      qMode==="english"?(selected?.ko||answer):answer
+     skipped
+      ?"건너뜀"
+      :qMode==="english"
+       ?(selected?.ko||answer)
+       :answer
     )
    );
-
    if(selected&&qMode==="meaning"){
     addText(feedback,"내 답의 뜻: "+selected.ko);
    }
   }
-
   addText(feedback,"정답: "+w.en);
   addText(feedback,"뜻: "+w.ko);
   addText(feedback,"품사: "+posLabel(w.pos));
  }
-
  if(qMode==="english"){
   [...$("options").children].forEach(button=>{
    button.disabled=true;
-
    if(key(button.dataset.en)===key(w.en)){
     button.classList.add("correct");
-   }else if(!correct&&!skipped&&key(button.dataset.en)===key(answer)){
+   }else if(
+    !correct&&!skipped&&key(button.dataset.en)===key(answer)
+   ){
     button.classList.add("wrong");
    }
   });
  }
-
  $("skip").classList.add("hidden");
  $("next").classList.remove("hidden");
- $("next").textContent=qi===deck.length-1?"결과 확인":"다음 문제";
-
+ $("next").textContent=
+  qi===deck.length-1?"결과 확인":"다음 문제";
  updateStats();
  updateQuizInfo();
  renderWrongList();
 }
-
 $("check").onclick=()=>{
  if(answered||!gameRunning||!deck[qi])return;
-
  const w=deck[qi];
  if(currentMode(w)==="english")return;
  const raw=$("answer").value;
-
  if(w.kind!=="normal"){
   const details=gradeRelations(raw,w);
-
   if(!details.length){
    alert(names[w.kind]+"를 하나 이상 입력하세요.");
    return;
   }
-
   finish(
    details.every(x=>x.correct),
    details.map(x=>x.answer).join(", "),
@@ -1891,93 +1703,78 @@ $("check").onclick=()=>{
   );
  }else{
   const answer=norm(raw);
-
   if(!answer){
    alert("답을 입력하세요.");
    return;
   }
-
   finish(key(answer)===key(w.en),answer,false,[]);
  }
 };
-
 $("answer").onkeydown=e=>{
  if(e.key==="Enter"&&!e.isComposing){
   e.preventDefault();
   if(!answered)$("check").click();
  }
 };
-
 $("skip").onclick=()=>{
  if(!answered&&gameRunning)finish(false,"",true,[]);
 };
-
 $("next").onclick=()=>{
  if(!answered||!gameRunning)return;
  qi++;
  renderQuestion();
 };
-
-/* =========================
+/* ==================================
    결과 화면
-========================= */
-
+================================== */
 function showResults(){
  gameRunning=false;
  $("play").classList.add("hidden");
  $("results").classList.remove("hidden");
-
  const correct=history.filter(r=>r.status==="correct").length;
  const wrong=history.filter(r=>r.status==="wrong").length;
  const skipped=history.filter(r=>r.status==="skip").length;
- const almost=history.filter(r=>resultClass(r)==="result-almost").length;
+ const almost=history.filter(
+  r=>resultClass(r)==="result-almost"
+ ).length;
  const remaining=totalRecords(activeBookId);
-
  const lines=[
-  activeQuizType==="wrong"?"오답 복습 결과":names[activeQuizType]+" 퀴즈 결과",
+  activeQuizType==="wrong"
+   ?"오답 복습 결과"
+   :names[activeQuizType]+" 퀴즈 결과",
   "총 "+history.length+"문제",
   "정답 "+correct+"개 · 오답 "+wrong+"개 · 건너뜀 "+skipped+"개",
   "철자 한 글자 차이 "+almost+"개",
   "최종 점수: "+score+"점 / "+history.length*10+"점",
   "현재 남은 오답: "+remaining+"문제"
  ];
-
  for(const kind of ["synonym","antonym"]){
   const subset=history.filter(r=>r.kind===kind);
   if(!subset.length)continue;
-
   const answers=subset.flatMap(r=>r.details);
   const good=answers.filter(x=>x.correct).length;
-
   lines.push(
    names[kind]+" 개별 답: 정답 "+good+"개 · 오답 "+
    (answers.length-good)+"개"
   );
  }
-
  if(history.some(r=>r.kind!=="normal")){
   lines.push("※ 입력한 답이 모두 맞은 문제에 10점을 부여합니다.");
  }
-
  $("summary").textContent=lines.join("\n");
-
  const root=$("resultList");
  root.replaceChildren();
-
  history.forEach((r,i)=>{
   const card=document.createElement("div");
   card.className="card "+resultClass(r);
   card.append(typeTag(r.kind));
-
   const title=document.createElement("div");
   title.className="result-status";
   title.textContent=(i+1)+". "+resultLabel(r);
   card.append(title);
-
   if(r.kind!=="normal"){
    addText(card,"문제 단어: "+r.word.en+" — "+r.word.ko);
    addText(card,"품사: "+posLabel(r.word.pos));
-
    if(r.status==="skip"){
     addText(card,"내 답: 건너뜀");
    }else{
@@ -1988,41 +1785,41 @@ function showResults(){
      "정답 "+good+"개 · 오답 "+(r.details.length-good)+"개"
     );
    }
-
    addText(
     card,
     "등록된 "+names[r.kind]+": "+
     relationAnswers(r.word,r.kind).join(", ")
    );
   }else{
-   addText(card,"정답: "+r.word.en+" ("+posLabel(r.word.pos)+")");
+   addText(
+    card,
+    "정답: "+r.word.en+" ("+posLabel(r.word.pos)+")"
+   );
    addText(card,"뜻: "+r.word.ko);
-
    if(r.status!=="correct"){
     addText(
      card,
      "내 답: "+(
-      r.status==="skip"?"건너뜀":
-       r.mode==="english"?(r.selectedMeaning||r.answer):r.answer
+      r.status==="skip"
+       ?"건너뜀"
+       :r.mode==="english"
+        ?(r.selectedMeaning||r.answer)
+        :r.answer
      )
     );
-
     if(r.mode==="meaning"&&r.status!=="skip"){
      const mine=book(activeBookId)?.words.find(
       w=>key(w.en)===key(r.answer)
      );
      if(mine)addText(card,"내 답의 뜻: "+mine.ko);
     }
-
     if(resultClass(r)==="result-almost"){
      addText(card,"철자가 한 글자 차이 납니다.");
     }
    }
   }
-
   root.append(card);
  });
-
  if(activeQuizType==="wrong"&&remaining===0){
   const complete=document.createElement("div");
   complete.className="note ok";
@@ -2031,60 +1828,50 @@ function showResults(){
    "'오답 다시 풀기'를 누르거나 다음 날 접속하면 이전 오답을 복습할 수 있습니다.";
   root.prepend(complete);
  }
-
  updateStats();
  updateQuizInfo();
  renderWrongList();
 }
-
-/* =========================
-   모드 / 초기화
-========================= */
-
+/* ==================================
+   모드 선택 / 초기 실행
+================================== */
 function setQuizType(type){
  quizType=type;
-
  document.querySelectorAll("[data-quiz]").forEach(button=>{
   button.className=
    (button.dataset.quiz===type?"primary":"secondary")+" grow";
  });
-
  startGame();
 }
-
 document.querySelectorAll("[data-quiz]").forEach(button=>{
  button.onclick=()=>setQuizType(button.dataset.quiz);
 });
-
 function setMode(value){
  mode=value;
- $("modeMeaning").className=(mode==="meaning"?"primary":"secondary")+" grow";
- $("modeEnglish").className=(mode==="english"?"primary":"secondary")+" grow";
+ $("modeMeaning").className=
+  (mode==="meaning"?"primary":"secondary")+" grow";
+ $("modeEnglish").className=
+  (mode==="english"?"primary":"secondary")+" grow";
  startGame();
 }
-
 $("modeMeaning").onclick=()=>setMode("meaning");
 $("modeEnglish").onclick=()=>setMode("english");
 $("gameBook").onchange=startGame;
 $("startGame").onclick=startGame;
 $("retry").onclick=startGame;
-
 migrateHistory();
 checkAllDailyResets();
 refreshSelectors();
 persist();
 startGame();
-
 function refreshDaily(){
  checkAllDailyResets();
  updateQuizInfo();
  renderWrongList();
 }
-
 document.addEventListener("visibilitychange",()=>{
  if(!document.hidden)refreshDaily();
 });
-
 window.addEventListener("focus",refreshDaily);
 </script>
 </body>
