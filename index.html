@@ -1876,3 +1876,299 @@ window.addEventListener("focus",refreshDaily);
 </script>
 </body>
 </html>
+</script>
+
+<script>
+/* ==========================================
+   동의어·반의어 전체 입력 필수 기능
+   기존 코드 마지막에 추가하는 수정 코드
+========================================== */
+
+/*
+ 등록된 정답 전체와 입력한 답을 비교합니다.
+
+ correct: 정답 여부
+ missing: 입력하지 않은 정답 여부
+*/
+gradeRelations = function(raw,w){
+ const inputs=splitAnswers(raw);
+
+ // 빈 답은 기존 입력 안내를 표시하도록 처리
+ if(!inputs.length)return [];
+
+ const expected=relationAnswers(w,w.kind);
+ const accepted=new Set(expected.map(key));
+ const submitted=new Set(inputs.map(key));
+
+ const details=inputs.map(answer=>({
+  answer,
+  correct:accepted.has(key(answer)),
+  missing:false
+ }));
+
+ // 입력하지 않은 정답도 오답 항목에 포함
+ for(const answer of expected){
+  if(!submitted.has(key(answer))){
+   details.push({
+    answer,
+    correct:false,
+    missing:true
+   });
+  }
+ }
+
+ return details;
+};
+
+
+/* 채점 결과 개수 */
+function strictAnswerCounts(details){
+ return {
+  correct:details.filter(
+   item=>item.correct
+  ).length,
+
+  wrong:details.filter(
+   item=>!item.correct&&!item.missing
+  ).length,
+
+  missing:details.filter(
+   item=>item.missing
+  ).length
+ };
+}
+
+function strictCountText(details){
+ const counts=strictAnswerCounts(details);
+
+ return "정답 "+counts.correct+"개 · "+
+  "오답 "+counts.wrong+"개 · "+
+  "미입력 "+counts.missing+"개";
+}
+
+
+/* 정답 / 오답 / 미입력을 각각 표시 */
+renderAnswerDetails = function(parent,details){
+ const list=document.createElement("div");
+ list.className="answer-list";
+
+ for(const item of details){
+  const chip=document.createElement("span");
+  chip.className="answer-chip";
+
+  if(item.missing){
+   chip.textContent="⚠️ "+item.answer+" · 미입력";
+   chip.style.background="#ffedd5";
+   chip.style.color="#9a3412";
+   chip.style.borderColor="#fdba74";
+  }else if(item.correct){
+   chip.classList.add("ok");
+   chip.textContent="✅ "+item.answer+" · 정답";
+  }else{
+   chip.classList.add("bad");
+   chip.textContent="❌ "+item.answer+" · 오답";
+  }
+
+  list.append(chip);
+ }
+
+ parent.append(list);
+};
+
+
+/* 문제에 필요한 답 개수 표시 */
+const originalRenderQuestionStrict=renderQuestion;
+
+renderQuestion = function(){
+ originalRenderQuestionStrict();
+
+ if(!gameRunning||qi>=deck.length)return;
+
+ const w=deck[qi];
+ if(w.kind==="normal")return;
+
+ const count=relationAnswers(w,w.kind).length;
+ const label=names[w.kind];
+
+ $("questionType").textContent=
+  label+" 문제 · 정답 "+count+"개";
+
+ $("questionLabel").textContent=
+  label+" "+count+"개를 모두 입력하세요";
+
+ $("answer").placeholder=
+  label+" "+count+"개를 쉼표로 구분해 입력";
+
+ $("answerHelp").textContent=
+  "등록된 "+count+"개를 빠짐없이 입력해야 정답입니다. "+
+  "틀린 답을 추가하거나 일부를 입력하지 않으면 오답입니다. "+
+  "순서는 상관없고, 같은 답은 한 번만 인정합니다.";
+};
+
+
+/* 퀴즈 설명도 새 규칙으로 변경 */
+const originalUpdateQuizInfoStrict=updateQuizInfo;
+
+updateQuizInfo = function(){
+ originalUpdateQuizInfoStrict();
+
+ if(quizType==="synonym"||quizType==="antonym"){
+  $("quizInfo").textContent=
+   $("quizInfo").textContent.replace(
+    "입력한 답이 모두 맞으면 정답, 하나라도 틀리면 오답",
+    "등록된 답을 모두 입력해야 정답 · 오답 또는 미입력 시 오답"
+   );
+ }else if(quizType==="wrong"){
+  $("quizInfo").textContent+=
+   "\n동의어·반의어는 등록된 답을 모두 입력해야 정답";
+ }
+};
+
+
+/*
+ 미입력 답도 오답 기록에 남깁니다.
+ 예: swift (미입력)
+
+ 실제 정답 데이터는 변경하지 않습니다.
+*/
+const originalAddWrongStrict=addWrong;
+
+addWrong = function(bookId,en,kind,details,skipped){
+ const savedDetails=details.map(item=>({
+  ...item,
+  answer:item.missing
+   ?item.answer+" (미입력)"
+   :item.answer
+ }));
+
+ originalAddWrongStrict(
+  bookId,
+  en,
+  kind,
+  savedDetails,
+  skipped
+ );
+};
+
+
+/* 제출 직후 안내 문구 보완 */
+const originalFinishStrict=finish;
+
+finish = function(correct,answer,skipped,details=[]){
+ if(answered||!gameRunning||!deck[qi])return;
+
+ const relation=deck[qi].kind!=="normal";
+
+ originalFinishStrict(
+  correct,
+  answer,
+  skipped,
+  details
+ );
+
+ if(!relation||skipped)return;
+
+ const feedback=$("feedback");
+ const paragraphs=[
+  ...feedback.querySelectorAll("p.detail")
+ ];
+
+ if(paragraphs[0]){
+  paragraphs[0].textContent=correct
+   ?"모두 정답! +10점"
+   :"오답 또는 입력하지 않은 답이 있습니다.";
+ }
+
+ for(const paragraph of paragraphs){
+  if(paragraph.textContent.startsWith("입력한 답:")){
+   paragraph.textContent=
+    "채점 결과: "+strictCountText(details);
+  }
+ }
+};
+
+
+/* 결과 화면에서도 미입력을 별도로 집계 */
+const originalShowResultsStrict=showResults;
+
+showResults = function(){
+ originalShowResultsStrict();
+
+ const cards=[
+  ...$("resultList").children
+ ].filter(element=>element.classList.contains("card"));
+
+ history.forEach((record,index)=>{
+  if(record.kind==="normal"||record.status==="skip")return;
+
+  const card=cards[index];
+  if(!card)return;
+
+  const paragraphs=[
+   ...card.querySelectorAll("p.detail")
+  ];
+
+  for(const paragraph of paragraphs){
+   if(/^정답 \d+개 · 오답 \d+개$/.test(paragraph.textContent)){
+    paragraph.textContent=
+     strictCountText(record.details);
+   }
+  }
+
+  const counts=strictAnswerCounts(record.details);
+  const title=card.querySelector(".result-status");
+
+  if(
+   title&&
+   record.status!=="correct"&&
+   counts.wrong===0&&
+   counts.missing>0
+  ){
+   title.textContent=
+    (index+1)+". 일부 정답 미입력";
+  }
+ });
+
+ let summary=$("summary").textContent;
+
+ for(const kind of ["synonym","antonym"]){
+  const relevant=history.filter(
+   record=>record.kind===kind
+  );
+
+  if(!relevant.length)continue;
+
+  const details=relevant.flatMap(
+   record=>record.details
+  );
+
+  const prefix=names[kind]+" 개별 답:";
+
+  summary=summary
+   .split("\n")
+   .map(line=>
+    line.startsWith(prefix)
+     ?names[kind]+" 채점: "+strictCountText(details)
+     :line
+   )
+   .join("\n");
+ }
+
+ summary=summary.replace(
+  "※ 입력한 답이 모두 맞은 문제에 10점을 부여합니다.",
+  "※ 등록된 답을 모두 입력하고 오답이 없는 문제에 10점을 부여합니다."
+ );
+
+ $("summary").textContent=summary;
+};
+
+
+/* 처음 열린 문제에도 새 안내 적용 */
+updateQuizInfo();
+
+if(gameRunning&&!answered){
+ renderQuestion();
+}
+</script>
+</body>
+</html>
